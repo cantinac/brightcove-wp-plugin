@@ -29,10 +29,10 @@ media_upload_header();
 	<form id='bc-video-form' class='media-upload-form type-form validate' method='post' enctype='multipart/form-data'>
 	<div id='media-items'>
 		<label for='bc-video'>Video:</label> <input type='text' name='bc-video' id='bc-video' placeholder='Video ID or URL'/>
-		<input type='checkbox' name='bc-video-id' id='bc-video-id' /><label for='bc-video-id'>This is a reference ID, not a video ID </label>
+		<input type='checkbox' name='bc-video-ref' id='bc-video-ref'/><label for='bc-video-ref'>This is a reference ID, not a video ID </label>
 
 		<label for='bc-playlist'> Playlist:</label> <input type='text' name='bc-playlist' id='bc-playlist' placeholder='Playlist ID(s)' />
-		<input type='checkbox' name='bc-playlist-id' id='bc-playlist-id' /><label for='bc-playlist-id'>These are reference IDs, not playlist IDs</label>
+		<input type='checkbox' name='bc-playlist-ref' id='bc-playlist-ref'/><label for='bc-playlist-ref'>These are reference IDs, not playlist IDs</label>
 
 		<label for='bc-player'>Player:</label> <input type='text' name='bc-player' id='bc-player' placeholder='Player ID (optional)' />
 

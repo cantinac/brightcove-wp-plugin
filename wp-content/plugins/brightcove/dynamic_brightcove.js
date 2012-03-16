@@ -8,7 +8,9 @@ BCL.playerData = { "playerID" : "1450315110001",
 // flag to keep track of whether there is a player
 BCL.isPlayerAdded = false;
 // template for the player object - will populate it with data using markup()
-BCL.playerTemplate = "<div style=\"display:none\"></div><object id=\"myExperience\" class=\"BrightcoveExperience\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"playerKey\" value=\"{{playerKey}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@videoPlayer\" value=\"{{videoID}}\"; /><param name=\"templateLoadHandler\" value=\"BCL.onTemplateLoaded\"</object>";
+BCL.singlePlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperience\" class=\"BrightcoveExperience\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"playerKey\" value=\"{{playerKey}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@videoPlayer\" value=\"{{videoID}}\"; /><param name=\"templateLoadHandler\" value=\"BCL.onTemplateLoaded\"</object>";
+BCL.playlistPlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperience\" class=\"BrightcoveExperience\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"playerKey\" value=\"{{playerKey}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@playlistTabs\" value=\"{{playlistID}}\"; /><param name=\"templateLoadHandler\" value=\"BCL.onTemplateLoaded\"</object>";
+
 BCL.addPlayer = function () {
 
   
@@ -16,10 +18,38 @@ BCL.addPlayer = function () {
   if (BCL.isPlayerAdded == false) {
     BCL.isPlayerAdded = true;
     var playerHTML = "";
+
+    BCL.playerData.playerID = document.getElementById('bc-player').value;
+    
     // set the videoID to the selected video
-    BCL.playerData.videoID = document.getElementById('bc-video').value
-    // populate the player object template
-    playerHTML = BCL.markup(BCL.playerTemplate, BCL.playerData);
+
+    BCL.playerData.videoID = document.getElementById('bc-video').value;
+    BCL.playerData.playlistID = document.getElementById('bc-playlist').value;
+
+    
+    if (document.getElementById('bc-video-ref').checked == 'true')
+    {
+      BCL.playerData.videoID = "ref:"+BCL.playerData.videoID;
+    }
+
+    if (document.getElementById('bc-playlist-ref').checked == 'true')
+    {
+      BCL.playerData.playlistID = "ref:"+BCL.playerData.playlistID;
+    }
+
+    
+    console.log(BCL.playerData.playlistID);
+
+    
+    if ( BCL.playerData.videoID != '') {
+      // populate the player object template
+      playerHTML = BCL.markup(BCL.singlePlayerTemplate, BCL.playerData);
+    } else if (BCL.playerData.playlistID != '') {
+      playerHTML = BCL.markup(BCL.playlistPlayerTemplate, BCL.playerData);
+    }
+
+    
+    
     // inject the player code into the DOM
     document.getElementById("placeHolder").innerHTML = playerHTML;
     // instantiate the player
