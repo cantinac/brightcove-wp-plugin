@@ -65,7 +65,103 @@ add_action('media_upload_brightcove', 'brightcove_menu_handle');
  wp_register_style('myStyleSheets', $myStyleUrl);
  wp_enqueue_style( 'myStyleSheets');
 
+add_shortcode('brightcove','add_brightcove');
+
+
+function add_brightcove_script() {	
+wp_deregister_script( 'brightcove_script' );
+wp_register_script( 'brightcove_script', 'http://admin.brightcove.com/js/BrightcoveExperiences.js');
+wp_enqueue_script( 'brightcove_script' );
+}
+
+function add_brightcove($atts)
+{
+
+add_brightcove_script();
+isset($atts['playerid']) ? $playerId=($atts['playerid']): $playerId='1191338931001';
+var_dump($playerId);
+
+
+?>
+
+<!-- Start of Brightcove Player -->
+
+<div style="display:none">
+</div>
+
+<object id="myExperience" class="BrightcoveExperience">
+  <param name="bgcolor" value="#FFFFFF" />
+  <param name="width" value="640" />
+  <param name="height" value="360" />
+  <param name="playerID" value="<?php echo $playerId; ?>" />
+  <!--<param name="playerKey" value="AQ~~,AAAAipOT-Hk~,_eG7BsSTB2xUL0C9k36uPnnnkgJfJRPS" />-->
+  <param name="isVid" value="true" />
+  <param name="dynamicStreaming" value="true" />
     
+
+   <?php 
+   if ($atts['videoid'] != NULL && $atts['isref'] == NULL)
+   { ?>
+   	<param name="@videoPlayer" value="<?php echo $atts['videoid']; ?>" />
+   <?php } 
+   if ($atts['videoid'] != NULL && $atts['isref'] != NULL)
+   { ?>
+   	<param name="@videoPlayer" value="ref:<?php echo $atts['videoid']; ?>" />
+   <?php }
+   if ($atts['playlistid'] != NULL && $atts['isref'] == NULL)
+   { ?>
+   	<param name="@playlistTabs" value="<?php echo $atts['playlistid']; ?>" />
+   <?php } 
+   if ($atts['playlistid'] != NULL && $atts['isref'] != NULL)
+   { ?>
+   	<param name="@playistTabs" value="ref:<?php echo $atts['playlistid']; ?>" />
+   <?php }
+	?>
+
+
+  
+</object>
+
+<!-- 
+This script tag will cause the Brightcove Players defined above it to be created as soon
+as the line is read by the browser. If you wish to have the player instantiated only after
+the rest of the HTML is processed and the page load is complete, remove the line.
+-->
+<!--<script type="text/javascript">brightcove.createExperiences();</script>-->
+
+<!-- End of Brightcove Player -->	
+
+
+
+<?php
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
 
 
 ?>
