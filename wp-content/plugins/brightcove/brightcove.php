@@ -12,6 +12,67 @@ Version: 0.1
 Author URI: 
 */
 
+/************************Administrator Menu ***************************/
+
+add_action('admin_menu', 'brightcove_menu');
+
+function brightcove_menu()
+{
+
+add_menu_page(__('Brightcove Settings'), __('Brightcove'), 'edit_themes', 'brightcove_menu', 'brightcove_menu_render'); 
+ 
+}
+
+function brightcove_menu_render()
+{
+  ?>
+
+  <div class='wrap'>
+    <h2>Brightcove Settings </h2>
+    <form>
+      <table class='form-table'> 
+        <tbody>
+          <tr valign="top">
+            <th scope="row">
+              <label for="bc_pub_id">Publisher ID</label>
+            </th>
+            <td>
+              <input name="bc_pub_id" type="text" id="bc_pub_id" placeholder='Publisher ID for accessing the API' class="regular-text">
+              <span class='description'>Publisher ID for accessing the API.</span>
+            </td>
+          </tr>
+          <tr valign="top">
+            <th scope="row">
+              <label for="bc_player_id">Default Player ID</label>
+            </th>
+            <td>
+              <input name="bc_player_id" type="text" id="bc_player_id" class="regular-text" placeholder='Default player ID'>
+              <span class='description'>Default player ID for setting a custom player template across the site.</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="submit">
+        <input type="submit" name="submit" id="submit" class="button-primary" value="Save Changes">
+      </p>
+    </form>
+  </div>
+  <?php
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/************************Upload Media Tab ***************************/
+
 function brightcove_media_menu($tabs) {
 $tabs['brightcove']='Brightcove';
 return $tabs;
@@ -22,6 +83,7 @@ function brightcove_menu_handle() {
 	return wp_iframe('bc_media_upload_form',$errors);
 }
 
+/*Controls the tab of the media upload form*/
 function bc_media_upload_form() { 
 media_upload_header();
 add_brightcove_script();
@@ -48,6 +110,7 @@ add_dynamic_brightcove_api_script();
 	<button onclick="BCL.addPlayer()" />Test Player</button>
 	<?php
 }
+
 
 
 
