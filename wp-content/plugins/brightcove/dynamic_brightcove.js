@@ -11,55 +11,37 @@ BCL.isPlayerAdded = false;
 BCL.singlePlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperience\" class=\"BrightcoveExperience\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"playerKey\" value=\"{{playerKey}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@videoPlayer\" value=\"{{videoID}}\"; /><param name=\"templateLoadHandler\" value=\"BCL.onTemplateLoaded\"</object>";
 BCL.playlistPlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperience\" class=\"BrightcoveExperience\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"playerKey\" value=\"{{playerKey}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@playlistTabs\" value=\"{{playlistID}}\"; /><param name=\"templateLoadHandler\" value=\"BCL.onTemplateLoaded\"</object>";
 
-BCL.addPlayer = function () {
+BCL.addPlayer = function () { 
+  /*BCL.isPlayerAdded = true;*/
+  var playerHTML = "";
+  // set the playerID to the selected player
+  BCL.playerData.playerID = document.getElementById('bc-player').value;
+  // set the videoID to the selected video
+  BCL.playerData.videoID = document.getElementById('bc-video').value;
+  // set the playlistID to the selected playlist
+  BCL.playerData.playlistID = document.getElementById('bc-playlist').value;
 
-  
-  // if we don't already have a player
-  if (BCL.isPlayerAdded == false) {
-    BCL.isPlayerAdded = true;
-    var playerHTML = "";
-
-    BCL.playerData.playerID = document.getElementById('bc-player').value;
-    
-    // set the videoID to the selected video
-
-    BCL.playerData.videoID = document.getElementById('bc-video').value;
-    BCL.playerData.playlistID = document.getElementById('bc-playlist').value;
-
-    
-    if (document.getElementById('bc-video-ref').checked == 'true')
-    {
-      BCL.playerData.videoID = "ref:"+BCL.playerData.videoID;
-    }
-
-    if (document.getElementById('bc-playlist-ref').checked == 'true')
-    {
-      BCL.playerData.playlistID = "ref:"+BCL.playerData.playlistID;
-    }
-
-    
-    console.log(BCL.playerData.playlistID);
-
-    
-    if ( BCL.playerData.videoID != '') {
-      // populate the player object template
-      playerHTML = BCL.markup(BCL.singlePlayerTemplate, BCL.playerData);
-    } else if (BCL.playerData.playlistID != '') {
-      playerHTML = BCL.markup(BCL.playlistPlayerTemplate, BCL.playerData);
-    }
-
-    
-    
-    // inject the player code into the DOM
-    document.getElementById("placeHolder").innerHTML = playerHTML;
-    // instantiate the player
-    brightcove.createExperiences();
+  //If video reference box is checked
+  if (document.getElementById('bc-video-ref').checked == 'true') {
+    BCL.playerData.videoID = "ref:"+BCL.playerData.videoID;
   }
-  // user must have requested a different video for player already loaded
-  else {
-    console.log(BCL.videoSelect.selectedIndex);
-    BCL.videoPlayer.loadVideo(BCL.videoData[BCL.videoSelect.selectedIndex].videoID);
+  //If playlist reference box is checked
+  if (document.getElementById('bc-playlist-ref').checked == 'true') {
+    BCL.playerData.playlistID = "ref:"+BCL.playerData.playlistID;
   }
+  // populate the player object template
+  if ( BCL.playerData.videoID != '') {
+    //If a single video id is entered
+    playerHTML = BCL.markup(BCL.singlePlayerTemplate, BCL.playerData);
+  } else if (BCL.playerData.playlistID != '') {
+    //If a playlist is loaded
+    playerHTML = BCL.markup(BCL.playlistPlayerTemplate, BCL.playerData);
+  }
+
+  // inject the player code into the DOM
+  document.getElementById("dynamic-bc-placeholder").innerHTML = playerHTML;
+  // instantiate the player
+  brightcove.createExperiences();  
 };
 /* 
 simple HTML templating function
