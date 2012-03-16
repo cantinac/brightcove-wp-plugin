@@ -40,23 +40,29 @@ media_upload_header();
 		</div>
 	</form>
 
-	<script>
-	jQuery(document).ready(function() {
 	
-	jQuery('#bc-submit').click(function(){
-		
-	  	var allVals = [];
-		var htmlcode;
-		// console.log(pagelist);
-	htmlcode = '[something]';
-	  window.send_to_editor(htmlcode);
-	  return false;
-	 });
+<script language="JavaScript" type="text/javascript" 
+        src="http://admin.brightcove.com/js/BrightcoveExperiences.js">
+</script>
+<script language="JavaScript" type="text/javascript" 
+        src="http://admin.brightcove.com/js/APIModules_all.js">
+</script>
 
-	});
-	</script>
+<div id="placeHolder" style="background-color:#64AAB2;width:485px;height:270px;text-align: center;padding:5px;">
+
+<button onclick="BCL.addPlayer()" />Test Player</button>
+
+
+
+
+
+
 	<?php
 }
+
+
+
+
 
 add_filter('media_upload_tabs', 'brightcove_media_menu');
 add_action('media_upload_brightcove', 'brightcove_menu_handle');
@@ -74,13 +80,19 @@ wp_register_script( 'brightcove_script', 'http://admin.brightcove.com/js/Brightc
 wp_enqueue_script( 'brightcove_script' );
 }
 
+
+wp_deregister_script( 'dynamic_brightcove_script' );
+wp_register_script( 'dynamic_brightcove_script', '/wp-content/plugins/brightcove/dynamic_brightcove.js');
+wp_enqueue_script( 'dynamic_brightcove_script' );
+
+
+
+
 function add_brightcove($atts)
 {
-
+var_dump($atts);
 add_brightcove_script();
 isset($atts['playerid']) ? $playerId=($atts['playerid']): $playerId='1191338931001';
-var_dump($playerId);
-
 
 ?>
 
@@ -98,7 +110,6 @@ var_dump($playerId);
   <param name="isVid" value="true" />
   <param name="dynamicStreaming" value="true" />
     
-
    <?php 
    if ($atts['videoid'] != NULL && $atts['isref'] == NULL)
    { ?>
