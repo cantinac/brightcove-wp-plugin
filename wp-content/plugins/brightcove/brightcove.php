@@ -15,6 +15,7 @@ Author URI:
 /************************Administrator Menu ***************************/
 
 add_action('admin_menu', 'brightcove_menu');
+add_action( 'admin_init', 'register_brightcove_settings' );
 
 function brightcove_menu()
 {
@@ -29,7 +30,8 @@ function brightcove_menu_render()
 
   <div class='wrap'>
     <h2>Brightcove Settings </h2>
-    <form>
+    <form method='post' action='options.php'>
+    <?php settings_fields( 'brightcove-settings-group' ); ?>
       <table class='form-table'> 
         <tbody>
           <tr valign="top">
@@ -37,7 +39,7 @@ function brightcove_menu_render()
               <label for="bc_pub_id">Publisher ID</label>
             </th>
             <td>
-              <input name="bc_pub_id" type="text" id="bc_pub_id" placeholder='Publisher ID for accessing the API' class="regular-text">
+              <input value = '<? echo get_option('bc_pub_id'); ?>' name="bc_pub_id" type="text" id="bc_pub_id" placeholder='Publisher ID for accessing the API' class="regular-text">
               <span class='description'>Publisher ID for accessing the API.</span>
             </td>
           </tr>
@@ -46,7 +48,7 @@ function brightcove_menu_render()
               <label for="bc_player_id">Default Player ID</label>
             </th>
             <td>
-              <input name="bc_player_id" type="text" id="bc_player_id" class="regular-text" placeholder='Default player ID'>
+              <input value = '<? echo get_option('bc_player_id'); ?>' name="bc_player_id" type="text" id="bc_player_id" class="regular-text" placeholder='Default player ID'>
               <span class='description'>Default player ID for setting a custom player template across the site.</span>
             </td>
           </tr>
@@ -59,6 +61,12 @@ function brightcove_menu_render()
   </div>
   <?php
 }
+
+function register_brightcove_settings() { // whitelist options
+  register_setting( 'brightcove-settings-group', 'bc_pub_id' );
+  register_setting( 'brightcove-settings-group', 'bc_player_id' );
+}
+
 
 
 
@@ -89,10 +97,11 @@ media_upload_header();
 add_brightcove_script();
 add_api_brightcove_script();
 add_dynamic_brightcove_api_script();
-
+$playerID=get_option('bc_player_id');
 ?>
 	<form id='bc-video-form' class='media-upload-form type-form validate' method='post' enctype='multipart/form-data'>
 		<div id='media-items'>
+      <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
 			<label for='bc-video'>Video:</label> <input type='text' name='bc-video' id='bc-video' placeholder='Video ID or URL' onchange="BCL.addPlayer()"/>
 			<input type='checkbox' name='bc-video-ref' id='bc-video-ref' onchange="BCL.addPlayer()" /><label for='bc-video-ref'>This is a reference ID, not a video ID </label>
 
@@ -101,13 +110,13 @@ add_dynamic_brightcove_api_script();
 
 			<label for='bc-player'>Player:</label> <input type='text' name='bc-player' id='bc-player' placeholder='Player ID (optional)' onchange="BCL.addPlayer()" />
 
-			<input type='submit' name='bc-submit' id='bc-submit' value='Insert Player'> 
+			<input type='submit' class='button' name='bc-submit' id='bc-submit' value='Insert Player'> 
 		</div>
 	</form>
-
+  <p> Player Preview: </p>
 	<div id="dynamic-bc-placeholder" style="background-color:#64AAB2;width:485px;height:270px;text-align: center;padding:5px;"> </div>
 
-	<button onclick="BCL.addPlayer()" />Test Player</button>
+	<button onclick="BCL.addPlayer(<?php echo $playerID; ?>)" />Test Player</button>
 	<?php
 }
 

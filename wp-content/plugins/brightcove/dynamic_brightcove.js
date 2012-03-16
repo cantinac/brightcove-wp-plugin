@@ -16,6 +16,10 @@ BCL.addPlayer = function () {
   var playerHTML = "";
   // set the playerID to the selected player
   BCL.playerData.playerID = document.getElementById('bc-player').value;
+  if (BCL.playerData.playerID == '')
+  {
+    BCL.playerData.playerID = document.getElementById('bc_default_player').value;
+  }
   // set the videoID to the selected video
   BCL.playerData.videoID = document.getElementById('bc-video').value;
   // set the playlistID to the selected playlist
