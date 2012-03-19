@@ -60,7 +60,10 @@ function brightcove_menu_render()
     </form>
   </div>
   <?php
+
 }
+
+
 
 function register_brightcove_settings() { // whitelist options
   register_setting( 'brightcove-settings-group', 'bc_pub_id' );
@@ -117,6 +120,7 @@ $playerID=get_option('bc_player_id');
 	<div id="dynamic-bc-placeholder" style="background-color:#64AAB2;width:485px;height:270px;text-align: center;padding:5px;"> </div>
 
 	<button onclick="BCL.addPlayer(<?php echo $playerID; ?>)" />Test Player</button>
+  <button onclick="BCL.insertShortcode()" />Insert Shortcode</button>
 	<?php
 }
 

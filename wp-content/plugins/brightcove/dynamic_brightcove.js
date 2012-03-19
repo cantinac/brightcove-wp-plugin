@@ -4,7 +4,8 @@ var BCL = {};
 BCL.playerData = { "playerID" : "1450315110001",
                     "width" : "480",
                     "height" : "270",
-                    "videoID" : "1140969113001" };
+                    "videoID" : "1140969113001",
+                    "isRef" : "" };
 // flag to keep track of whether there is a player
 BCL.isPlayerAdded = false;
 // template for the player object - will populate it with data using markup()
@@ -26,12 +27,14 @@ BCL.addPlayer = function () {
   BCL.playerData.playlistID = document.getElementById('bc-playlist').value;
 
   //If video reference box is checked
-  if (document.getElementById('bc-video-ref').checked == 'true') {
+  if (document.getElementById('bc-video-ref').checked == true) {
     BCL.playerData.videoID = "ref:"+BCL.playerData.videoID;
+    BCL.playerData.isRef = "true";
   }
   //If playlist reference box is checked
-  if (document.getElementById('bc-playlist-ref').checked == 'true') {
+  if (document.getElementById('bc-playlist-ref').checked == true) {
     BCL.playerData.playlistID = "ref:"+BCL.playerData.playlistID;
+    BCL.playerData.isRef = "true";
   }
   // populate the player object template
   if ( BCL.playerData.videoID != '') {
@@ -45,8 +48,45 @@ BCL.addPlayer = function () {
   // inject the player code into the DOM
   document.getElementById("dynamic-bc-placeholder").innerHTML = playerHTML;
   // instantiate the player
+
   brightcove.createExperiences();  
 };
+
+BCL.insertShortcode = function() {
+
+      var isRef='';
+      if (BCL.playerData.isRef == 'true') {
+       isRef="isRef='"+BCL.playerData.isRef+"'";
+      }
+         
+      if (BCL.playerData.videoID != '')
+      {
+         var shortcode = '[brightcove videoID="'+BCL.playerData.videoID+'" '+isRef+' playerID="'+BCL.playerData.playerID+'"]';
+      }
+
+      else if (BCL.playerData.playlistID != '')
+      {
+         var shortcode = '[brightcove playlistID="'+BCL.playerData.playlistID+'" '+isRef+' playerID="'+BCL.playerData.playerID+'"]';
+      }
+       
+        
+        var win = window.dialogArguments || opener || parent || top;
+        var isVisual = (typeof win.tinyMCE != "undefined") && win.tinyMCE.activeEditor && !win.tinyMCE.activeEditor.isHidden();    
+        if (isVisual) {
+            win.tinyMCE.activeEditor.execCommand('mceInsertContent', false, shortcode);
+        } else {
+            var currentContent = jQuery('#content', window.parent.document).val();
+            if ( typeof currentContent == 'undefined' )
+                 currentContent = '';        
+            jQuery( '#content', window.parent.document ).val( currentContent + shortcode );
+        }
+        self.parent.tb_remove();
+    }
+
+
+
+
+
 /* 
 simple HTML templating function
  array example:
