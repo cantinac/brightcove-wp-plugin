@@ -17,15 +17,11 @@ Author URI:
 add_action('admin_menu', 'brightcove_menu');
 add_action( 'admin_init', 'register_brightcove_settings' );
 
-function brightcove_menu()
-{
-
+function brightcove_menu() {
 add_menu_page(__('Brightcove Settings'), __('Brightcove'), 'edit_themes', 'brightcove_menu', 'brightcove_menu_render'); 
- 
 }
 
-function brightcove_menu_render()
-{
+function brightcove_menu_render() {
   ?>
 
   <div class='wrap'>
@@ -60,38 +56,75 @@ function brightcove_menu_render()
     </form>
   </div>
   <?php
-
 }
-
-
 
 function register_brightcove_settings() { // whitelist options
   register_setting( 'brightcove-settings-group', 'bc_pub_id' );
   register_setting( 'brightcove-settings-group', 'bc_player_id' );
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 /************************Upload Media Tab ***************************/
 
 function brightcove_media_menu($tabs) {
 $tabs['brightcove']='Brightcove';
+$tabs['brightcove_api']='Brightcove Media API';
 return $tabs;
 }
 
 function brightcove_menu_handle() {
-	/*add_filter('htmledit_pre', '<p>Something</p>');*/
 	return wp_iframe('bc_media_upload_form',$errors);
+}
+
+function brightcove_api_menu_handle() {
+  return wp_iframe('bc_media_api_upload_form',$errors);
+}
+
+function bc_media_api_upload_form() {
+media_upload_header();
+add_brightcove_script();
+add_api_brightcove_script();
+add_dynamic_brightcove_api_script();
+?>
+<script src="/wp-content/plugins/brightcove/bc-mapi.js" type="text/javascript"></script>
+
+<div class='outer_container'>
+  <div class='bc_api_header'>
+    <div class='alignleft'>
+      <h1>Brightcove</h1>
+    </div>
+      <div class='alignright' id='bc_search'>
+      <button class='button' onclick='BCL.mediaAPISearch()'>Search</button>
+      <input type='text'>
+    </div>
+  </div>
+  <div id='bc-video-search'></div>
+
+
+<!--<script type="text/javascript">
+
+BCMAPI.token = "pF-Nn_-cfM0eqJ4CgGPQ4dzsM7__X0IrdwmsHgnUoCsy_AOoyGND_Q..";
+  // Make a call to the API requesting content
+  // Note that a callback function is needed to handle the returned data
+  BCMAPI.find("find_all_videos", { "callback" : "handle" });
+  // Our callback loops through the returned videos, alerting their names
+  function handle (pResponse) {
+    var innerHTML;
+    for (var pVideo in pResponse.items) {
+      if (pVideo % 3 == 0)
+      {
+        innerHTML=innerHTML+'</div><div class="bc_row">';
+      }
+      var currentName="<h3>"+pResponse.items[pVideo].name+"</h3>"
+      var currentVid="<img src='"+pResponse.items[pVideo].thumbnailURL+"'/>";
+      innerHTML= innerHTML+"<div class='bc_video_thumb'>"+currentName+currentVid+"</div>";
+    }
+    document.getElementById("bc-video-search").innerHTML = innerHTML;
+  }
+</script>-->
+
+</div>
+
+<?php
 }
 
 /*Controls the tab of the media upload form*/
@@ -100,44 +133,109 @@ media_upload_header();
 add_brightcove_script();
 add_api_brightcove_script();
 add_dynamic_brightcove_api_script();
+
+/*Gets the default player set in the admin settings*/
 $playerID=get_option('bc_player_id');
 ?>
-	<form id='bc-video-form' class='media-upload-form type-form validate' method='post' enctype='multipart/form-data'>
-		<div id='media-items'>
-      <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
-			<label for='bc-video'>Video:</label> <input type='text' name='bc-video' id='bc-video' placeholder='Video ID or URL' onchange="BCL.addPlayer()"/>
-			<input type='checkbox' name='bc-video-ref' id='bc-video-ref' onchange="BCL.addPlayer()" /><label for='bc-video-ref'>This is a reference ID, not a video ID </label>
 
-			<label for='bc-playlist'> Playlist:</label> <input type='text' name='bc-playlist' id='bc-playlist' placeholder='Playlist ID(s)' onchange="BCL.addPlayer()"/>
-			<input type='checkbox' name='bc-playlist-ref' id='bc-playlist-ref' onchange="BCL.addPlayer()"/><label for='bc-playlist-ref'>These are reference IDs, not playlist IDs</label>
-
-			<label for='bc-player'>Player:</label> <input type='text' name='bc-player' id='bc-player' placeholder='Player ID (optional)' onchange="BCL.addPlayer()" />
-
-			<input type='submit' class='button' name='bc-submit' id='bc-submit' value='Insert Player'> 
-		</div>
-	</form>
-  <p> Player Preview: </p>
-	<div id="dynamic-bc-placeholder" style="background-color:#64AAB2;width:485px;height:270px;text-align: center;padding:5px;"> </div>
-
-	<button onclick="BCL.addPlayer(<?php echo $playerID; ?>)" />Test Player</button>
-  <button onclick="BCL.insertShortcode()" />Insert Shortcode</button>
+<form enctype='multipart/form-data' class='media-upload-form' id='bc-form'>
+  <div id='media-items'>
+    <div class='media-item'>
+    <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
+    	<table class='describe'>
+        <tbody>
+    		  <tr>
+            <th valign='top' scope='row' class='label' style='width:130px;'>
+              <span class="alignleft"><label for="bc-video">Video:</label></span>
+              <span class="alignright"></span>
+            </th>
+            <td>
+             <input placeholder='Video ID or URL' aria-required="true" type='text' name='bc-video' id='bc-video' placeholder='Video ID or URL' onchange="BCL.addPlayer()">
+            </td>
+          </tr>
+          <tr>
+            <th valign='top' scope='row' class='label' style='width:130px;'>
+            </th>
+            <td class='bc-check'>
+             <input class='alignleft'type='checkbox' name='bc-video-ref' id='bc-video-ref' onchange="BCL.addPlayer()"/>
+             <span class="alignleft"><label for='bc-video-ref'>This is a reference ID, not a video ID </label></span>
+            </td>
+          </tr>
+          <tr>
+            <th valign='top' scope='row' class='label' style='width:130px;'>
+            </th>
+            <td>
+             <div class='alignleft'></div><div class='aligncenter'>or</div><div class='alignright'></div>
+            </td>
+          </tr>
+          <tr>
+            <th valign='top' scope='row' class='label' style='width:130px;'>
+              <span class="alignleft"><label for="bc-playlist">Playlist:</label></span>
+              <span class="alignright"></span>
+            </th>
+            <td>
+             <input type='text' name='bc-playlist' id='bc-playlist' placeholder='Playlist ID(s)' onchange="BCL.addPlayer()"/>
+            </td>
+          </tr>
+          <tr>
+            <th valign='top' scope='row' class='label' style='width:130px;'>
+            </th>
+            <td class='bc-check'>
+             <input class='alignleft' type='checkbox' name='bc-playlist-ref' id='bc-playlist-ref' onchange="BCL.addPlayer()"/>
+             <span class="alignleft"><label for='bc-playlist-ref'>These are reference IDs, not playlist IDs </label></span>
+            </td>
+          </tr>
+          <tr class='bc-player-row'>
+          <th valign='top' scope='row' class='label' style='width:130px;'>
+            <span class="alignleft"><label for="bc-player">Player:</label></span>
+            <span class="alignright"></span>
+          </th>
+          <td>
+           <input type='text' name='bc-player' id='bc-player' placeholder='Player ID (optional)' onchange="BCL.addPlayer()" />
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class='media-item no-border'>
+      <button class='aligncenter button' onclick="BCL.insertShortcode()" />Insert Shortcode</button>
+    </div>
+    <div class='media-item no-border'>
+      <div class='bc-error describe'>The video could not be loaded:video ID could not be found</div>
+    </div>
+    <div class='media-item no-border'>
+     <table class='describe'>
+       <tbody>
+        <tr>
+          <td>
+            <div class='alignleft player-preview'>
+                <p> Player Preview: </p>
+                <div id="dynamic-bc-placeholder"> </div>
+            </div>
+            <div class='alignleft'>
+              <h1> Title </h1>
+              <p> Description</p>
+            </div>
+          </td>
+        </tr>
+        <tbody>
+      </table>
+    </div>
+  </div>  
+</form>
 	<?php
 }
 
-
-
-
-
-
 add_filter('media_upload_tabs', 'brightcove_media_menu');
 add_action('media_upload_brightcove', 'brightcove_menu_handle');
+add_action('media_upload_brightcove_api', 'brightcove_api_menu_handle');
+
 
  $myStyleUrl = plugins_url('brightcove.css', __FILE__);
  wp_register_style('myStyleSheets', $myStyleUrl);
  wp_enqueue_style( 'myStyleSheets');
 
 add_shortcode('brightcove','add_brightcove');
-
 
 function add_brightcove_script() {	
 wp_deregister_script( 'brightcove_script' );
@@ -157,14 +255,10 @@ wp_register_script( 'dynamic_brightcove_script', '/wp-content/plugins/brightcove
 wp_enqueue_script( 'dynamic_brightcove_script' );
 }
 
-function add_brightcove($atts)
-{
-var_dump($atts);
+function add_brightcove($atts) {
 add_brightcove_script();
 isset($atts['playerid']) ? $playerId=($atts['playerid']): $playerId='1191338931001';
-
 ?>
-
 <!-- Start of Brightcove Player -->
 
 <div style="display:none">

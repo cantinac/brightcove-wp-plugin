@@ -1,10 +1,10 @@
 // namespace to keep the global clear of clutter
 var BCL = {};
 // data for our player -- note that it must have ActionScript/JavaScript APIs enabled!!
-BCL.playerData = { "playerID" : "1450315110001",
+BCL.playerData = { "playerID" : "",
                     "width" : "480",
                     "height" : "270",
-                    "videoID" : "1140969113001",
+                    "videoID" : "",
                     "isRef" : "" };
 // flag to keep track of whether there is a player
 BCL.isPlayerAdded = false;
@@ -13,6 +13,7 @@ BCL.singlePlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExp
 BCL.playlistPlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperience\" class=\"BrightcoveExperience\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"playerKey\" value=\"{{playerKey}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@playlistTabs\" value=\"{{playlistID}}\"; /><param name=\"templateLoadHandler\" value=\"BCL.onTemplateLoaded\"</object>";
 
 BCL.addPlayer = function () { 
+
   /*BCL.isPlayerAdded = true;*/
   var playerHTML = "";
   // set the playerID to the selected player
@@ -31,11 +32,13 @@ BCL.addPlayer = function () {
     BCL.playerData.videoID = "ref:"+BCL.playerData.videoID;
     BCL.playerData.isRef = "true";
   }
+
   //If playlist reference box is checked
   if (document.getElementById('bc-playlist-ref').checked == true) {
     BCL.playerData.playlistID = "ref:"+BCL.playerData.playlistID;
     BCL.playerData.isRef = "true";
   }
+
   // populate the player object template
   if ( BCL.playerData.videoID != '') {
     //If a single video id is entered
@@ -45,12 +48,25 @@ BCL.addPlayer = function () {
     playerHTML = BCL.markup(BCL.playlistPlayerTemplate, BCL.playerData);
   }
 
+
   // inject the player code into the DOM
   document.getElementById("dynamic-bc-placeholder").innerHTML = playerHTML;
   // instantiate the player
 
   brightcove.createExperiences();  
+  /*onTemplateLoaded('myExperience');*/
 };
+
+
+
+BCL.onTemplateLoaded = function(id) 
+{
+   BCL.player = brightcove.getExperience(id);
+   BCL.currPlayer= BCL.player.getModule(APIModules.EXPERIENCE);
+   BCL.currVid= BCL.player.getModule(APIModules.CONTENT);
+   BCL.currID=BCL.currPlayer.getExperienceID();
+   console.log(BCL.currVid.getMedia(ID));
+}
 
 BCL.insertShortcode = function() {
 
@@ -86,7 +102,6 @@ BCL.insertShortcode = function() {
 
 
 
-
 /* 
 simple HTML templating function
  array example:
@@ -108,3 +123,32 @@ BCL.markup = function (html, data) {
     }
     return html;
 };
+
+BCL.mediaAPISearch = function() {
+
+  BCMAPI.token = "pF-Nn_-cfM0eqJ4CgGPQ4dzsM7__X0IrdwmsHgnUoCsy_AOoyGND_Q..";
+  // Make a call to the API requesting content
+  // Note that a callback function is needed to handle the returned data
+  BCMAPI.find("find_all_videos", { "callback" : "BCL.handle" });
+  // Our callback loops through the returned videos, alerting their names
+ 
+};
+
+ BCL.handle = function (pResponse) {
+    var innerHTML;
+    for (var pVideo in pResponse.items) {
+      if (pVideo % 3 == 0)
+      {
+        innerHTML=innerHTML+'</div><div class="bc_row">';
+      }
+      var currentName="<h3>"+pResponse.items[pVideo].name+"</h3>"
+      var currentVid="<img src='"+pResponse.items[pVideo].thumbnailURL+"'/>";
+      innerHTML= innerHTML+"<div class='bc_video_thumb'>"+currentName+currentVid+"</div>";
+    }
+    document.getElementById("bc-video-search").innerHTML = innerHTML;
+  }
+
+
+
+
+
