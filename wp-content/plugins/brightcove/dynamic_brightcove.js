@@ -46,7 +46,6 @@ BCL.addPlayer = function () {
   var playerHTML = "";
   // set the playerID to the selected player
   // populate the player object template
-  console.log(BCL.playerData.videoID);
   if ( BCL.playerData.videoID != '' && BCL.playerData.videoID != undefined) {
     //If a single video id is entered
     playerHTML = BCL.markup(BCL.singlePlayerTemplate, BCL.playerData);
@@ -56,7 +55,6 @@ BCL.addPlayer = function () {
   }
 
   // inject the player code into the DOM
-  console.log(playerHTML);
   document.getElementById("dynamic-bc-placeholder").innerHTML = playerHTML;
   // instantiate the player
 
@@ -65,11 +63,16 @@ BCL.addPlayer = function () {
 };
 
 BCL.onTemplateLoaded = function(id) {
+
+
    BCL.player = brightcove.getExperience(id);
    BCL.currPlayer= BCL.player.getModule(APIModules.EXPERIENCE);
-   BCL.currVid= BCL.player.getModule(APIModules.CONTENT);
+  console.log(BCL.currPlayer);
+   BCL.currVid= BCL.player.getModule(APIModules.VIDEO_PLAYER);
    BCL.currID=BCL.currPlayer.getExperienceID();
-   console.log(BCL.currVid.getMedia(ID));
+   console.log(BCL.currVid.getID());
+
+
 }
 
 BCL.insertShortcode = function() {
@@ -118,7 +121,6 @@ BCL.markup = function (html, data) {
 };
 
 BCL.mediaAPISearch = function() {
-
   BCL.searchParams = document.getElementById('bc-search-field').value;
   BCMAPI.token = "pF-Nn_-cfM0eqJ4CgGPQ4dzsM7__X0IrdwmsHgnUoCsy_AOoyGND_Q..";
   // Make a call to the API requesting content
@@ -149,7 +151,6 @@ BCL.displaySingleVideo = function (pResponse)
 }
 
  BCL.displayVideos = function (pResponse) {
-
     var innerHTML="";
     for (var pVideo in pResponse.items) {
       if (pVideo % 3 == 0 && pVideo != 0) {
@@ -157,9 +158,14 @@ BCL.displaySingleVideo = function (pResponse)
       } else if (pVideo == 0) {
         innerHTML=innerHTML+'<div class="bc_row">';
       }
-        
+      var imgSrc=pResponse.items[pVideo].thumbnailURL;
+      if (imgSrc == undefined && pResponse.items[pVideo].videos != undefined) {
+        if (pResponse.items[pVideo].videos[0] != undefined) {
+          imgSrc=pResponse.items[pVideo].videos[0].thumbnailURL;
+        }
+      }
       var currentName="<h3>"+BCL.constrain(pResponse.items[pVideo].name,20)+"</h3>";
-      var currentVid="<img src='"+pResponse.items[pVideo].thumbnailURL+"'/>";
+      var currentVid="<img src='"+imgSrc+"'/>";
       innerHTML = innerHTML+"<div id='bc_video_"+pVideo+"' onclick='BCL.setPlayerDataAPI("+pVideo+","+pResponse.items[pVideo].id+")' title='"+pResponse.items[pVideo].name+"' class='bc_video_thumb'>"+currentName+currentVid+"</div>";
     }
     document.getElementById("bc-video-search").innerHTML = innerHTML;
@@ -167,12 +173,6 @@ BCL.displaySingleVideo = function (pResponse)
 
 BCL.setPlayerDataAPI = function (id, videoId){
   document.getElementById('bc-video-search').innerHTML='<div id="dynamic-bc-placeholder"></div><button onclick="BCL.insertShortcode()">Insert Video </button><input type="text" id="bc-player" onchange="BCL.changePlayer()" placeholder="Player ID" />';
-  
-  if (BCL.typeOfPlayer == 'playlist')
-  {
-    console.log('something');
-  }
-  console.log(BCL.typeOfPlayer);
   if (BCL.typeOfPlayer == 'single') {
     console.log('something');
     BCL.playerData = {  "playerID" : document.getElementById('bc_default_player').value,
