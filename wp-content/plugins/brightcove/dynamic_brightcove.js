@@ -4,7 +4,7 @@ var BCL = {};
 BCL.playerData = { "playerID" : "",
                     "width" : "480",
                     "height" : "270",
-                    "videoID" : "",
+                    "videoID":"",
                     "isRef" : "" };
 // flag to keep track of whether there is a player
 BCL.isPlayerAdded = false;
@@ -12,12 +12,16 @@ BCL.isPlayerAdded = false;
 BCL.singlePlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperience\" class=\"BrightcoveExperience\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"playerKey\" value=\"{{playerKey}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@videoPlayer\" value=\"{{videoID}}\"; /><param name=\"templateLoadHandler\" value=\"BCL.onTemplateLoaded\"</object>";
 BCL.playlistPlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperience\" class=\"BrightcoveExperience\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"playerKey\" value=\"{{playerKey}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@playlistTabs\" value=\"{{playlistID}}\"; /><param name=\"templateLoadHandler\" value=\"BCL.onTemplateLoaded\"</object>";
 
+
+
 BCL.setPlayerData = function ()
 {
   BCL.playerData.playerID = document.getElementById('bc-player').value;
-  if (BCL.playerData.playerID == '')
-  {
+
+  if (BCL.playerData.playerID == '' && document.getElementById('bc-playlist').value == '') {
     BCL.playerData.playerID = document.getElementById('bc_default_player').value;
+  } else if (BCL.playerData.playerID == '' && document.getElementById('bc-video').value == '') {
+     BCL.playerData.playerID = document.getElementById('bc_default_player_playlist').value;
   }
   // set the videoID to the selected video
   BCL.playerData.videoID = document.getElementById('bc-video').value;
@@ -53,7 +57,6 @@ BCL.addPlayer = function () {
     playerHTML = BCL.markup(BCL.playlistPlayerTemplate, BCL.playerData);
   }
 
-
   // inject the player code into the DOM
   document.getElementById("dynamic-bc-placeholder").innerHTML = playerHTML;
   // instantiate the player
@@ -62,8 +65,7 @@ BCL.addPlayer = function () {
   /*onTemplateLoaded('myExperience');*/
 };
 
-BCL.onTemplateLoaded = function(id) 
-{
+BCL.onTemplateLoaded = function(id) {
    BCL.player = brightcove.getExperience(id);
    BCL.currPlayer= BCL.player.getModule(APIModules.EXPERIENCE);
    BCL.currVid= BCL.player.getModule(APIModules.CONTENT);
@@ -72,37 +74,28 @@ BCL.onTemplateLoaded = function(id)
 }
 
 BCL.insertShortcode = function() {
-
-      var isRef='';
-      if (BCL.playerData.isRef == 'true') {
-       isRef="isRef='"+BCL.playerData.isRef+"'";
-      }
-         
-      if (BCL.playerData.videoID != '')
-      {
-         var shortcode = '[brightcove videoID="'+BCL.playerData.videoID+'" '+isRef+' playerID="'+BCL.playerData.playerID+'"]';
-      }
-
-      else if (BCL.playerData.playlistID != '')
-      {
-         var shortcode = '[brightcove playlistID="'+BCL.playerData.playlistID+'" '+isRef+' playerID="'+BCL.playerData.playerID+'"]';
-      }
-         
-        var win = window.dialogArguments || opener || parent || top;
-        var isVisual = (typeof win.tinyMCE != "undefined") && win.tinyMCE.activeEditor && !win.tinyMCE.activeEditor.isHidden();    
-        if (isVisual) {
-            win.tinyMCE.activeEditor.execCommand('mceInsertContent', false, shortcode);
-        } else {
-            var currentContent = jQuery('#content', window.parent.document).val();
-            if ( typeof currentContent == 'undefined' )
-                 currentContent = '';        
-            jQuery( '#content', window.parent.document ).val( currentContent + shortcode );
-        }
-        self.parent.tb_remove();
-    }
-
-
-
+  var isRef='';
+  if (BCL.playerData.isRef == 'true') {
+    isRef="isRef='"+BCL.playerData.isRef+"'";
+  }
+  if (BCL.playerData.videoID != undefined && BCL.playerData.videoID != '') {
+    var shortcode = '[brightcove videoID="'+BCL.playerData.videoID+'" '+isRef+' playerID="'+BCL.playerData.playerID+'"]';
+  } else if (BCL.playerData.playlistID != undefined) {
+     var shortcode = '[brightcove playlistID="'+BCL.playerData.playlistID+'" '+isRef+' playerID="'+BCL.playerData.playerID+'"]';
+  }
+     
+  var win = window.dialogArguments || opener || parent || top;
+  var isVisual = (typeof win.tinyMCE != "undefined") && win.tinyMCE.activeEditor && !win.tinyMCE.activeEditor.isHidden();    
+  if (isVisual) {
+      win.tinyMCE.activeEditor.execCommand('mceInsertContent', false, shortcode);
+  } else {
+      var currentContent = jQuery('#content', window.parent.document).val();
+      if ( typeof currentContent == 'undefined' )
+           currentContent = '';        
+      jQuery( '#content', window.parent.document ).val( currentContent + shortcode );
+  }
+  self.parent.tb_remove();
+}
 
 /* 
 simple HTML templating function
@@ -131,58 +124,87 @@ BCL.mediaAPISearch = function() {
   BCMAPI.token = "pF-Nn_-cfM0eqJ4CgGPQ4dzsM7__X0IrdwmsHgnUoCsy_AOoyGND_Q..";
   // Make a call to the API requesting content
   // Note that a callback function is needed to handle the returned data
-  BCMAPI.search({ "callback" : "BCL.displayVideos", 'all':BCL.searchParams});
+  BCMAPI.search({ "callback" : "BCL.displaySingleVideo", 'all':BCL.searchParams});
   // Our callback loops through the returned videos, alerting their names
  
 };
 
+BCL.seeAllPlaylists = function() {
+  BCMAPI.token = "pF-Nn_-cfM0eqJ4CgGPQ4dzsM7__X0IrdwmsHgnUoCsy_AOoyGND_Q..";
+  // Make a call to the API requesting content
+  // Note that a callback function is needed to handle the returned data
+  BCMAPI.find('find_all_playlists',{ "callback" : "BCL.displayPlaylist"});
+  // Our callback loops through the returned videos, alerting their names 
+};
+
+BCL.displayPlaylist = function (pResponse)
+{
+ BCL.typeOfPlayer='playlist';
+ BCL.displayVideos(pResponse); 
+}
+
+BCL.displaySingleVideo = function (pResponse)
+{
+  BCL.typeOfPlayer='single';
+  BCL.displayVideos(pResponse);
+}
+
  BCL.displayVideos = function (pResponse) {
-   
+
     var innerHTML="";
-    console.log(pResponse);
     for (var pVideo in pResponse.items) {
-      if (pVideo % 3 == 0 && pVideo != 0)
-      {
+      if (pVideo % 3 == 0 && pVideo != 0) {
         innerHTML=innerHTML+'</div><div class="bc_row">';
-      }
-      else if (pVideo == 0)
-      {
+      } else if (pVideo == 0) {
         innerHTML=innerHTML+'<div class="bc_row">';
       }
-      var currentName="<h3>"+BCL.constrain(pResponse.items[pVideo].name,20)+"</h3>"
+        
+      var currentName="<h3>"+BCL.constrain(pResponse.items[pVideo].name,20)+"</h3>";
       var currentVid="<img src='"+pResponse.items[pVideo].thumbnailURL+"'/>";
-      innerHTML= innerHTML+"<div id='bc_video_"+pVideo+"' onclick='BCL.setPlayerDataAPI("+pVideo+","+pResponse.items[pVideo].id+")' title='"+pResponse.items[pVideo].name+"' class='bc_video_thumb'>"+currentName+currentVid+"</div>";
+      innerHTML = innerHTML+"<div id='bc_video_"+pVideo+"' onclick='BCL.setPlayerDataAPI("+pVideo+","+pResponse.items[pVideo].id+")' title='"+pResponse.items[pVideo].name+"' class='bc_video_thumb'>"+currentName+currentVid+"</div>";
     }
-    console.log(innerHTML);
     document.getElementById("bc-video-search").innerHTML = innerHTML;
   }
 
-  BCL.setPlayerDataAPI = function (id, videoId)
+BCL.setPlayerDataAPI = function (id, videoId){
+  document.getElementById('bc-video-search').innerHTML='<div id="dynamic-bc-placeholder"></div><button onclick="BCL.insertShortcode()">Insert Video </button><input type="text" id="bc-player" onchange="BCL.changePlayer()" placeholder="Player ID" />';
+  
+  if (BCL.typeOfPlayer == 'playlist')
   {
-    document.getElementById('bc-video-search').innerHTML='<div id="dynamic-bc-placeholder"></div><button onclick="BCL.insertShortcode()">Insert Video </button><input type="text" id="bc-player" onchange="BCL.changePlayer()" placeholder="Player ID" />';
-    
-    BCL.playerData = { "playerID" : document.getElementById('bc_default_player').value,
-                    "width" : "480",
-                    "height" : "270",
-                    "videoID" : videoId,
-                    "isRef" : ""};
-    BCL.addPlayer();
+    console.log('something');
+  }
+  console.log(BCL.typeOfPlayer);
+  if (BCL.typeOfPlayer == 'single') {
+    console.log('something');
+    BCL.playerData = {  "playerID" : document.getElementById('bc_default_player').value,
+                      "width"   : "480",
+                      "height"  : "270",
+                      "videoID" : videoId,
+                      "isRef"   : ""};
+  } else {
    
-  }
+    BCL.playerData = {  "playerID" : document.getElementById('bc_default_player_playlist').value,
+                      "width"   : "480",
+                      "height"  : "270",
+                      "playlistID" : videoId,
+                      "isRef"   : ""};
+                    }
+  BCL.addPlayer();
+}
 
-  BCL.changePlayer = function()
-  {
-    BCL.playerData.playerID = document.getElementById('bc-player').value;
-    BCL.addPlayer();
-  }
-
+BCL.changePlayer = function() {
+  BCL.playerData.playerID = document.getElementById('bc-player').value;
+  BCL.addPlayer();
+}
 
 BCL.constrain = function (str,n){
   if (str.length > n) {
-  var s = str.substr(0, n);
-  s = s.toString() + '&hellip;'
-  return s;
-  } else { return str; }
+    var s = str.substr(0, n);
+    s = s.toString() + '&hellip;'
+    return s;
+  } else { 
+    return str; 
+  }
 }
 
 

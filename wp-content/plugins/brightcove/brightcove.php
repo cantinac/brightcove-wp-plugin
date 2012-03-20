@@ -41,11 +41,20 @@ function brightcove_menu_render() {
           </tr>
           <tr valign="top">
             <th scope="row">
-              <label for="bc_player_id">Default Player ID</label>
+              <label for="bc_player_id">Default Player ID - Single Video</label>
             </th>
             <td>
               <input value = '<? echo get_option('bc_player_id'); ?>' name="bc_player_id" type="text" id="bc_player_id" class="regular-text" placeholder='Default player ID'>
               <span class='description'>Default player ID for setting a custom player template across the site.</span>
+            </td>
+          </tr>
+          <tr valign="top">
+            <th scope="row">
+              <label for="bc_player_id_playlist">Default Player ID - Playlist</label>
+            </th>
+            <td>
+              <input value = '<? echo get_option('bc_player_id_playlist'); ?>' name="bc_player_id_playlist" type="text" id="bc_player_id_playlist" class="regular-text" placeholder='Default player ID for Playlists'>
+              <span class='description'>Default player ID for setting a custom player template across the site for playlists.</span>
             </td>
           </tr>
         </tbody>
@@ -61,6 +70,7 @@ function brightcove_menu_render() {
 function register_brightcove_settings() { // whitelist options
   register_setting( 'brightcove-settings-group', 'bc_pub_id' );
   register_setting( 'brightcove-settings-group', 'bc_player_id' );
+  register_setting( 'brightcove-settings-group', 'bc_player_id_playlist' );
 }
 
 /************************Upload Media Tab ***************************/
@@ -85,18 +95,21 @@ add_brightcove_script();
 add_api_brightcove_script();
 add_dynamic_brightcove_api_script();
 $playerID=get_option('bc_player_id');
+$playerID_playlist=get_option('bc_player_id_playlist');
 ?>
 <script src="/wp-content/plugins/brightcove/bc-mapi.js" type="text/javascript"></script>
 
-<div class='outer_container'>
+<div class='outer_container' >
   <div class='bc_api_header'>
     <div class='alignleft'>
       <h1>Brightcove</h1>
     </div>
-      <div class='alignright' id='bc_search'>
-      <button class='button'  onclick='BCL.mediaAPISearch()'>Search</button>
+      <div class='alignright' onload='BCL.mediaAPISearch()' id='bc_search'>
+      <button class='button' onclick='BCL.seeAllPlaylists()'>See all playlists</button>
+      <button class='button' onclick='BCL.mediaAPISearch()'>Search</button>
       <input id='bc-search-field' type='text'>
       <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
+      <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
     </div>
   </div>
   <div id='bc-video-search'></div>
@@ -114,12 +127,14 @@ add_dynamic_brightcove_api_script();
 
 /*Gets the default player set in the admin settings*/
 $playerID=get_option('bc_player_id');
+$playerID_playlist=get_option('bc_player_id_playlist');
 ?>
 
 <form enctype='multipart/form-data' class='media-upload-form' id='bc-form'>
   <div id='media-items'>
     <div class='media-item'>
     <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
+    <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
     	<table class='describe'>
         <tbody>
     		  <tr>
@@ -236,6 +251,7 @@ wp_enqueue_script( 'dynamic_brightcove_script' );
 function add_brightcove($atts) {
 add_brightcove_script();
 isset($atts['playerid']) ? $playerId=($atts['playerid']): $playerId='1191338931001';
+var_dump($atts);
 ?>
 <!-- Start of Brightcove Player -->
 
@@ -250,28 +266,31 @@ isset($atts['playerid']) ? $playerId=($atts['playerid']): $playerId='11913389310
   <!--<param name="playerKey" value="AQ~~,AAAAipOT-Hk~,_eG7BsSTB2xUL0C9k36uPnnnkgJfJRPS" />-->
   <param name="isVid" value="true" />
   <param name="dynamicStreaming" value="true" />
-    
-   <?php 
+  
+   <?php  
    if ($atts['videoid'] != NULL && $atts['isref'] == NULL)
    { ?>
-   	<param name="@videoPlayer" value="<?php echo $atts['videoid']; ?>" />
+    <param name="@videoPlayer" value="<?php echo $atts['videoid']; ?>" />
    <?php } 
    if ($atts['videoid'] != NULL && $atts['isref'] != NULL)
    { ?>
-   	<param name="@videoPlayer" value="ref:<?php echo $atts['videoid']; ?>" />
+    <param name="@videoPlayer" value="ref:<?php echo $atts['videoid']; ?>" />
    <?php }
    if ($atts['playlistid'] != NULL && $atts['isref'] == NULL)
    { ?>
-   	<param name="@playlistTabs" value="<?php echo $atts['playlistid']; ?>" />
+    <param name="@playlistTabs" value="<?php echo $atts['playlistid']; ?>" />
+    <param name="@videoList" value="<?php echo $atts['playlistid']; ?>" />
+    <param name="@playlistCombo" value="<?php echo $atts['playlistid']; ?>" />
    <?php } 
    if ($atts['playlistid'] != NULL && $atts['isref'] != NULL)
    { ?>
-   	<param name="@playistTabs" value="ref:<?php echo $atts['playlistid']; ?>" />
+    <param name="@playlistTabs" value="ref:<?php echo $atts['playlistid']; ?>" />
+    <param name="@videoList" value="ref:<?php echo $atts['playlistid']; ?>" />
+    <param name="@playlistCombo" value="ref:<?php echo $atts['playlistid']; ?>" />
    <?php }
-	?>
+  ?>
 
 
-  
 </object>
 
 <!-- 
