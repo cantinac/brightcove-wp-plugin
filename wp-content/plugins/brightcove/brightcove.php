@@ -92,7 +92,6 @@ function brightcove_api_menu_handle() {
 function bc_media_api_upload_form() {
 media_upload_header();
 add_brightcove_script();
-add_api_brightcove_script();
 add_dynamic_brightcove_api_script();
 $playerID=get_option('bc_player_id');
 $playerID_playlist=get_option('bc_player_id_playlist');
@@ -122,7 +121,7 @@ $playerID_playlist=get_option('bc_player_id_playlist');
 function bc_media_upload_form() { 
 media_upload_header();
 add_brightcove_script();
-add_api_brightcove_script();
+
 add_dynamic_brightcove_api_script();
 
 /*Gets the default player set in the admin settings*/
@@ -206,8 +205,8 @@ $playerID_playlist=get_option('bc_player_id_playlist');
                 <div id="dynamic-bc-placeholder"> </div>
             </div>
             <div class='alignleft'>
-              <h1> Title </h1>
-              <p> Description</p>
+              <h1 id='bc_title'> Title </h1>
+              <p id='bc_description'> Description</p>
             </div>
           </td>
         </tr>
@@ -235,12 +234,12 @@ wp_deregister_script( 'brightcove_script' );
 wp_register_script( 'brightcove_script', 'http://admin.brightcove.com/js/BrightcoveExperiences.js');
 wp_enqueue_script( 'brightcove_script' );
 }
-
+/*
 function add_api_brightcove_script() {	
 wp_deregister_script( 'api_brightcove_script' );
 wp_register_script( 'api_brightcove_script', 'http://admin.brightcove.com/js/APIModules_all.js');
 wp_enqueue_script( 'api_brightcove_script' );
-}
+}*/
 
 function add_dynamic_brightcove_api_script() {	
 wp_deregister_script( 'dynamic_brightcove_script' );

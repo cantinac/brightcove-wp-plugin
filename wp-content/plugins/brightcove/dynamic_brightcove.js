@@ -9,8 +9,8 @@ BCL.playerData = { "playerID" : "",
 // flag to keep track of whether there is a player
 BCL.isPlayerAdded = false;
 // template for the player object - will populate it with data using markup()
-BCL.singlePlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperience\" class=\"BrightcoveExperience\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@videoPlayer\" value=\"{{videoID}}\"; /><param name=\"templateLoadHandler\" value=\"BCL.onTemplateLoaded\"</object>";
-BCL.playlistPlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperience\" class=\"BrightcoveExperience\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@playlistTabs\" value=\"{{playlistID}}\"; /><param name=\"@videoList\" value=\"{{playlistID}}\"; /><param name=\"@playlistCombo\" value=\"{{playlistID}}\"; /><param name=\"templateLoadHandler\" value=\"BCL.onTemplateLoaded\"</object>";
+BCL.singlePlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperience\" class=\"BrightcoveExperience\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@videoPlayer\" value=\"{{videoID}}\"; /><param name='includeAPI' value='true' /><param name='templateReadyHandler' value='BCL.onTemplateReady' /></object>";
+BCL.playlistPlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperience\" class=\"BrightcoveExperience\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@playlistTabs\" value=\"{{playlistID}}\"; /><param name=\"@videoList\" value=\"{{playlistID}}\"; /><param name=\"@playlistCombo\" value=\"{{playlistID}}\"; /><param name='includeAPI' value='true' /><param name='templateReadyHandler' value='BCL.onTemplateReady' /></object>";
 
 BCL.setPlayerData = function ()
 {
@@ -62,18 +62,24 @@ BCL.addPlayer = function () {
   /*onTemplateLoaded('myExperience');*/
 };
 
-BCL.onTemplateLoaded = function(id) {
+BCL.onTemplateReady = function(event) {
 
+        console.log('onTemplateReady');
+        BCL.player = brightcove.api.getExperience("myExperience");
 
-   BCL.player = brightcove.getExperience(id);
-   BCL.currPlayer= BCL.player.getModule(APIModules.EXPERIENCE);
-  console.log(BCL.currPlayer);
-   BCL.currVid= BCL.player.getModule(APIModules.VIDEO_PLAYER);
-   BCL.currID=BCL.currPlayer.getExperienceID();
-   console.log(BCL.currVid.getID());
+        // get a reference to the video player
+        BCL.videoPlayer = BCL.player
+            .getModule(brightcove.api.modules.APIModules.VIDEO_PLAYER);
 
-
-}
+        
+        BCL.videoPlayer.getCurrentVideo(function(videoDTO) {
+            console.log(videoDTO);
+            BCL.currentVideo = videoDTO;
+            document.getElementById('bc_title').innerHTML=BCL.currentVideo.displayName;
+            document.getElementById('bc_description').innerHTML=BCL.currentVideo.shortDescription;
+        });
+    
+    }
 
 BCL.insertShortcode = function() {
   var isRef='';
