@@ -84,6 +84,7 @@ media_upload_header();
 add_brightcove_script();
 add_api_brightcove_script();
 add_dynamic_brightcove_api_script();
+$playerID=get_option('bc_player_id');
 ?>
 <script src="/wp-content/plugins/brightcove/bc-mapi.js" type="text/javascript"></script>
 
@@ -93,35 +94,12 @@ add_dynamic_brightcove_api_script();
       <h1>Brightcove</h1>
     </div>
       <div class='alignright' id='bc_search'>
-      <button class='button' onclick='BCL.mediaAPISearch()'>Search</button>
-      <input type='text'>
+      <button class='button'  onclick='BCL.mediaAPISearch()'>Search</button>
+      <input id='bc-search-field' type='text'>
+      <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
     </div>
   </div>
   <div id='bc-video-search'></div>
-
-
-<!--<script type="text/javascript">
-
-BCMAPI.token = "pF-Nn_-cfM0eqJ4CgGPQ4dzsM7__X0IrdwmsHgnUoCsy_AOoyGND_Q..";
-  // Make a call to the API requesting content
-  // Note that a callback function is needed to handle the returned data
-  BCMAPI.find("find_all_videos", { "callback" : "handle" });
-  // Our callback loops through the returned videos, alerting their names
-  function handle (pResponse) {
-    var innerHTML;
-    for (var pVideo in pResponse.items) {
-      if (pVideo % 3 == 0)
-      {
-        innerHTML=innerHTML+'</div><div class="bc_row">';
-      }
-      var currentName="<h3>"+pResponse.items[pVideo].name+"</h3>"
-      var currentVid="<img src='"+pResponse.items[pVideo].thumbnailURL+"'/>";
-      innerHTML= innerHTML+"<div class='bc_video_thumb'>"+currentName+currentVid+"</div>";
-    }
-    document.getElementById("bc-video-search").innerHTML = innerHTML;
-  }
-</script>-->
-
 </div>
 
 <?php
@@ -150,14 +128,14 @@ $playerID=get_option('bc_player_id');
               <span class="alignright"></span>
             </th>
             <td>
-             <input placeholder='Video ID or URL' aria-required="true" type='text' name='bc-video' id='bc-video' placeholder='Video ID or URL' onchange="BCL.addPlayer()">
+             <input placeholder='Video ID or URL' aria-required="true" type='text' name='bc-video' id='bc-video' placeholder='Video ID or URL' onchange="BCL.setPlayerData()">
             </td>
           </tr>
           <tr>
             <th valign='top' scope='row' class='label' style='width:130px;'>
             </th>
             <td class='bc-check'>
-             <input class='alignleft'type='checkbox' name='bc-video-ref' id='bc-video-ref' onchange="BCL.addPlayer()"/>
+             <input class='alignleft'type='checkbox' name='bc-video-ref' id='bc-video-ref' onchange="BCL.setPlayerData()"/>
              <span class="alignleft"><label for='bc-video-ref'>This is a reference ID, not a video ID </label></span>
             </td>
           </tr>
@@ -174,14 +152,14 @@ $playerID=get_option('bc_player_id');
               <span class="alignright"></span>
             </th>
             <td>
-             <input type='text' name='bc-playlist' id='bc-playlist' placeholder='Playlist ID(s)' onchange="BCL.addPlayer()"/>
+             <input type='text' name='bc-playlist' id='bc-playlist' placeholder='Playlist ID(s)' onchange="BCL.setPlayerData()"/>
             </td>
           </tr>
           <tr>
             <th valign='top' scope='row' class='label' style='width:130px;'>
             </th>
             <td class='bc-check'>
-             <input class='alignleft' type='checkbox' name='bc-playlist-ref' id='bc-playlist-ref' onchange="BCL.addPlayer()"/>
+             <input class='alignleft' type='checkbox' name='bc-playlist-ref' id='bc-playlist-ref' onchange="BCL.setPlayerData()"/>
              <span class="alignleft"><label for='bc-playlist-ref'>These are reference IDs, not playlist IDs </label></span>
             </td>
           </tr>
@@ -191,7 +169,7 @@ $playerID=get_option('bc_player_id');
             <span class="alignright"></span>
           </th>
           <td>
-           <input type='text' name='bc-player' id='bc-player' placeholder='Player ID (optional)' onchange="BCL.addPlayer()" />
+           <input type='text' name='bc-player' id='bc-player' placeholder='Player ID (optional)' onchange="BCL.setPlayerData()" />
           </td>
         </tr>
         </tbody>
