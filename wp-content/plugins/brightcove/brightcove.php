@@ -265,6 +265,7 @@ var_dump($atts);
   <param name="playerID" value="<?php echo $playerId; ?>" />
   <!--<param name="playerKey" value="AQ~~,AAAAipOT-Hk~,_eG7BsSTB2xUL0C9k36uPnnnkgJfJRPS" />-->
   <param name="isVid" value="true" />
+  <param name="isUI" value="true" />
   <param name="dynamicStreaming" value="true" />
   
    <?php  
