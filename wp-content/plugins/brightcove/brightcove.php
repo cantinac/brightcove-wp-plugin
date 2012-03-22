@@ -121,45 +121,47 @@ $playerID_playlist=get_option('bc_player_id_playlist');
 function bc_media_upload_form() { 
 media_upload_header();
 add_brightcove_script();
-
+add_jquery_scripts();
 add_dynamic_brightcove_api_script();
 
 /*Gets the default player set in the admin settings*/
 $playerID=get_option('bc_player_id');
 $playerID_playlist=get_option('bc_player_id_playlist');
 ?>
-
-<form enctype='multipart/form-data' class='media-upload-form' id='bc-form'>
-  <div id='media-items'>
-    <div class='media-item'>
-    <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
-    <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
-    	<table class='describe'>
+<div id='tabs'>
+  <ul>
+    <li ><a class='video-tab' href="#tabs-1">Videos</a></li>
+    <li><a class='playlist-tab' href="#tabs-2">Playlists</a></li>
+  </ul>
+  <div class='tab video-tab' id='tabs-1'>
+    <div class='media-item no-border'>
+      <table>
         <tbody>
-    		  <tr>
+          <tr>
             <th valign='top' scope='row' class='label' style='width:130px;'>
               <span class="alignleft"><label for="bc-video">Video:</label></span>
               <span class="alignright"></span>
             </th>
             <td>
-             <input placeholder='Video ID or URL' aria-required="true" type='text' name='bc-video' id='bc-video' placeholder='Video ID or URL' onchange="BCL.setPlayerData()">
+              <input placeholder='Video ID or URL' aria-required="true" type='text' name='bc-video' id='bc-video' placeholder='Video ID or URL' onchange="BCL.setPlayerData()">
             </td>
           </tr>
           <tr>
             <th valign='top' scope='row' class='label' style='width:130px;'>
             </th>
             <td class='bc-check'>
-             <input class='alignleft'type='checkbox' name='bc-video-ref' id='bc-video-ref' onchange="BCL.setPlayerData()"/>
-             <span class="alignleft"><label for='bc-video-ref'>This is a reference ID, not a video ID </label></span>
+               <input class='alignleft'type='checkbox' name='bc-video-ref' id='bc-video-ref' onchange="BCL.setPlayerData()"/>
+               <span class="alignleft"><label for='bc-video-ref'>This is a reference ID, not a video ID </label></span>
             </td>
           </tr>
-          <tr>
-            <th valign='top' scope='row' class='label' style='width:130px;'>
-            </th>
-            <td>
-             <div class='alignleft'></div><div class='aligncenter'>or</div><div class='alignright'></div>
-            </td>
-          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class='tab playlist-tab' id='tabs-2'>
+   <div class='media-item no-border'>
+      <table> 
+        <tbody>
           <tr>
             <th valign='top' scope='row' class='label' style='width:130px;'>
               <span class="alignleft"><label for="bc-playlist">Playlist:</label></span>
@@ -177,6 +179,17 @@ $playerID_playlist=get_option('bc_player_id_playlist');
              <span class="alignleft"><label for='bc-playlist-ref'>These are reference IDs, not playlist IDs </label></span>
             </td>
           </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+    <div class='media-item'>
+      <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
+      <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
+      <table>
+        <tbody>
           <tr class='bc-player-row'>
           <th valign='top' scope='row' class='label' style='width:130px;'>
             <span class="alignleft"><label for="bc-player">Player:</label></span>
@@ -186,17 +199,40 @@ $playerID_playlist=get_option('bc_player_id_playlist');
            <input type='text' name='bc-player' id='bc-player' placeholder='Player ID (optional)' onchange="BCL.setPlayerData()" />
           </td>
         </tr>
+        <tr class='bc-height-row'>
+          <th valign='top' scope='row' class='label' style='width:130px;'>
+            <span class="alignleft"><label for="bc-height">Height:</label></span>
+            <span class="alignright"></span>
+          </th>
+          <td>
+           <input type='text' name='bc-height' id='bc-height' placeholder='Height (optional)' onchange="BCL.setPlayerData()" />
+          </td>
+        </tr>
+        <tr class='bc-width-row'>
+          <th valign='top' scope='row' class='label' style='width:130px;'>
+            <span class="alignleft"><label for="bc-width">Width:</label></span>
+            <span class="alignright"></span>
+          </th>
+          <td>
+           <input type='text' name='bc-width' id='bc-width' placeholder='Width (optional)' onchange="BCL.setPlayerData()" />
+          </td>
+        </tr>
         </tbody>
       </table>
     </div>
+
+  
+
     <div class='media-item no-border'>
       <button class='aligncenter button' onclick="BCL.insertShortcode()" />Insert Shortcode</button>
     </div>
+
     <div class='media-item no-border'>
-      <div class='bc-error describe'>The video could not be loaded:video ID could not be found</div>
+      <div id='bc-error' class='hidden error'></div>
     </div>
+
     <div class='media-item no-border'>
-     <table class='describe'>
+     <table>
        <tbody>
         <tr>
           <td>
@@ -205,16 +241,16 @@ $playerID_playlist=get_option('bc_player_id_playlist');
                 <div id="dynamic-bc-placeholder"> </div>
             </div>
             <div class='alignleft'>
-              <h1 id='bc_title'> Title </h1>
-              <p id='bc_description'> Description</p>
+              <h1 id='bc_title'></h1>
+              <p id='bc_description'></p>
             </div>
           </td>
         </tr>
         <tbody>
       </table>
     </div>
-  </div>  
-</form>
+
+
 	<?php
 }
 
@@ -234,6 +270,20 @@ wp_deregister_script( 'brightcove_script' );
 wp_register_script( 'brightcove_script', 'http://admin.brightcove.com/js/BrightcoveExperiences.js');
 wp_enqueue_script( 'brightcove_script' );
 }
+
+function add_jquery_scripts()
+{
+   wp_deregister_script('jQuery');
+  wp_register_script( 'jQuery', '/wp-content/plugins/brightcove/jQueryUI/js/jquery-1.7.1.min.js');
+  wp_enqueue_script( 'jQuery' );
+
+  wp_deregister_script('jQueryUI');
+  wp_register_script( 'jQueryUI', '/wp-content/plugins/brightcove/jQueryUI/js/jquery-ui-1.8.18.custom.min.js');
+  wp_enqueue_script( 'jQueryUI' );
+
+   wp_register_style('jQueryStyle', '/wp-content/plugins/brightcove/jQueryUI/css/smoothness/jquery-ui-1.8.18.custom.css');
+  wp_enqueue_style( 'jQueryStyle');
+}
 /*
 function add_api_brightcove_script() {	
 wp_deregister_script( 'api_brightcove_script' );
@@ -249,8 +299,7 @@ wp_enqueue_script( 'dynamic_brightcove_script' );
 
 function add_brightcove($atts) {
 add_brightcove_script();
-isset($atts['playerid']) ? $playerId=($atts['playerid']): $playerId='1191338931001';
-var_dump($atts);
+isset($atts['playerid']) ? $playerId=($atts['playerid']): $playerId=get_option('bc_player_id');
 ?>
 <!-- Start of Brightcove Player -->
 
@@ -259,8 +308,8 @@ var_dump($atts);
 
 <object id="myExperience" class="BrightcoveExperience">
   <param name="bgcolor" value="#FFFFFF" />
-  <param name="width" value="640" />
-  <param name="height" value="360" />
+  <param name="width" value="<?php echo $atts['width']; ?>" />
+  <param name="height" value="<?php echo $atts['height']; ?>" />
   <param name="playerID" value="<?php echo $playerId; ?>" />
   <!--<param name="playerKey" value="AQ~~,AAAAipOT-Hk~,_eG7BsSTB2xUL0C9k36uPnnnkgJfJRPS" />-->
   <param name="isVid" value="true" />
