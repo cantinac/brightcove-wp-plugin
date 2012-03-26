@@ -5,18 +5,15 @@ jQuery(document).ready(function() {
     jQuery("#tabs").tabs();
     jQuery('#tabs li a').bind('click', BCL.ignoreOtherTab);
   }
-    
+  if (jQuery('#tabs-api').length > 0)
+  {
+    jQuery("#tabs-api").tabs();
+  }
+  if (jQuery('#bc_search').length > 0) {
     jQuery('#bc_search').bind('click', BCL.mediaAPISearch);
     jQuery('#show_playlists').bind('click', BCL.seeAllPlaylists);
-   /*
-   jQuery('#bc_search').bind('click', function(){
-     BCL.mediaAPISearch();
-   });
-
-  jQuery('#show_playlists').bind('click', function(){
-    BCL.seeAllPlaylists();
-  });*/
-
+  }
+    
 });
 
 // namespace to keep the global clear of clutter
@@ -149,7 +146,7 @@ BCL.addPlayer = function () {
   }
 
   // inject the player code into the DOM
-  document.getElementById("dynamic-bc-placeholder").innerHTML = playerHTML;
+  ;
   // instantiate the player
 
   brightcove.createExperiences();  
@@ -183,8 +180,8 @@ BCL.onTemplateReady = function(event) {
   BCL.videoPlayer = BCL.player.getModule(brightcove.api.modules.APIModules.VIDEO_PLAYER);
   BCL.videoPlayer.getCurrentVideo(function(videoDTO) {
     BCL.currentVideo = videoDTO;
-    document.getElementById('bc_title').innerHTML=BCL.currentVideo.displayName;
-    document.getElementById('bc_description').innerHTML=BCL.currentVideo.shortDescription;
+    jQuery('#bc_title').html(BCL.currentVideo.displayName);
+    jQuery('#bc_description').html(BCL.currentVideo.shortDescription);
   });
 }
 
@@ -234,7 +231,7 @@ BCL.markup = function (html, data) {
 };
 
 BCL.mediaAPISearch = function() {
-  BCL.searchParams = document.getElementById('bc-search-field').value;
+  BCL.searchParams = jQuery('#bc-search-field').val();
   BCMAPI.token = jQuery('#bc_api_key').val();
   /*BCMAPI.token = "pF-Nn_-cfM0eqJ4CgGPQ4dzsM7__X0IrdwmsHgnUoCsy_AOoyGND_Q..";*/
   // Make a call to the API requesting content

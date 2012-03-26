@@ -122,6 +122,7 @@ function brightcove_api_menu_handle() {
 function bc_media_api_upload_form() {
 media_upload_header();
 add_brightcove_script();
+add_jquery_scripts();
 add_dynamic_brightcove_api_script();
 $playerID=get_option('bc_player_id');
 $apiKey=get_option('bc_api_key');
@@ -131,20 +132,27 @@ $playerID_playlist=get_option('bc_player_id_playlist');
 
 <div class='outer_container' >
   <input type='hidden' id='bc_api_key' name='bc_api_key' value='<?php echo $apiKey; ?>' >
-  <div class='bc_api_header'>
-    <div class='alignleft'>
-      <h1>Brightcove</h1>
-    </div>
-      <div class='alignright'>
-      <button class='button' id='show_playlists'>See all playlists</button>
+  <div id='tabs-api'>
+    <ul>
+      <li ><a class='video-tab-api' href="#tabs-1">Videos</a></li>
+      <li><a class='playlist-tab-api' href="#tabs-2">Playlists</a></li>
+    </ul>
+    <div id='tabs-1'>
       <button class='button' id='bc_search'>Search</button>
-      <input id='bc-search-field' type='text'>
-      <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
+      <div class='alignright'>
+        <input id='bc-search-field' type='text'>
+        <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
+      </div>
+    </div>
+    <div id='tabs-2'>
+      <button class='button' id='show_playlists'>See all playlists</button>
       <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
     </div>
   </div>
+
   <div id='bc-video-search'></div>
 </div>
+
 
 <?php
 }
