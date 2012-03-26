@@ -127,33 +127,43 @@ add_dynamic_brightcove_api_script();
 $playerID=get_option('bc_player_id');
 $apiKey=get_option('bc_api_key');
 $playerID_playlist=get_option('bc_player_id_playlist');
+if ($playerID == '' || $playerID_playlist == '') {
+  $defaultSet='false';
+} else  {
+  $defaultSet='true';
+}
 ?>
 <script src="/wp-content/plugins/brightcove/bc-mapi.js" type="text/javascript"></script>
+<div class='hidden error' id='defaults_not_set' data-defaultsSet='<?php echo $defaultSet; ?>'>
+  You have not set up your defaults for this plugin. Please go to the brightcove menu on the side panel of the admin screen.
+</div>
+<div class='no-error'>
+  <div class='outer_container' >
+    <input type='hidden' id='bc_api_key' name='bc_api_key' value='<?php echo $apiKey; ?>' >
+    <div id='tabs-api'>
+      <ul>
+        <li ><a class='video-tab-api' href="#tabs-1">Videos</a></li>
+        <li><a class='playlist-tab-api' href="#tabs-2">Playlists</a></li>
+      </ul>
+      <div id='tabs-1'>
+        <button class='button' id='bc_search'>Search</button>
+        <div class='alignright'>
+          <input id='bc-search-field' type='text'>
+          <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
+        </div>
+        <div class='bc-video-search clearfix' id='bc-video-search-video'></div>
 
-<div class='outer_container' >
-  <input type='hidden' id='bc_api_key' name='bc_api_key' value='<?php echo $apiKey; ?>' >
-  <div id='tabs-api'>
-    <ul>
-      <li ><a class='video-tab-api' href="#tabs-1">Videos</a></li>
-      <li><a class='playlist-tab-api' href="#tabs-2">Playlists</a></li>
-    </ul>
-    <div id='tabs-1'>
-      <button class='button' id='bc_search'>Search</button>
-      <div class='alignright'>
-        <input id='bc-search-field' type='text'>
-        <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
+      </div>
+      <div id='tabs-2'>
+        <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
+        <div class='bc-video-search clearfix' id='bc-video-search-playlist'></div>
+
       </div>
     </div>
-    <div id='tabs-2'>
-      <button class='button' id='show_playlists'>See all playlists</button>
-      <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
-    </div>
+
   </div>
 
-  <div id='bc-video-search'></div>
 </div>
-
-
 <?php
 }
 
@@ -169,132 +179,142 @@ $playerID=get_option('bc_player_id');
 $defaultHeight=get_option('bc_default_height');
 $defaultWidth=get_option('bc_default_width');
 $playerID_playlist=get_option('bc_player_id_playlist');
+
+if ($playerID == '' || $playerID_playlist == '') {
+  $defaultSet='false';
+} else  {
+  $defaultSet='true';
+}
 ?>
-<div id='tabs'>
-  <ul>
-    <li ><a class='video-tab' href="#tabs-1">Videos</a></li>
-    <li><a class='playlist-tab' href="#tabs-2">Playlists</a></li>
-  </ul>
-  <div class='tab video-tab' id='tabs-1'>
-    <div class='media-item no-border'>
-      <table>
-        <tbody>
-          <tr>
-            <th valign='top' scope='row' class='label' style='width:130px;'>
-              <span class="alignleft"><label for="bc-video">Video:</label></span>
-              <span class="alignright"></span>
-            </th>
-            <td>
-              <input placeholder='Video ID or URL' aria-required="true" type='text' name='bc-video' id='bc-video' placeholder='Video ID or URL' onchange="BCL.setPlayerData()">
-            </td>
-          </tr>
-          <tr>
-            <th valign='top' scope='row' class='label' style='width:130px;'>
-            </th>
-            <td class='bc-check'>
-               <input class='alignleft'type='checkbox' name='bc-video-ref' id='bc-video-ref' onchange="BCL.setPlayerData()"/>
-               <span class="alignleft"><label for='bc-video-ref'>This is a reference ID, not a video ID </label></span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class='tab playlist-tab' id='tabs-2'>
-   <div class='media-item no-border'>
-      <table> 
-        <tbody>
-          <tr>
-            <th valign='top' scope='row' class='label' style='width:130px;'>
-              <span class="alignleft"><label for="bc-playlist">Playlist:</label></span>
-              <span class="alignright"></span>
-            </th>
-            <td>
-             <input type='text' name='bc-playlist' id='bc-playlist' placeholder='Playlist ID(s)' onchange="BCL.setPlayerData()"/>
-            </td>
-          </tr>
-          <tr>
-            <th valign='top' scope='row' class='label' style='width:130px;'>
-            </th>
-            <td class='bc-check'>
-             <input class='alignleft' type='checkbox' name='bc-playlist-ref' id='bc-playlist-ref' onchange="BCL.setPlayerData()"/>
-             <span class="alignleft"><label for='bc-playlist-ref'>These are reference IDs, not playlist IDs </label></span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+<div class='hidden error' id='defaults_not_set' data-defaultsSet='<?php echo $defaultSet; ?>'>
+  You have not set up your defaults for this plugin. Please go to the brightcove menu on the side panel of the admin screen.
 </div>
-
-    <div class='media-item'>
-      <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
-      <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
-      <input type='hidden' id='bc_default_height' name='bc_default_height' value='<?php echo $defaultHeight; ?>' >
-      <input type='hidden' id='bc_default_width' name='bc_default_width' value='<?php echo $defaultWidth; ?>' >
-
-      <table>
-        <tbody>
-          <tr class='bc-player-row'>
-          <th valign='top' scope='row' class='label' style='width:130px;'>
-            <span class="alignleft"><label for="bc-player">Player:</label></span>
-            <span class="alignright"></span>
-          </th>
-          <td>
-           <input type='text' name='bc-player' id='bc-player' placeholder='Player ID (optional)' onchange="BCL.setPlayerData()" />
-          </td>
-        </tr>
-        <tr class='bc-height-row'>
-          <th valign='top' scope='row' class='label' style='width:130px;'>
-            <span class="alignleft"><label for="bc-height">Height:</label></span>
-            <span class="alignright"></span>
-          </th>
-          <td>
-           <input type='text' name='bc-height' id='bc-height' placeholder='Height (optional)' onchange="BCL.setPlayerData()" />
-          </td>
-        </tr>
-        <tr class='bc-width-row'>
-          <th valign='top' scope='row' class='label' style='width:130px;'>
-            <span class="alignleft"><label for="bc-width">Width:</label></span>
-            <span class="alignright"></span>
-          </th>
-          <td>
-           <input type='text' name='bc-width' id='bc-width' placeholder='Width (optional)' onchange="BCL.setPlayerData()" />
-          </td>
-        </tr>
-        </tbody>
-      </table>
+<div class='no-error'>
+  <div id='tabs'>
+    <ul>
+      <li ><a class='video-tab' href="#tabs-1">Videos</a></li>
+      <li><a class='playlist-tab' href="#tabs-2">Playlists</a></li>
+    </ul>
+    <div class='tab video-tab' id='tabs-1'>
+      <div class='media-item no-border'>
+        <table>
+          <tbody>
+            <tr>
+              <th valign='top' scope='row' class='label' style='width:130px;'>
+                <span class="alignleft"><label for="bc-video">Video:</label></span>
+                <span class="alignright"></span>
+              </th>
+              <td>
+                <input placeholder='Video ID or URL' aria-required="true" type='text' name='bc-video' id='bc-video' placeholder='Video ID or URL' onchange="BCL.setPlayerData()">
+              </td>
+            </tr>
+            <tr>
+              <th valign='top' scope='row' class='label' style='width:130px;'>
+              </th>
+              <td class='bc-check'>
+                 <input class='alignleft'type='checkbox' name='bc-video-ref' id='bc-video-ref' onchange="BCL.setPlayerData()"/>
+                 <span class="alignleft"><label for='bc-video-ref'>This is a reference ID, not a video ID </label></span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-
-  
-
-    <div class='media-item no-border'>
-      <button class='aligncenter button' onclick="BCL.insertShortcode()" />Insert Shortcode</button>
+    <div class='tab playlist-tab' id='tabs-2'>
+     <div class='media-item no-border'>
+        <table> 
+          <tbody>
+            <tr>
+              <th valign='top' scope='row' class='label' style='width:130px;'>
+                <span class="alignleft"><label for="bc-playlist">Playlist:</label></span>
+                <span class="alignright"></span>
+              </th>
+              <td>
+               <input type='text' name='bc-playlist' id='bc-playlist' placeholder='Playlist ID(s)' onchange="BCL.setPlayerData()"/>
+              </td>
+            </tr>
+            <tr>
+              <th valign='top' scope='row' class='label' style='width:130px;'>
+              </th>
+              <td class='bc-check'>
+               <input class='alignleft' type='checkbox' name='bc-playlist-ref' id='bc-playlist-ref' onchange="BCL.setPlayerData()"/>
+               <span class="alignleft"><label for='bc-playlist-ref'>These are reference IDs, not playlist IDs </label></span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
+  </div>
 
-    <div class='media-item no-border'>
-      <div id='bc-error' class='hidden error'></div>
-    </div>
+      <div class='media-item'>
+        <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
+        <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
+        <input type='hidden' id='bc_default_height' name='bc_default_height' value='<?php echo $defaultHeight; ?>' >
+        <input type='hidden' id='bc_default_width' name='bc_default_width' value='<?php echo $defaultWidth; ?>' >
 
-    <div class='media-item no-border'>
-     <table>
-       <tbody>
-        <tr>
-          <td>
-            <div class='alignleft player-preview'>
-                <p> Video Preview: </p>
-                <div id="dynamic-bc-placeholder"> </div>
-            </div>
-            <div class='alignleft'>
-              <h1 id='bc_title'></h1>
-              <p id='bc_description'></p>
-            </div>
-          </td>
-        </tr>
-        <tbody>
-      </table>
-    </div>
+        <table>
+          <tbody>
+            <tr class='bc-player-row'>
+            <th valign='top' scope='row' class='label' style='width:130px;'>
+              <span class="alignleft"><label for="bc-player">Player:</label></span>
+              <span class="alignright"></span>
+            </th>
+            <td>
+             <input type='text' name='bc-player' id='bc-player' placeholder='Player ID (optional)' onchange="BCL.setPlayerData()" />
+            </td>
+          </tr>
+          <tr class='bc-height-row'>
+            <th valign='top' scope='row' class='label' style='width:130px;'>
+              <span class="alignleft"><label for="bc-height">Height:</label></span>
+              <span class="alignright"></span>
+            </th>
+            <td>
+             <input type='text' name='bc-height' id='bc-height' placeholder='Height (optional)' onchange="BCL.setPlayerData()" />
+            </td>
+          </tr>
+          <tr class='bc-width-row'>
+            <th valign='top' scope='row' class='label' style='width:130px;'>
+              <span class="alignleft"><label for="bc-width">Width:</label></span>
+              <span class="alignright"></span>
+            </th>
+            <td>
+             <input type='text' name='bc-width' id='bc-width' placeholder='Width (optional)' onchange="BCL.setPlayerData()" />
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
 
+    
+
+      <div class='media-item no-border'>
+        <button class='aligncenter button' onclick="BCL.insertShortcode()" />Insert Shortcode</button>
+      </div>
+
+      <div class='media-item no-border'>
+        <div id='bc-error' class='hidden error'></div>
+      </div>
+
+      <div class='media-item no-border'>
+       <table>
+         <tbody>
+          <tr>
+            <td>
+              <div class='alignleft player-preview'>
+                  <p> Video Preview: </p>
+                  <div id="dynamic-bc-placeholder"> </div>
+              </div>
+              <div class='alignleft'>
+                <h1 id='bc_title'></h1>
+                <p id='bc_description'></p>
+              </div>
+            </td>
+          </tr>
+          <tbody>
+        </table>
+      </div>
+</div>
 
 	<?php
 }

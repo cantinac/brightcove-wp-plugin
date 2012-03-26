@@ -1,19 +1,27 @@
 /*Creates tab functionality in plugin*/
 jQuery(document).ready(function() {
 
-  if (jQuery('#tabs').length > 0){
-    jQuery("#tabs").tabs();
-    jQuery('#tabs li a').bind('click', BCL.ignoreOtherTab);
-  }
-  if (jQuery('#tabs-api').length > 0)
+/*
+function ($) {*/
+  console.log(jQuery('#defaults_not_set').data('defaultsset'));
+  if (jQuery('#defaults_not_set').data('defaultsset') ==  false)
   {
-    jQuery("#tabs-api").tabs();
+    jQuery('.no-error').addClass('hidden');
+    jQuery('#defaults_not_set').removeClass('hidden');
+  } else {
+    if (jQuery('#tabs').length > 0){
+      jQuery("#tabs").tabs();
+      jQuery('#tabs li a').bind('click', BCL.ignoreOtherTab);
+    }
+    if (jQuery('#tabs-api').length > 0)
+    {
+      jQuery("#tabs-api").tabs();
+    }
+    if (jQuery('#bc_search').length > 0) {
+      jQuery('#bc_search').bind('click', BCL.mediaAPISearch);
+      jQuery('.playlist-tab-api').bind('click', BCL.seeAllPlaylists);
+    }
   }
-  if (jQuery('#bc_search').length > 0) {
-    jQuery('#bc_search').bind('click', BCL.mediaAPISearch);
-    jQuery('#show_playlists').bind('click', BCL.seeAllPlaylists);
-  }
-    
 });
 
 // namespace to keep the global clear of clutter
@@ -129,7 +137,6 @@ BCL.ignoreOtherTab = function () {
 
 BCL.addPlayer = function () { 
   /*Remove all of the old HTML for the player and the old title and description*/
-
   jQuery('#dynamic-bc-placeholder').html('');
   jQuery('#bc_title').html('');
   jQuery('#bc_description').html('');
@@ -146,7 +153,8 @@ BCL.addPlayer = function () {
   }
 
   // inject the player code into the DOM
-  ;
+
+  jQuery('#dynamic-bc-placeholder').html(playerHTML);
   // instantiate the player
 
   brightcove.createExperiences();  
@@ -269,13 +277,14 @@ BCL.displaySingleVideo = function (pResponse)
 }
 
  BCL.displayVideos = function (pResponse) {
+ 
     var innerHTML="";
     for (var pVideo in pResponse.items) {
-      if (pVideo % 3 == 0 && pVideo != 0) {
-        innerHTML=innerHTML+'</div><div class="bc_row">';
+      /*if (pVideo % 3 == 0 && pVideo != 0) {
+        innerHTML=innerHTML+'</div><div class="bc_row clearfix">';
       } else if (pVideo == 0) {
-        innerHTML=innerHTML+'<div class="bc_row">';
-      }
+        innerHTML=innerHTML+'<div class="bc_row clearfix">';
+      }*/
       var imgSrc=pResponse.items[pVideo].thumbnailURL;
       if (imgSrc == undefined && pResponse.items[pVideo].videos != undefined) {
         if (pResponse.items[pVideo].videos[0] != undefined) {
@@ -283,34 +292,60 @@ BCL.displaySingleVideo = function (pResponse)
         }
       }
 
-      var currentName="<h3>"+BCL.constrain(pResponse.items[pVideo].name,20)+"</h3>";
+      var currentName="<h3>"+BCL.constrain(pResponse.items[pVideo].name,13)+"</h3>";
       var currentVid="<img src='"+imgSrc+"'/>";
       innerHTML = innerHTML+"<div id='bc_video_"+pVideo+"' data-videoID='"+pResponse.items[pVideo].id+"' title='"+pResponse.items[pVideo].name+"' class='bc_video_thumb'>"+currentName+currentVid+"</div>";
     }
     
-    jQuery('#bc-video-search').html(innerHTML);
+    if (BCL.typeOfPlayer == 'single') {
+      jQuery('#bc-video-search-video').html(innerHTML);
+    }
+    if (BCL.typeOfPlayer == 'playlist') {
+     jQuery('#bc-video-search-playlist').html(innerHTML);
+    }
+    
+    
     jQuery('.bc_video_thumb').bind('click', function() {
-    console.log(this);
-    BCL.setPlayerDataAPI(jQuery(this).data('videoid'));
+    BCL.setHTML(jQuery(this).data('videoid'));
     });
   }
 
-BCL.setPlayerDataAPI = function (videoId){
-  jQuery('#bc-video-search').html('<div id="dynamic-bc-placeholder"></div><button onclick="BCL.insertShortcode()">Insert Video </button><input type="text" id="bc-player" onchange="BCL.changePlayer()" placeholder="Player ID" />');
+BCL.setHTML =function (videoId)
+{
+  innerHTML = '<div id="dynamic-bc-placeholder"></div>';
+  innerHTML += '<input class="block" type="text" id="bc-player" onchange="BCL.changePlayer()" placeholder="Player ID" />';
+  innerHTML += '<input onchange="BCL.setPlayerDataAPI()" class="block" id="bc-width" type="text" placeholder="Width (optional)" />';
+  innerHTML += '<input onchange="BCL.setPlayerDataAPI()" class="block" type="text" id="bc-height" placeholder="Height (optional)" />';
+  innerHTML += '<button onclick="BCL.insertShortcode()">Insert Video </button>';
+  
   if (BCL.typeOfPlayer == 'single') {
+    jQuery('#bc-video-search-video').html(innerHTML);
+    BCL.playerData.videoID=videoId;
+  } else {
+    jQuery('#bc-video-search-playlist').html(innerHTML);
+      BCL.playerData.playlistID=videoId;
+  } 
+  BCL.setPlayerDataAPI();
+}
+
+BCL.setPlayerDataAPI = function (){
+
+  if (BCL.typeOfPlayer == 'single') {
+    jQuery('#bc-video-search-video').html(innerHTML);
     BCL.playerData = {  "playerID" : jQuery('#bc_default_player').val(),
-                      "width"   : "480",
-                      "height"  : "270",
-                      "videoID" : videoId,
+                      "width"   : jQuery('#bc-width').val(),
+                      "height"  : jQuery('#bc-height').val(),
+                      "videoID" : BCL.playerData.videoID,
                       "isRef"   : ""};
   } else {
-   
+    jQuery('#bc-video-search-playlist').html(innerHTML);
     BCL.playerData = {  "playerID" : jQuery('#bc_default_player_playlist').val(),
-                      "width"   : "480",
-                      "height"  : "270",
-                      "playlistID" : videoId,
+                      "width"   : jQuery('#bc-width').val(),
+                      "height"  : jQuery('#bc-height').val(),
+                      "playlistID" : BCL.playerData.playlistID,
                       "isRef"   : ""};
                     }
+                 
   BCL.addPlayer();
 }
 
