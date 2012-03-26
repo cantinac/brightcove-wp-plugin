@@ -41,6 +41,15 @@ function brightcove_menu_render() {
           </tr>
           <tr valign="top">
             <th scope="row">
+              <label for="bc_api_key">API Read Key</label>
+            </th>
+            <td>
+              <input value = '<? echo get_option('bc_api_key'); ?>' name="bc_api_key" type="text" id="bc_api_key" placeholder='API Key' class="regular-text">
+              <span class='description'>Media API Key</span>
+            </td>
+          </tr>
+          <tr valign="top">
+            <th scope="row">
               <label for="bc_player_id">Default Player ID - Single Video</label>
             </th>
             <td>
@@ -57,6 +66,24 @@ function brightcove_menu_render() {
               <span class='description'>Default player ID for setting a custom player template across the site for playlists.</span>
             </td>
           </tr>
+          <tr valign="top">
+            <th scope="row">
+              <label for="bc_default_height">Default Player Height </label>
+            </th>
+            <td>
+              <input value = '<? echo get_option('bc_default_height'); ?>' name="bc_default_height" type="text" id="bc_default_height" class="regular-text" placeholder='Default player height'>
+              <span class='description'>Default height for video players</span>
+            </td>
+          </tr>
+          <tr valign="top">
+            <th scope="row">
+              <label for="bc_default_width">Default Player Width</label>
+            </th>
+            <td>
+              <input value = '<? echo get_option('bc_default_width'); ?>' name="bc_default_width" type="text" id="bc_default_width" class="regular-text" placeholder='Default player width'>
+              <span class='description'>Default width for video players</span>
+            </td>
+          </tr>
         </tbody>
       </table>
       <p class="submit">
@@ -71,6 +98,9 @@ function register_brightcove_settings() { // whitelist options
   register_setting( 'brightcove-settings-group', 'bc_pub_id' );
   register_setting( 'brightcove-settings-group', 'bc_player_id' );
   register_setting( 'brightcove-settings-group', 'bc_player_id_playlist' );
+  register_setting( 'brightcove-settings-group', 'bc_api_key' );
+  register_setting( 'brightcove-settings-group', 'bc_default_height' );
+  register_setting( 'brightcove-settings-group', 'bc_default_width' );
 }
 
 /************************Upload Media Tab ***************************/
@@ -94,18 +124,20 @@ media_upload_header();
 add_brightcove_script();
 add_dynamic_brightcove_api_script();
 $playerID=get_option('bc_player_id');
+$apiKey=get_option('bc_api_key');
 $playerID_playlist=get_option('bc_player_id_playlist');
 ?>
 <script src="/wp-content/plugins/brightcove/bc-mapi.js" type="text/javascript"></script>
 
 <div class='outer_container' >
+  <input type='hidden' id='bc_api_key' name='bc_api_key' value='<?php echo $apiKey; ?>' >
   <div class='bc_api_header'>
     <div class='alignleft'>
       <h1>Brightcove</h1>
     </div>
-      <div class='alignright' onload='BCL.mediaAPISearch()' id='bc_search'>
-      <button class='button' onclick='BCL.seeAllPlaylists()'>See all playlists</button>
-      <button class='button' onclick='BCL.mediaAPISearch()'>Search</button>
+      <div class='alignright'>
+      <button class='button' id='show_playlists'>See all playlists</button>
+      <button class='button' id='bc_search'>Search</button>
       <input id='bc-search-field' type='text'>
       <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
       <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
@@ -126,6 +158,8 @@ add_dynamic_brightcove_api_script();
 
 /*Gets the default player set in the admin settings*/
 $playerID=get_option('bc_player_id');
+$defaultHeight=get_option('bc_default_height');
+$defaultWidth=get_option('bc_default_width');
 $playerID_playlist=get_option('bc_player_id_playlist');
 ?>
 <div id='tabs'>
@@ -188,6 +222,9 @@ $playerID_playlist=get_option('bc_player_id_playlist');
     <div class='media-item'>
       <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
       <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
+      <input type='hidden' id='bc_default_height' name='bc_default_height' value='<?php echo $defaultHeight; ?>' >
+      <input type='hidden' id='bc_default_width' name='bc_default_width' value='<?php echo $defaultWidth; ?>' >
+
       <table>
         <tbody>
           <tr class='bc-player-row'>
@@ -237,7 +274,7 @@ $playerID_playlist=get_option('bc_player_id_playlist');
         <tr>
           <td>
             <div class='alignleft player-preview'>
-                <p> Player Preview: </p>
+                <p> Video Preview: </p>
                 <div id="dynamic-bc-placeholder"> </div>
             </div>
             <div class='alignleft'>
@@ -281,7 +318,7 @@ function add_jquery_scripts()
   wp_register_script( 'jQueryUI', '/wp-content/plugins/brightcove/jQueryUI/js/jquery-ui-1.8.18.custom.min.js');
   wp_enqueue_script( 'jQueryUI' );
 
-   wp_register_style('jQueryStyle', '/wp-content/plugins/brightcove/jQueryUI/css/smoothness/jquery-ui-1.8.18.custom.css');
+  wp_register_style('jQueryStyle', '/wp-content/plugins/brightcove/jQueryUI/css/smoothness/jquery-ui-1.8.18.custom.css');
   wp_enqueue_style( 'jQueryStyle');
 }
 /*

@@ -1,21 +1,26 @@
 /*Creates tab functionality in plugin*/
-$(document).ready(function() {
-  $("#tabs").tabs();
-  $('#tabs li a').bind('click', BCL.ignoreOtherTab);
+jQuery(document).ready(function() {
+
+  if (jQuery('#tabs').length > 0){
+    jQuery("#tabs").tabs();
+    jQuery('#tabs li a').bind('click', BCL.ignoreOtherTab);
+  }
+    
+    jQuery('#bc_search').bind('click', BCL.mediaAPISearch);
+    jQuery('#show_playlists').bind('click', BCL.seeAllPlaylists);
+   /*
+   jQuery('#bc_search').bind('click', function(){
+     BCL.mediaAPISearch();
+   });
+
+  jQuery('#show_playlists').bind('click', function(){
+    BCL.seeAllPlaylists();
+  });*/
+
 });
-
-
 
 // namespace to keep the global clear of clutter
 var BCL = {};
-
-/*$('#video-tab').bind('click',function() {
-  BCL.ignoreOtherTab();
-});*/
-
-//$('#playlist-tab').bind('click', BCL.ignoreOtherTab);
-
-
 
 // data for our player -- note that it must have ActionScript/JavaScript APIs enabled!!
 BCL.playerData = { "playerID" : "",
@@ -78,25 +83,22 @@ BCL.setPlayerData = function ()
   if ($('#bc-height').val() != undefined && $('#bc-height').val() != '') {
     BCL.playerData.height = $('#bc-height').val();
   } else {
-    BCL.playerData.height='270';
+    BCL.playerData.height=$('#bc_default_height').val();
   }
-  
 
   if ($('#bc-width').val() != undefined && $('#bc-width').val() != '') {
     BCL.playerData.width = $('#bc-width').val();
   } else {
-    BCL.playerData.width='480';
+    BCL.playerData.width=$('#bc_default_width').val();
   }
 
   BCL.addPlayer();
 }
 
 BCL.ignoreOtherTab = function () {
-
   
   BCL.playerData.playlistID='';
   BCL.playerData.videoID='';
-
   
   $('.ignore').removeClass('ignore');
   
@@ -131,9 +133,9 @@ BCL.ignoreOtherTab = function () {
 BCL.addPlayer = function () { 
   /*Remove all of the old HTML for the player and the old title and description*/
 
-  $('#dynamic-bc-placeholder').html('');
-  $('#bc_title').html('');
-  $('#bc_description').html('');
+  jQuery('#dynamic-bc-placeholder').html('');
+  jQuery('#bc_title').html('');
+  jQuery('#bc_description').html('');
   
   var playerHTML = "";
   // set the playerID to the selected player
@@ -184,8 +186,7 @@ BCL.onTemplateReady = function(event) {
     document.getElementById('bc_title').innerHTML=BCL.currentVideo.displayName;
     document.getElementById('bc_description').innerHTML=BCL.currentVideo.shortDescription;
   });
-
-    }
+}
 
 BCL.insertShortcode = function() {
   var isRef='';
@@ -234,18 +235,26 @@ BCL.markup = function (html, data) {
 
 BCL.mediaAPISearch = function() {
   BCL.searchParams = document.getElementById('bc-search-field').value;
-  BCMAPI.token = "pF-Nn_-cfM0eqJ4CgGPQ4dzsM7__X0IrdwmsHgnUoCsy_AOoyGND_Q..";
+  BCMAPI.token = jQuery('#bc_api_key').val();
+  /*BCMAPI.token = "pF-Nn_-cfM0eqJ4CgGPQ4dzsM7__X0IrdwmsHgnUoCsy_AOoyGND_Q..";*/
   // Make a call to the API requesting content
   // Note that a callback function is needed to handle the returned data
-  BCMAPI.search({ "callback" : "BCL.displaySingleVideo", 'all':BCL.searchParams});
+
+  /*Show loader*/
+  /*Then in callback hide the loader*/
+  BCMAPI.search({ "callback" : "BCL.displaySingleVideo", 'all' : BCL.searchParams});
   // Our callback loops through the returned videos, alerting their names
  
 };
 
 BCL.seeAllPlaylists = function() {
-  BCMAPI.token = "pF-Nn_-cfM0eqJ4CgGPQ4dzsM7__X0IrdwmsHgnUoCsy_AOoyGND_Q..";
+  BCMAPI.token = jQuery('#bc_api_key').val();
   // Make a call to the API requesting content
   // Note that a callback function is needed to handle the returned data
+  
+  /*Show loader*/
+  /*Then in callback hide the loader*/
+  
   BCMAPI.find('find_all_playlists',{ "callback" : "BCL.displayPlaylist"});
   // Our callback loops through the returned videos, alerting their names 
 };
@@ -276,25 +285,30 @@ BCL.displaySingleVideo = function (pResponse)
           imgSrc=pResponse.items[pVideo].videos[0].thumbnailURL;
         }
       }
+
       var currentName="<h3>"+BCL.constrain(pResponse.items[pVideo].name,20)+"</h3>";
       var currentVid="<img src='"+imgSrc+"'/>";
-      innerHTML = innerHTML+"<div id='bc_video_"+pVideo+"' onclick='BCL.setPlayerDataAPI("+pVideo+","+pResponse.items[pVideo].id+")' title='"+pResponse.items[pVideo].name+"' class='bc_video_thumb'>"+currentName+currentVid+"</div>";
+      innerHTML = innerHTML+"<div id='bc_video_"+pVideo+"' data-videoID='"+pResponse.items[pVideo].id+"' title='"+pResponse.items[pVideo].name+"' class='bc_video_thumb'>"+currentName+currentVid+"</div>";
     }
-    document.getElementById("bc-video-search").innerHTML = innerHTML;
+    
+    jQuery('#bc-video-search').html(innerHTML);
+    jQuery('.bc_video_thumb').bind('click', function() {
+    console.log(this);
+    BCL.setPlayerDataAPI(jQuery(this).data('videoid'));
+    });
   }
 
-BCL.setPlayerDataAPI = function (id, videoId){
-  document.getElementById('bc-video-search').innerHTML='<div id="dynamic-bc-placeholder"></div><button onclick="BCL.insertShortcode()">Insert Video </button><input type="text" id="bc-player" onchange="BCL.changePlayer()" placeholder="Player ID" />';
+BCL.setPlayerDataAPI = function (videoId){
+  jQuery('#bc-video-search').html('<div id="dynamic-bc-placeholder"></div><button onclick="BCL.insertShortcode()">Insert Video </button><input type="text" id="bc-player" onchange="BCL.changePlayer()" placeholder="Player ID" />');
   if (BCL.typeOfPlayer == 'single') {
-    console.log('something');
-    BCL.playerData = {  "playerID" : document.getElementById('bc_default_player').value,
+    BCL.playerData = {  "playerID" : jQuery('#bc_default_player').val(),
                       "width"   : "480",
                       "height"  : "270",
                       "videoID" : videoId,
                       "isRef"   : ""};
   } else {
    
-    BCL.playerData = {  "playerID" : document.getElementById('bc_default_player_playlist').value,
+    BCL.playerData = {  "playerID" : jQuery('#bc_default_player_playlist').val(),
                       "width"   : "480",
                       "height"  : "270",
                       "playlistID" : videoId,
@@ -304,7 +318,7 @@ BCL.setPlayerDataAPI = function (id, videoId){
 }
 
 BCL.changePlayer = function() {
-  BCL.playerData.playerID = document.getElementById('bc-player').value;
+  BCL.playerData.playerID = jQuery('#bc-player').val();
   BCL.addPlayer();
 }
 
