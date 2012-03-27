@@ -12,102 +12,19 @@ Version: 0.1
 Author URI: 
 */
 
-/************************Administrator Menu ***************************/
 
-add_action('admin_menu', 'brightcove_menu');
-add_action( 'admin_init', 'register_brightcove_settings' );
+require dirname( __FILE__ ) . '/admin/brightcove_admin.php';
 
-function brightcove_menu() {
-add_menu_page(__('Brightcove Settings'), __('Brightcove'), 'edit_themes', 'brightcove_menu', 'brightcove_menu_render'); 
-}
-
-function brightcove_menu_render() {
-  ?>
-
-  <div class='wrap'>
-    <h2>Brightcove Settings </h2>
-    <form method='post' action='options.php'>
-    <?php settings_fields( 'brightcove-settings-group' ); ?>
-      <table class='form-table'> 
-        <tbody>
-          <tr valign="top">
-            <th scope="row">
-              <label for="bc_pub_id">Publisher ID</label>
-            </th>
-            <td>
-              <input value = '<? echo get_option('bc_pub_id'); ?>' name="bc_pub_id" type="text" id="bc_pub_id" placeholder='Publisher ID for accessing the API' class="regular-text">
-              <span class='description'>Publisher ID for accessing the API.</span>
-            </td>
-          </tr>
-          <tr valign="top">
-            <th scope="row">
-              <label for="bc_api_key">API Read Key</label>
-            </th>
-            <td>
-              <input value = '<? echo get_option('bc_api_key'); ?>' name="bc_api_key" type="text" id="bc_api_key" placeholder='API Key' class="regular-text">
-              <span class='description'>Media API Key</span>
-            </td>
-          </tr>
-          <tr valign="top">
-            <th scope="row">
-              <label for="bc_player_id">Default Player ID - Single Video</label>
-            </th>
-            <td>
-              <input value = '<? echo get_option('bc_player_id'); ?>' name="bc_player_id" type="text" id="bc_player_id" class="regular-text" placeholder='Default player ID'>
-              <span class='description'>Default player ID for setting a custom player template across the site.</span>
-            </td>
-          </tr>
-          <tr valign="top">
-            <th scope="row">
-              <label for="bc_player_id_playlist">Default Player ID - Playlist</label>
-            </th>
-            <td>
-              <input value = '<? echo get_option('bc_player_id_playlist'); ?>' name="bc_player_id_playlist" type="text" id="bc_player_id_playlist" class="regular-text" placeholder='Default player ID for Playlists'>
-              <span class='description'>Default player ID for setting a custom player template across the site for playlists.</span>
-            </td>
-          </tr>
-          <tr valign="top">
-            <th scope="row">
-              <label for="bc_default_height">Default Player Height </label>
-            </th>
-            <td>
-              <input value = '<? echo get_option('bc_default_height'); ?>' name="bc_default_height" type="text" id="bc_default_height" class="regular-text" placeholder='Default player height'>
-              <span class='description'>Default height for video players</span>
-            </td>
-          </tr>
-          <tr valign="top">
-            <th scope="row">
-              <label for="bc_default_width">Default Player Width</label>
-            </th>
-            <td>
-              <input value = '<? echo get_option('bc_default_width'); ?>' name="bc_default_width" type="text" id="bc_default_width" class="regular-text" placeholder='Default player width'>
-              <span class='description'>Default width for video players</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <p class="submit">
-        <input type="submit" name="submit" id="submit" class="button-primary" value="Save Changes">
-      </p>
-    </form>
-  </div>
-  <?php
-}
-
-function register_brightcove_settings() { // whitelist options
-  register_setting( 'brightcove-settings-group', 'bc_pub_id' );
-  register_setting( 'brightcove-settings-group', 'bc_player_id' );
-  register_setting( 'brightcove-settings-group', 'bc_player_id_playlist' );
-  register_setting( 'brightcove-settings-group', 'bc_api_key' );
-  register_setting( 'brightcove-settings-group', 'bc_default_height' );
-  register_setting( 'brightcove-settings-group', 'bc_default_width' );
-}
 
 /************************Upload Media Tab ***************************/
 
 function brightcove_media_menu($tabs) {
-$tabs['brightcove']='Brightcove';
-$tabs['brightcove_api']='Brightcove Media API';
+
+if (get_option('bc_api_key') != NULL or get_option('bc_api_key') != '') {
+ $tabs['brightcove_api']='Brightcove Media API'; 
+} else {
+  $tabs['brightcove']='Brightcove';
+}
 return $tabs;
 }
 
@@ -125,9 +42,11 @@ add_brightcove_script();
 add_jquery_scripts();
 add_dynamic_brightcove_api_script();
 $playerID=get_option('bc_player_id');
-$apiKey=get_option('bc_api_key');
 $playerID_playlist=get_option('bc_player_id_playlist');
-if ($playerID == '' || $playerID_playlist == '') {
+$publisherID=get_option('bc_pub_id');
+$apiKey=get_option('bc_api_key');
+
+if ($playerID == '' || $playerID_playlist == '' || $publisherID  == '') {
   $defaultSet='false';
 } else  {
   $defaultSet='true';
@@ -135,8 +54,10 @@ if ($playerID == '' || $playerID_playlist == '') {
 ?>
 <script src="/wp-content/plugins/brightcove/bc-mapi.js" type="text/javascript"></script>
 <div class='hidden error' id='defaults_not_set' data-defaultsSet='<?php echo $defaultSet; ?>'>
-  You have not set up your defaults for this plugin. Please go to the brightcove menu on the side panel of the admin screen.
+  You have not set up your defaults for this plugin. Please click on the link to set your defaults.
+  <a target="_top" href="admin.php?page=brightcove_menu">Brightcove Settings</a>
 </div>
+<div id='bc-error' class='hidden error'></div>
 <div class='no-error'>
   <div class='outer_container' >
     <input type='hidden' id='bc_api_key' name='bc_api_key' value='<?php echo $apiKey; ?>' >
