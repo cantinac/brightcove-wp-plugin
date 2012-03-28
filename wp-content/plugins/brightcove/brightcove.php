@@ -40,6 +40,7 @@ function bc_media_api_upload_form() {
 media_upload_header();
 add_brightcove_script();
 add_jquery_scripts();
+add_validation_scripts();
 add_dynamic_brightcove_api_script();
 $playerID=get_option('bc_player_id');
 $playerID_playlist=get_option('bc_player_id_playlist');
@@ -58,33 +59,30 @@ if ($playerID == '' || $playerID_playlist == '' || $publisherID  == '') {
   <a target="_top" href="admin.php?page=brightcove_menu">Brightcove Settings</a>
 </div>
 <div id='bc-error' class='hidden error'></div>
-<div class='no-error'>
-  <div class='outer_container' >
-    <input type='hidden' id='bc_api_key' name='bc_api_key' value='<?php echo $apiKey; ?>' >
-    <div id='tabs-api'>
-      <ul>
-        <li ><a class='video-tab-api' href="#tabs-1">Videos</a></li>
-        <li><a class='playlist-tab-api' href="#tabs-2">Playlists</a></li>
-      </ul>
-      <div id='tabs-1'>
-        <button class='button' id='bc_search'>Search</button>
-        <div class='alignright'>
-          <input id='bc-search-field' type='text'>
-          <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
+  <div class='no-error'>
+    <div class='outer_container' >
+      <input type='hidden' id='bc_api_key' name='bc_api_key' value='<?php echo $apiKey; ?>' >
+      <div id='tabs-api'>
+        <ul>
+          <li ><a class='video-tab-api' href="#tabs-1">Videos</a></li>
+          <li><a class='playlist-tab-api' href="#tabs-2">Playlists</a></li>
+        </ul>
+        <div id='tabs-1'>
+          <button class='button' id='bc_search'>Search</button>
+          <div class='alignright'>
+            <input id='bc-search-field' type='text'>
+            <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
+          </div>
+          <div class='bc-video-search clearfix' id='bc-video-search-video'></div>
+
         </div>
-        <div class='bc-video-search clearfix' id='bc-video-search-video'></div>
-
-      </div>
-      <div id='tabs-2'>
-        <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
-        <div class='bc-video-search clearfix' id='bc-video-search-playlist'></div>
-
+        <div id='tabs-2'>
+          <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
+          <div class='bc-video-search clearfix' id='bc-video-search-playlist'></div>
+        </div>
       </div>
     </div>
-
   </div>
-
-</div>
 <?php
 }
 
@@ -93,6 +91,7 @@ function bc_media_upload_form() {
 media_upload_header();
 add_brightcove_script();
 add_jquery_scripts();
+add_validation_scripts();
 add_dynamic_brightcove_api_script();
 
 /*Gets the default player set in the admin settings*/
@@ -116,54 +115,60 @@ if ($playerID == '' || $playerID_playlist == '') {
       <li ><a class='video-tab' href="#tabs-1">Videos</a></li>
       <li><a class='playlist-tab' href="#tabs-2">Playlists</a></li>
     </ul>
+
     <div class='tab video-tab' id='tabs-1'>
       <div class='media-item no-border'>
-        <table>
-          <tbody>
-            <tr>
-              <th valign='top' scope='row' class='label' style='width:130px;'>
-                <span class="alignleft"><label for="bc-video">Video:</label></span>
-                <span class="alignright"></span>
-              </th>
-              <td>
-                <input placeholder='Video ID or URL' aria-required="true" type='text' name='bc-video' id='bc-video' placeholder='Video ID or URL' onchange="BCL.setPlayerData()">
-              </td>
-            </tr>
-            <tr>
-              <th valign='top' scope='row' class='label' style='width:130px;'>
-              </th>
-              <td class='bc-check'>
-                 <input class='alignleft'type='checkbox' name='bc-video-ref' id='bc-video-ref' onchange="BCL.setPlayerData()"/>
-                 <span class="alignleft"><label for='bc-video-ref'>This is a reference ID, not a video ID </label></span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <form id='validate_video'>
+          <table>
+            <tbody>
+              <tr>
+                <th valign='top' scope='row' class='label' style='width:130px;'>
+                  <span class="alignleft"><label for="bc-video">Video:</label></span>
+                  <span class="alignright"></span>
+                </th>
+                <td>
+                  <input placeholder='Video ID' aria-required="true" type='text' name='bcVideo' id='bc-video' placeholder='Video ID or URL' onchange="BCL.setPlayerData()">
+                </td>
+              </tr>
+              <tr>
+                <th valign='top' scope='row' class='label' style='width:130px;'>
+                </th>
+                <td class='bc-check'>
+                   <input class='alignleft' type='checkbox' name='bc-video-ref' id='bc-video-ref' onchange="BCL.setPlayerData()"/>
+                   <span class="alignleft"><label for='bc-video-ref'>This is a reference ID, not a video ID </label></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
       </div>
     </div>
     <div class='tab playlist-tab' id='tabs-2'>
      <div class='media-item no-border'>
-        <table> 
-          <tbody>
-            <tr>
-              <th valign='top' scope='row' class='label' style='width:130px;'>
-                <span class="alignleft"><label for="bc-playlist">Playlist:</label></span>
-                <span class="alignright"></span>
-              </th>
-              <td>
-               <input type='text' name='bc-playlist' id='bc-playlist' placeholder='Playlist ID(s)' onchange="BCL.setPlayerData()"/>
-              </td>
-            </tr>
-            <tr>
-              <th valign='top' scope='row' class='label' style='width:130px;'>
-              </th>
-              <td class='bc-check'>
-               <input class='alignleft' type='checkbox' name='bc-playlist-ref' id='bc-playlist-ref' onchange="BCL.setPlayerData()"/>
-               <span class="alignleft"><label for='bc-playlist-ref'>These are reference IDs, not playlist IDs </label></span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <form id='validate_playlist'>
+          <table> 
+            <tbody>
+              <tr>
+                <th valign='top' scope='row' class='label' style='width:130px;'>
+                  <span class="alignleft"><label for="bc-playlist">Playlist:</label></span>
+                  <span class="alignright"></span>
+                </th>
+                <td>
+                 <input  type='text' name='bc-playlist' id='bc-playlist' placeholder='Playlist ID(s)' onchange="BCL.setPlayerData()"/>
+                 <p>Please enter Playlist ID's separated by comma's</p>
+                </td>
+              </tr>
+              <tr>
+                <th valign='top' scope='row' class='label' style='width:130px;'>
+                </th>
+                <td class='bc-check'>
+                 <input class='alignleft' type='checkbox' name='bc-playlist-ref' id='bc-playlist-ref' onchange="BCL.setPlayerData()"/>
+                 <span class="alignleft"><label for='bc-playlist-ref'>These are reference IDs, not playlist IDs </label></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
       </div>
     </div>
   </div>
@@ -173,38 +178,39 @@ if ($playerID == '' || $playerID_playlist == '') {
         <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
         <input type='hidden' id='bc_default_height' name='bc_default_height' value='<?php echo $defaultHeight; ?>' >
         <input type='hidden' id='bc_default_width' name='bc_default_width' value='<?php echo $defaultWidth; ?>' >
-
-        <table>
-          <tbody>
-            <tr class='bc-player-row'>
-            <th valign='top' scope='row' class='label' style='width:130px;'>
-              <span class="alignleft"><label for="bc-player">Player:</label></span>
-              <span class="alignright"></span>
-            </th>
-            <td>
-             <input type='text' name='bc-player' id='bc-player' placeholder='Player ID (optional)' onchange="BCL.setPlayerData()" />
-            </td>
-          </tr>
-          <tr class='bc-height-row'>
-            <th valign='top' scope='row' class='label' style='width:130px;'>
-              <span class="alignleft"><label for="bc-height">Height:</label></span>
-              <span class="alignright"></span>
-            </th>
-            <td>
-             <input type='text' name='bc-height' id='bc-height' placeholder='Height (optional)' onchange="BCL.setPlayerData()" />
-            </td>
-          </tr>
-          <tr class='bc-width-row'>
-            <th valign='top' scope='row' class='label' style='width:130px;'>
-              <span class="alignleft"><label for="bc-width">Width:</label></span>
-              <span class="alignright"></span>
-            </th>
-            <td>
-             <input type='text' name='bc-width' id='bc-width' placeholder='Width (optional)' onchange="BCL.setPlayerData()" />
-            </td>
-          </tr>
-          </tbody>
-        </table>
+        <form id='validate_settings'>
+          <table>
+            <tbody>
+              <tr class='bc-player-row'>
+              <th valign='top' scope='row' class='label' style='width:130px;'>
+                <span class="alignleft"><label for="bc-player">Player:</label></span>
+                <span class="alignright"></span>
+              </th>
+              <td>
+               <input class='digits' type='text' name='bc-player' id='bc-player' placeholder='Player ID (optional)' onchange="BCL.setPlayerData()" />
+              </td>
+            </tr>
+            <tr class='bc-height-row'>
+              <th valign='top' scope='row' class='label' style='width:130px;'>
+                <span class="alignleft"><label for="bc-height">Height:</label></span>
+                <span class="alignright"></span>
+              </th>
+              <td>
+               <input class='digits'  type='text' name='bc-height' id='bc-height' placeholder='Height (optional)' onchange="BCL.setPlayerData()" />
+              </td>
+            </tr>
+            <tr class='bc-width-row'>
+              <th valign='top' scope='row' class='label' style='width:130px;'>
+                <span class="alignleft"><label for="bc-width">Width:</label></span>
+                <span class="alignright"></span>
+              </th>
+              <td>
+               <input class='digits' type='text' name='bc-width' id='bc-width' placeholder='Width (optional)' onchange="BCL.setPlayerData()" />
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </form>
       </div>
 
     
@@ -257,11 +263,22 @@ wp_register_script( 'brightcove_script', 'http://admin.brightcove.com/js/Brightc
 wp_enqueue_script( 'brightcove_script' );
 }
 
-function add_jquery_scripts()
+function add_validation_scripts()
 {
-   wp_deregister_script('jQuery');
+  wp_deregister_script('jQueryValidate');
+  wp_register_script( 'jQueryValidate', '/wp-content/plugins/brightcove/jQueryValidation/jquery.validate.min.js');
+  wp_enqueue_script( 'jQueryValidate' );
+
+  wp_deregister_script('jQueryValidateAddional');
+  wp_register_script( 'jQueryValidateAddional', '/wp-content/plugins/brightcove/jQueryValidation/additional-methods.min.js');
+  wp_enqueue_script( 'jQueryValidateAddional' );
+}
+
+function add_jquery_scripts()
+{/*
+  wp_deregister_script('jQuery');
   wp_register_script( 'jQuery', '/wp-content/plugins/brightcove/jQueryUI/js/jquery-1.7.1.min.js');
-  wp_enqueue_script( 'jQuery' );
+  wp_enqueue_script( 'jQuery' );*/
 
   wp_deregister_script('jQueryUI');
   wp_register_script( 'jQueryUI', '/wp-content/plugins/brightcove/jQueryUI/js/jquery-ui-1.8.18.custom.min.js');

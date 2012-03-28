@@ -10,19 +10,26 @@ wp_enqueue_script( 'brightcove_menu_script' );
 
 wp_register_style( 'brightcove_menu_style', '/wp-content/plugins/brightcove/admin/brightcove_admin.css');
 wp_enqueue_style( 'brightcove_menu_style' );
+add_menu_page(__('Brightcove Settings'), __('Brightcove'), 'edit_themes', 'brightcove_menu', 'brightcove_menu_render', WP_PLUGIN_URL.'/brightcove/admin/bc_icon.png'); 
 
-add_menu_page(__('Brightcove Settings'), __('Brightcove'), 'edit_themes', 'brightcove_menu', 'brightcove_menu_render'); 
+  wp_deregister_script('jQueryValidate');
+  wp_register_script( 'jQueryValidate', '/wp-content/plugins/brightcove/jQueryValidation/jquery.validate.min.js');
+  wp_enqueue_script( 'jQueryValidate' );
+
+  wp_deregister_script('jQueryValidateAddional');
+  wp_register_script( 'jQueryValidateAddional', '/wp-content/plugins/brightcove/jQueryValidation/additional-methods.min.js');
+  wp_enqueue_script( 'jQueryValidateAddional');
 }
+
 function brightcove_menu_render() {
 $playerID = get_option('bc_player_id');
 $playerID_playlist = get_option('bc_player_id_playlist'); 
 $publisherID = get_option('bc_pub_id');
-
 ?>
 <input id='dataSet' type='hidden' data-defaultPlayer="<?php echo $playerID; ?>" data-defaultPlayerPlaylist="<?php echo $playerID_playlist; ?>" data-publisherID="<?php echo $publisherID; ?>"/>
   <div class='wrap'>
     <h2>Brightcove Settings </h2>
-    <form method='post' action='options.php'>
+    <form id='brightcove_menu' method='post' action='options.php'>
     <?php settings_fields( 'brightcove-settings-group' ); ?>
       <h3> Required Settings </h3>
       <table class='required form-table'> 
@@ -32,7 +39,7 @@ $publisherID = get_option('bc_pub_id');
             <label for="bc_pub_id">Publisher ID</label>
           </th>
           <td>
-            <input value = "<?php echo $publisherID; ?>" name="bc_pub_id" type="text" id="bc_pub_id" placeholder='Publisher ID for accessing the API' class="regular-text">
+            <input class='number regular-text required' value = "<?php echo $publisherID; ?>" name="bc_pub_id" type="text" id="bc_pub_id" placeholder='Publisher ID for accessing the API' class="regular-text">
             <span class='description'>Publisher ID for accessing the API.</span>
           </td>
         </tr>
@@ -41,7 +48,7 @@ $publisherID = get_option('bc_pub_id');
               <label for="bc_player_id">Default Player ID - Single Video</label>
             </th>
             <td>
-              <input value ="<?php echo $playerID; ?>" name="bc_player_id" type="text" id="bc_player_id" class="regular-text" placeholder='Default player ID'>
+              <input value ="<?php echo $playerID; ?>" name="bc_player_id" type="text" id="bc_player_id" class="required regular-text number" placeholder='Default player ID'>
               <span class='description'>Default player ID for setting a custom player template across the site.</span>
             </td>
           </tr>
@@ -50,7 +57,7 @@ $publisherID = get_option('bc_pub_id');
               <label for="bc_player_id_playlist">Default Player ID - Playlist</label>
             </th>
             <td>
-              <input value ="<?php echo $playerID_playlist; ?>"  name="bc_player_id_playlist" type="text" id="bc_player_id_playlist" class="regular-text" placeholder='Default player ID for Playlists'>
+              <input value ="<?php echo $playerID_playlist; ?>"  name="bc_player_id_playlist" type="text" id="bc_player_id_playlist" class="required number regular-text" placeholder='Default player ID for Playlists'>
               <span class='description'>Default player ID for setting a custom player template across the site for playlists.</span>
             </td>
           </tr>
@@ -78,7 +85,7 @@ $publisherID = get_option('bc_pub_id');
               <label for="bc_default_height">Default Player Height </label>
             </th>
             <td>
-              <input value = '<? echo get_option('bc_default_height'); ?>' name="bc_default_height" type="text" id="bc_default_height" class="regular-text" placeholder='Default player height'>
+              <input value = '<? echo get_option('bc_default_height'); ?>' name="bc_default_height" type="text" id="bc_default_height" class="number regular-text" placeholder='Default player height'>
               <span class='description'>Default height for video players</span>
             </td>
           </tr>
@@ -87,7 +94,7 @@ $publisherID = get_option('bc_pub_id');
               <label for="bc_default_width">Default Player Width</label>
             </th>
             <td>
-              <input value = '<? echo get_option('bc_default_width'); ?>' name="bc_default_width" type="text" id="bc_default_width" class="regular-text" placeholder='Default player width'>
+              <input value = '<? echo get_option('bc_default_width'); ?>' name="bc_default_width" type="text" id="bc_default_width" class="number regular-text" placeholder='Default player width'>
               <span class='description'>Default width for video players</span>
             </td>
           </tr>

@@ -20,4 +20,6 @@ jQuery(document).ready(function() {
 		}
 	}
 
+
+	jQuery('#brightcove_menu').validate();
 });
