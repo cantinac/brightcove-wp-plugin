@@ -150,11 +150,11 @@ if ($playerID == '' || $playerID_playlist == '') {
             <tbody>
               <tr>
                 <th valign='top' scope='row' class='label' style='width:130px;'>
-                  <span class="alignleft"><label for="bc-playlist">Playlist:</label></span>
+                  <span class="alignleft"><label for="bcPlaylist">Playlist:</label></span>
                   <span class="alignright"></span>
                 </th>
                 <td>
-                 <input  type='text' name='bc-playlist' id='bc-playlist' placeholder='Playlist ID(s)' onchange="BCL.setPlayerData()"/>
+                 <input  type='text' name='bcPlaylist' id='bcPlaylist' placeholder='Playlist ID(s)' onchange="BCL.setPlayerData()"/>
                  <p>Please enter Playlist ID's separated by comma's</p>
                 </td>
               </tr>
@@ -183,29 +183,29 @@ if ($playerID == '' || $playerID_playlist == '') {
             <tbody>
               <tr class='bc-player-row'>
               <th valign='top' scope='row' class='label' style='width:130px;'>
-                <span class="alignleft"><label for="bc-player">Player:</label></span>
+                <span class="alignleft"><label for="bcPlayer">Player:</label></span>
                 <span class="alignright"></span>
               </th>
               <td>
-               <input class='digits' type='text' name='bc-player' id='bc-player' placeholder='Player ID (optional)' onchange="BCL.setPlayerData()" />
+               <input class='digits' type='text' name='bcPlayer' id='bc-player' placeholder='Player ID (optional)' onchange="BCL.setPlayerData()" />
               </td>
             </tr>
             <tr class='bc-height-row'>
               <th valign='top' scope='row' class='label' style='width:130px;'>
-                <span class="alignleft"><label for="bc-height">Height:</label></span>
+                <span class="alignleft"><label for="bcHeight">Height:</label></span>
                 <span class="alignright"></span>
               </th>
               <td>
-               <input class='digits'  type='text' name='bc-height' id='bc-height' placeholder='Height (optional)' onchange="BCL.setPlayerData()" />
+               <input class='digits'  type='text' name='bcHeight' id='bc-height' placeholder='Height (optional)' onchange="BCL.setPlayerData()" />
               </td>
             </tr>
             <tr class='bc-width-row'>
               <th valign='top' scope='row' class='label' style='width:130px;'>
-                <span class="alignleft"><label for="bc-width">Width:</label></span>
+                <span class="alignleft"><label for="bcWidth">Width:</label></span>
                 <span class="alignright"></span>
               </th>
               <td>
-               <input class='digits' type='text' name='bc-width' id='bc-width' placeholder='Width (optional)' onchange="BCL.setPlayerData()" />
+               <input class='digits' type='text' name='bcWidth' id='bc-width' placeholder='Width (optional)' onchange="BCL.setPlayerData()" />
               </td>
             </tr>
             </tbody>

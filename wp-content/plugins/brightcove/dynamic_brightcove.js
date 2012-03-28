@@ -1,8 +1,15 @@
 /*Creates tab functionality in plugin*/
 jQuery(document).ready(function() {
 
-  jQuery('#validate_settings').validate();
-  /*jQuery('#validate_video').validate();*/
+  jQuery('#validate_settings').validate({
+    
+    messages:{
+      bcHeight : "Please enter a valid height",
+      bcWidth : "Please enter a valid width",
+      bcPlayer : "Please enter a valid player number",
+    }
+  });
+
 
   jQuery('#validate_video').validate({
    rules : {
@@ -18,18 +25,52 @@ jQuery(document).ready(function() {
       }
     },
    messages: {
-     bcVideo: {
-       number:"Please enter a number or check the box for being a reference ID",
-     } 
+      bcVideo: {
+       number:"Please enter a number or check the box for being a reference ID"
+      } 
     }
   });
 
-  jQuery('#validate_playlist').validate();
+    jQuery.validator.addMethod("listOfIds", function(value, element) {
+      return (this.optional(element) || /^[^a-z\W][0-9,\s]*$/ig.test(value));
+    }, "Please enter a single playlist ID or a list of IDs seperated by commas or spaces.");
 
-//Makes it so that video ID no longer has to be a number if it's a reference
+    jQuery.validator.addMethod("listOfRefIds", function(value, element) {
+      return (this.optional(element) || /^[^\W][a-z0-9,\s]*$/ig.test(value));
+    }, "Please enter a single playlist ID or a list of IDs seperated by commas or spaces.");
+
+  jQuery('#validate_playlist').validate({
+    rules: {
+      bcPlaylist: {
+        listOfIds:{ depends: function(element) {
+            if (jQuery("#bc-playlist-ref").attr('checked') == 'checked'){
+              return false;
+            } else {
+              return true;
+            }
+          }
+        },
+        listOfRefIds:{ depends: function(element) {
+            if (jQuery("#bc-playlist-ref").attr('checked') == ''){
+              return false;
+            } else {
+              return true;
+            }
+          }
+        }
+      }
+    }
+  });
+
+  //Makes it so form validates on the fly on #bc-video-ref changing
   jQuery('#bc-video-ref').bind('change',function() {
     jQuery('#bc-video').removeClass('valid').removeClass('error');
     jQuery('#validate_video').valid();
+  });
+
+  jQuery('#bc-playlist-ref').bind('change',function() {
+    jQuery('#bc-playlist').removeClass('valid').removeClass('error');
+    jQuery('#validate_playlist').valid();
   });
 
 /*function ($) {*/
