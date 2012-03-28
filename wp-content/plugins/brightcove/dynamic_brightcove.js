@@ -1,6 +1,6 @@
-/*Creates tab functionality in plugin*/
 jQuery(document).ready(function() {
 
+//Sets up validation messages for the settings on the express version of the plugin
   jQuery('#validate_settings').validate({
     
     messages:{
@@ -9,8 +9,7 @@ jQuery(document).ready(function() {
       bcPlayer : "Please enter a valid player number",
     }
   });
-
-
+//Sets up validation for the video so that if reference ID is not checked then it does not have to be a number
   jQuery('#validate_video').validate({
    rules : {
      bcVideo : {
@@ -23,22 +22,23 @@ jQuery(document).ready(function() {
          }
         }
       }
-    },
+    },//Sets up custom message
    messages: {
       bcVideo: {
-       number:"Please enter a number or check the box for being a reference ID"
+       number:"Please enter a number or check the box for reference ID"
       } 
     }
   });
-
+  //Adds two methods to the validator that deals with a list of playlist IDs and a list of reference IDs
     jQuery.validator.addMethod("listOfIds", function(value, element) {
       return (this.optional(element) || /^[^a-z\W][0-9,\s]*$/ig.test(value));
     }, "Please enter a single playlist ID or a list of IDs seperated by commas or spaces.");
 
     jQuery.validator.addMethod("listOfRefIds", function(value, element) {
-      return (this.optional(element) || /^[^\W][a-z0-9,\s]*$/ig.test(value));
+      return (this.optional(element) || /^[^\W][a-z0-9,\s_]*$/ig.test(value));
     }, "Please enter a single playlist ID or a list of IDs seperated by commas or spaces.");
 
+  //Validates the list of playlist IDs
   jQuery('#validate_playlist').validate({
     rules: {
       bcPlaylist: {
@@ -135,22 +135,28 @@ BCL.setPlayerData = function ()
     BCL.playerData.videoID = undefined; 
   }
 
+    
   if (jQuery('#bc-playlist').hasClass('ignore') == false) {
        // set the playlistID to the selected playlist
-    BCL.playerData.playlistID = jQuery('#bc-playlist').val();
+    var IDS=jQuery('#bc-playlist').val().split(" ").join(",").split(",");
+    var newIDS=[];
+    /*Goes through each value in the array and if it's not blank add's it to the list*/
+    jQuery.each(IDS, function(key,value) {
+      if (value != "") {
+       newIDS.push(value); 
+      }
+    });
+    BCL.playerData.playlistID = newIDS.join(',');
   } else {
     BCL.playerData.playlistID= undefined;
   }
   
   BCL.playerData.playerID = jQuery('#bc-player').val();
-  console.log(BCL.playerData);
   if ((BCL.playerData.playerID == '' || BCL.playerData.playerID == undefined) && (BCL.playerData.playlistID == undefined || BCL.playerData.playlistID == "")) {
       BCL.playerData.playerID = jQuery('#bc_default_player').val();
   } else if ((BCL.playerData.playerID == '' || BCL.playerData.playerID == undefined) && (BCL.playerData.videoID == undefined || BCL.playerData.videoID == "")) {
      BCL.playerData.playerID = jQuery('#bc_default_player_playlist').val();
   }
-  console.log(BCL.playerData);
-  
 
   //If video reference box is checked
   if (jQuery('#bc-video-ref').is(':checked') == true && jQuery('#bc-video-ref').hasClass('ignore') == false) {
@@ -160,20 +166,21 @@ BCL.setPlayerData = function ()
 
   //If playlist reference box is checked
   if (jQuery('#bc-playlist-ref').is(':checked') == true && jQuery('#bc-playlist-ref').hasClass('ignore') == false) {
-    BCL.playerData.playlistID = "ref:"+BCL.playerData.playlistID;
+    
+    BCL.playerData.playlistID= "ref:"+BCL.playerData.playlistID;
     BCL.playerData.isRef = "true";
   } 
 
   if (jQuery('#bc-height').val() != undefined && jQuery('#bc-height').val() != '') {
     BCL.playerData.height = jQuery('#bc-height').val();
-  } else {
+  } else if (jQuery('#bc_default_height').val() != '') {
     BCL.playerData.height=jQuery('#bc_default_height').val();
   }
 
   if (jQuery('#bc-width').val() != undefined && jQuery('#bc-width').val() != '') {
     BCL.playerData.width = jQuery('#bc-width').val();
-  } else {
-    BCL.playerData.width=jQuery('#bc_default_width').val();
+  } else if (jQuery('#bc_default_width').val() != '') {
+    BCL.playerData.height=jQuery('#bc_default_width').val();
   }
 
   BCL.addPlayer();

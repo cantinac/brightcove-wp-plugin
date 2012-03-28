@@ -122,19 +122,19 @@ if ($playerID == '' || $playerID_playlist == '') {
           <table>
             <tbody>
               <tr>
-                <th valign='top' scope='row' class='label' style='width:130px;'>
+                <th valign='top' scope='row' class='label'>
                   <span class="alignleft"><label for="bc-video">Video:</label></span>
                   <span class="alignright"></span>
                 </th>
                 <td>
-                  <input placeholder='Video ID' aria-required="true" type='text' name='bcVideo' id='bc-video' placeholder='Video ID or URL' onchange="BCL.setPlayerData()">
+                  <input class='id-field' placeholder='Video ID' aria-required="true" type='text' name='bcVideo' id='bc-video' placeholder='Video ID or URL' onblur="BCL.setPlayerData()">
                 </td>
               </tr>
               <tr>
-                <th valign='top' scope='row' class='label' style='width:130px;'>
+                <th valign='top' scope='row' class='label'>
                 </th>
                 <td class='bc-check'>
-                   <input class='alignleft' type='checkbox' name='bc-video-ref' id='bc-video-ref' onchange="BCL.setPlayerData()"/>
+                   <input class='alignleft' type='checkbox' name='bc-video-ref' id='bc-video-ref' onblur="BCL.setPlayerData()"/>
                    <span class="alignleft"><label for='bc-video-ref'>This is a reference ID, not a video ID </label></span>
                 </td>
               </tr>
@@ -149,20 +149,19 @@ if ($playerID == '' || $playerID_playlist == '') {
           <table> 
             <tbody>
               <tr>
-                <th valign='top' scope='row' class='label' style='width:130px;'>
+                <th valign='top' scope='row' class='label' >
                   <span class="alignleft"><label for="bcPlaylist">Playlist:</label></span>
                   <span class="alignright"></span>
                 </th>
                 <td>
-                 <input  type='text' name='bcPlaylist' id='bcPlaylist' placeholder='Playlist ID(s)' onchange="BCL.setPlayerData()"/>
-                 <p>Please enter Playlist ID's separated by comma's</p>
+                 <input class='id-field' type='text' name='bcPlaylist' id='bc-playlist' placeholder='Playlist ID(s) seperated by commas' onblur="BCL.setPlayerData()"/>
                 </td>
               </tr>
               <tr>
-                <th valign='top' scope='row' class='label' style='width:130px;'>
+                <th valign='top' scope='row' class='label'>
                 </th>
                 <td class='bc-check'>
-                 <input class='alignleft' type='checkbox' name='bc-playlist-ref' id='bc-playlist-ref' onchange="BCL.setPlayerData()"/>
+                 <input class='alignleft' type='checkbox' name='bc-playlist-ref' id='bc-playlist-ref' onblur="BCL.setPlayerData()"/>
                  <span class="alignleft"><label for='bc-playlist-ref'>These are reference IDs, not playlist IDs </label></span>
                 </td>
               </tr>
@@ -182,30 +181,30 @@ if ($playerID == '' || $playerID_playlist == '') {
           <table>
             <tbody>
               <tr class='bc-player-row'>
-              <th valign='top' scope='row' class='label' style='width:130px;'>
+              <th valign='top' scope='row' class='label'>
                 <span class="alignleft"><label for="bcPlayer">Player:</label></span>
                 <span class="alignright"></span>
               </th>
               <td>
-               <input class='digits' type='text' name='bcPlayer' id='bc-player' placeholder='Player ID (optional)' onchange="BCL.setPlayerData()" />
+               <input class='digits' type='text' name='bcPlayer' id='bc-player' placeholder='Player ID (optional)' onblur="BCL.setPlayerData()" />
               </td>
             </tr>
             <tr class='bc-height-row'>
-              <th valign='top' scope='row' class='label' style='width:130px;'>
+              <th valign='top' scope='row' class='label'>
                 <span class="alignleft"><label for="bcHeight">Height:</label></span>
                 <span class="alignright"></span>
               </th>
               <td>
-               <input class='digits'  type='text' name='bcHeight' id='bc-height' placeholder='Height (optional)' onchange="BCL.setPlayerData()" />
+               <input class='digits'  type='text' name='bcHeight' id='bc-height' placeholder='Height (optional)' onblur="BCL.setPlayerData()" />
               </td>
             </tr>
             <tr class='bc-width-row'>
-              <th valign='top' scope='row' class='label' style='width:130px;'>
+              <th valign='top' scope='row' class='label'>
                 <span class="alignleft"><label for="bcWidth">Width:</label></span>
                 <span class="alignright"></span>
               </th>
               <td>
-               <input class='digits' type='text' name='bcWidth' id='bc-width' placeholder='Width (optional)' onchange="BCL.setPlayerData()" />
+               <input class='digits' type='text' name='bcWidth' id='bc-width' placeholder='Width (optional)' onblur="BCL.setPlayerData()" />
               </td>
             </tr>
             </tbody>
@@ -223,18 +222,18 @@ if ($playerID == '' || $playerID_playlist == '') {
         <div id='bc-error' class='hidden error'></div>
       </div>
 
-      <div class='media-item no-border'>
+      <div class='media-item no-border player-preview'>
        <table>
          <tbody>
           <tr>
             <td>
-              <div class='alignleft player-preview'>
+              <div class='alignleft'>
+                  <h3 id='bc_title'></h3>
+                  <p id='bc_description'></p>
                   <p> Video Preview: </p>
                   <div id="dynamic-bc-placeholder"> </div>
               </div>
               <div class='alignleft'>
-                <h1 id='bc_title'></h1>
-                <p id='bc_description'></p>
               </div>
             </td>
           </tr>

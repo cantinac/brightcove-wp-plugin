@@ -36,11 +36,14 @@
  	margin-top:1em;
 }
 
-#tabs .media-item
+#tabs .media-item, #tabs .media-item table, .media-item table, .media-item table td input
 {
-	width:80%;
+	width:100%;
 }
-
+#bc-video-ref, #bc-playlist-ref
+{
+width:auto;
+}
 .hidden
 {
 	display:none;
@@ -175,4 +178,15 @@ body#media-upload ul#sidemenu
 .block
 {
 	display:block;
+}
+
+.player-preview
+{
+	line-height:1em;
+}
+
+.id-field
+{
+	width:100%;
+
 }
