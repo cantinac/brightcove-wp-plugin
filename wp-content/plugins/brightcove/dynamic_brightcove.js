@@ -1,8 +1,7 @@
 jQuery(document).ready(function() {
 
 //Sets up validation messages for the settings on the express version of the plugin
-  jQuery('#validate_settings').validate({
-    
+  jQuery('#validate_settings').validate({ 
     messages:{
       bcHeight : "Please enter a valid height",
       bcWidth : "Please enter a valid width",
@@ -90,6 +89,7 @@ jQuery(document).ready(function() {
       jQuery("#tabs-api").tabs();
     } //Bind search functionality to media API
     if (jQuery('#bc_search').length > 0) {
+      BCL.mediaAPISearch();
       jQuery('#bc_search').bind('click', BCL.mediaAPISearch);
       jQuery('.playlist-tab-api').bind('click', BCL.seeAllPlaylists);
     }
@@ -252,6 +252,7 @@ BCL.addPlayer = function () {
     {
       BCL.dontDisplay = 'false';
       BCL.seeAllPlaylists();
+      jQuery('.see_all_playlists').remove();
     });
 
   } else {
@@ -369,51 +370,51 @@ BCL.displaySingleVideo = function (pResponse)
         var month = (new Date(parseInt(lastModifiedDate))).getDay();
         var day = (new Date(parseInt(lastModifiedDate))).getMonth();
         var year = (new Date(parseInt(lastModifiedDate))).getFullYear();
-        lastModifiedDate ='<span class="title">'+month+'/'+day+'/'+year+'</span>';
+        lastModifiedDate ='<td class="title">'+month+'/'+day+'/'+year+'</td>';
 
         var numVideos=pResponse.items[pVideo].videos.length;
 
         if (numVideos == 0) {
-          lastModifiedDate ='<span class="title"></span>';
+          lastModifiedDate ='<td class="title"></td>';
         }
-        numVideos='<span class="title">'+numVideos+'</span>';
+        numVideos='<td class="text-align-center title">'+numVideos+'</td>';
 
 
-        var heading = '<div class="clearfix widefat"><div>Name</div><div>Number of videos</div><div>Last Updated</div></div>';
+        var heading = '<table class="widefat"><thead><tr><th></th><th>Name</th><th>Number of videos</th><th>Last Updated</th></tr></thead>';
         if (pResponse.items[pVideo].videos.length > 0) {
           var imgSrc=pResponse.items[pVideo].videos[0].thumbnailURL;
         }
-        var currentName="<div class='filename new'><span class='title'>"+BCL.constrain(pResponse.items[pVideo].name,13)+"</span></div>";
-        var currentVid="<img class='pinkynail toggle' src='"+imgSrc+"'/>";
+        var currentName="<td class='title'>"+BCL.constrain(pResponse.items[pVideo].name,25)+"</td>";
+        var currentVid="<td><img class='pinkynail toggle' src='"+imgSrc+"'/></td>";
         
-        innerHTML = innerHTML+"<div data-videoID='"+pResponse.items[pVideo].id+"' title='"+pResponse.items[pVideo].name+"' class='clearfix bc_video media-item child-of-2 preloaded'>"+currentVid+currentName+numVideos+lastModifiedDate+"</div>";  
+        innerHTML = innerHTML+"<tr data-videoID='"+pResponse.items[pVideo].id+"' title='"+pResponse.items[pVideo].name+"' class='bc_video media-item child-of-2 preloaded'>"+currentVid+currentName+numVideos+lastModifiedDate+"</tr>";  
 
     } else {
         //videos: small thumbnail, name, duration, published date
-        var currentName="<div class='filename new'><span class='title'>"+BCL.constrain(pResponse.items[pVideo].name,20)+"</span></div>";
+        var currentName="<td class='title'>"+BCL.constrain(pResponse.items[pVideo].name,25)+"</td>";
         var imgSrc=pResponse.items[pVideo].thumbnailURL;
         console.log(imgSrc);
-        var currentVid="<img class='pinkynail toggle' src='"+imgSrc+"'/>";
+        var currentVid="<td><img class='pinkynail toggle' src='"+imgSrc+"'/></td>";
         
         var lengthMin = Math.floor(pResponse.items[pVideo].length/60000);
         var lengthSec = Math.floor((pResponse.items[pVideo].length%60000)/1000);
-        var length = (lengthMin+":"+lengthSec);
+        var length ="<td class='title'>"+(lengthMin+":"+lengthSec)+"</td>";
         
         var date=new Date(parseInt(pResponse.items[pVideo].publishedDate));
         var month = date.getDay();
         var day = date.getMonth();
         var year = date.getFullYear();
-        date='<span>'+month+"/"+day+"/"+year+'</span>';
+        date='<td class="title">'+month+"/"+day+"/"+year+'</td>';
 
         
-        var heading = '<div class="clearfix widefat"><div>Name</div><div>Duration</div><div>Published Date</div></div>';
-        innerHTML = innerHTML+"<div data-videoID='"+pResponse.items[pVideo].id+"' title='"+pResponse.items[pVideo].name+"' class='clearfix bc_video media-item child-of-2 preloaded'>"+currentVid+currentName+length+date+"</div>";  
+        var heading = '<table class="clearfix widefat"><thead><tr><th></th><th>Name</th><th>Duration</th><th>Published Date</th></tr></thead>';
+        innerHTML = innerHTML+"<tr data-videoID='"+pResponse.items[pVideo].id+"' title='"+pResponse.items[pVideo].name+"' class='bc_video media-item child-of-2 preloaded'>"+currentVid+currentName+length+date+"</tr>";  
 
       }
   }
-    innerHTML = '<div id="media-items" style="width:100%" class="ui-sortable">'+innerHTML+'</div>';
     
-    innerHTML = heading + innerHTML;
+    
+    innerHTML = heading + innerHTML +"</table>" ;
 
     if (BCL.typeOfPlayer == 'single') {
       jQuery('#bc-video-search-video').html(innerHTML);
