@@ -200,7 +200,10 @@ body#media-upload ul#sidemenu
 	text-align:right;
 }
 
-#bc-search-field { width:80%; }
+/*Styling for search bar on media api video tab*/
+#tabs-api #tabs-1 div:first-child {width:85%;}
+#tabs-api #tabs-1 div:first-child input {width:100%;}
+#tabs-api #tabs-1 div:nth-child(2) button {float:right;}
 
 
 
