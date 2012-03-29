@@ -161,7 +161,8 @@ var BCL = {};
       });
     } else {
 
-      $('#dynamic-bc-placeholder').html(playerHTML).closest('.preview-container').show();
+      $('#dynamic-bc-placeholder').closest('.preview-container').show();
+      $('#dynamic-bc-placeholder').html(playerHTML);
 
     }
     
