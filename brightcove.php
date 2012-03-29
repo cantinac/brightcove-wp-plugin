@@ -70,15 +70,17 @@ if ($playerID == '' || $playerID_playlist == '' || $publisherID  == '') {
           <li><a class='playlist-tab-api' href="#tabs-2">Playlists</a></li>
         </ul>
         <div id='tabs-1'>
-          <div class='alignleft'>
-            <input placeholder=' Search by name, short description, long description, tag or custom field' id='bc-search-field' type='text'>
-            <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
-          </div>
-          <div class='align-right'>
-            <button class='button' id='bc_search'>Search</button>
-          </div>
+          <form id='search_form'>
+            <div class='alignleft'>
+              <input placeholder=' Search by name, short description, long description, tag or custom field' id='bc-search-field' type='text'>
+              <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
+            </div>
+            <div class='align-right'>
+              <button class='button' type='submit' id='bc_search'>Search</button>
+            </div>
+          </form>
           <div class='bc-video-search clearfix' id='bc-video-search-video'></div>
-
+          
         </div>
         <div id='tabs-2'>
           <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
