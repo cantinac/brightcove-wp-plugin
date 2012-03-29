@@ -319,10 +319,10 @@ BCL.mediaAPISearch = function() {
   var url= [
     "http://api.brightcove.com/services/library&command=search_videos",
     "&token=", encodeURIComponent(BCL.token),
-    "&all=search_text:", encodeURIComponent(BCL.searchParams),
-    "&all=custom_fields:", encodeURIComponent(BCL.searchParams),
-    "&all=tag:",encodeURIComponent(BCL.searchParams),
-    "&callback=",encodeURIComponent(BCL.displaySingleVideo())
+    "&any=search_text:", encodeURIComponent(BCL.searchParams),
+    "&any=custom_fields:", encodeURIComponent(BCL.searchParams),
+    "&any=tag:",encodeURIComponent(BCL.searchParams),
+    "&callback=",encodeURIComponent("BCL.displaySingleVideo")
   ].join("");
 
   // Make a call to the API requesting content
