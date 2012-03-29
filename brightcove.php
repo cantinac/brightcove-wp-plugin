@@ -236,16 +236,17 @@ if ($playerID == '' || $playerID_playlist == '') {
       <div id='bc-error' class='hidden error'></div>
     </div>
 
-    <div class='media-item no-border player-preview'>
-     <table>
+    <div class='media-item no-border player-preview preview-container' style="display: none;">
+      <h3>Video Preview</h3>
+
+      <table>
        <tbody>
         <tr>
           <td>
             <div class='alignleft'>
-                <h3 id='bc_title'></h3>
+                <h4 id='bc_title'></h4>
                 <p id='bc_description'></p>
-                <p> Video Preview: </p>
-                <div id="dynamic-bc-placeholder"> </div>
+                <div id="dynamic-bc-placeholder"></div>
             </div>
             <div class='alignleft'>
             </div>

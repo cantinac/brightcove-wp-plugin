@@ -128,7 +128,7 @@ var BCL = {};
   BCL.addPlayer = function () { 
 
     /*Remove all of the old HTML for the player and the old title and description*/
-    $('#dynamic-bc-placeholder').html('');
+    $('#dynamic-bc-placeholder').closest('.preview-container').hide();
     $('#bc_title').html('');
     $('#bc_description').html('');
     
@@ -161,7 +161,8 @@ var BCL = {};
       });
     } else {
 
-      $('#dynamic-bc-placeholder').html(playerHTML);
+      $('#dynamic-bc-placeholder').html(playerHTML).closest('.preview-container').show();
+
     }
     
     // instantiate the player
@@ -373,7 +374,7 @@ var BCL = {};
 
   // MAPI: Updates the player preview and the fields below for overriding settings
   BCL.setHTML =function (videoId) {
-    innerHTML =  '<div id="dynamic-bc-placeholder"></div>';
+    var innerHTML =  '<div id="dynamic-bc-placeholder"></div>';
     innerHTML += '<input class="block" type="text" id="bc-player" placeholder="Player ID" />';
     innerHTML += '<input class="block player_data_api" id="bc-width" type="text" placeholder="Width (optional)" />';
     innerHTML += '<input class="block player_data_api" type="text" id="bc-height" placeholder="Height (optional)" />';
