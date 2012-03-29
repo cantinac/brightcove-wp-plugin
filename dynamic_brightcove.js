@@ -126,6 +126,7 @@ var BCL = {};
 
   // Renders the preview player
   BCL.addPlayer = function () { 
+
     /*Remove all of the old HTML for the player and the old title and description*/
     $('#dynamic-bc-placeholder').html('');
     $('#bc_title').html('');
@@ -134,6 +135,7 @@ var BCL = {};
     var playerHTML;
     // set the playerID to the selected player
     // populate the player object template
+    console.log(BCL.playerData);
     if ( BCL.playerData.videoID != '' && BCL.playerData.videoID != undefined) {
       //If a single video id is entered
       playerHTML = BCL.markup(BCL.singlePlayerTemplate, BCL.playerData);
@@ -141,7 +143,6 @@ var BCL = {};
       //If a playlist is loaded
       playerHTML = BCL.markup(BCL.playlistPlayerTemplate, BCL.playerData);
     }
-   
 
     // inject the player code into the DOM
     //Check to see if we are in the media API then check to see what the player type is
@@ -159,6 +160,7 @@ var BCL = {};
         $('.see_all_playlists').remove();
       });
     } else {
+
       $('#dynamic-bc-placeholder').html(playerHTML);
     }
     
@@ -196,9 +198,9 @@ var BCL = {};
     }
 
     if (BCL.playerData.videoID != undefined && BCL.playerData.videoID != '') {
-      shortcode = '[brightcove videoID="'+BCL.playerData.videoID+'" '+isRef+' playerID="'+BCL.playerData.playerID+'" height="'+BCL.playerData.height+'" width="'+BCL.playerData.width+'"]';
+      var shortcode = '[brightcove videoID='+BCL.playerData.videoID+' '+isRef+' playerID='+BCL.playerData.playerID+' height='+BCL.playerData.height+' width='+BCL.playerData.width+']';
     } else if (BCL.playerData.playlistID != undefined) {
-      shortcode = '[brightcove playlistID="'+BCL.playerData.playlistID+'" '+isRef+' playerID="'+BCL.playerData.playerID+'" height="'+BCL.playerData.height+'" width="'+BCL.playerData.width+'"]';
+       var shortcode = '[brightcove playlistID='+BCL.playerData.playlistID+' '+isRef+' playerID='+BCL.playerData.playerID+' height='+BCL.playerData.height+' width='+BCL.playerData.width+']';
     }
        
     var win = window.dialogArguments || opener || parent || top;
@@ -348,10 +350,20 @@ var BCL = {};
   // Gather the selected playlists and trigger a player update
   BCL.getPlaylists = function ()
   {
+    var playlists = []
     $.each($('#bc-video-search-playlist tr'), function (key, value)
     {
-      console.log(value);  
+      if ($(value).find('input').attr('checked'))
+      {
+        playlists.push($(value).data('videoid'));
+      }
     });
+    playlists=playlists.join(',');
+    jQuery('.playlist_preview').remove();
+    BCL.setHTML();
+    BCL.playerData.playlistID=playlists;
+    BCL.setPlayerDataAPI();
+
   }
 
   // MAPI: Updates the player preview and the fields below for overriding settings
