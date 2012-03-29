@@ -15,7 +15,6 @@ Author URI:
 
 require dirname( __FILE__ ) . '/admin/brightcove_admin.php';
 
-
 /************************Upload Media Tab ***************************/
 
 function brightcove_media_menu($tabs) {
@@ -72,10 +71,12 @@ if ($playerID == '' || $playerID_playlist == '' || $publisherID  == '') {
           <li><a class='playlist-tab-api' href="#tabs-2">Playlists</a></li>
         </ul>
         <div id='tabs-1'>
-          <button class='button' id='bc_search'>Search</button>
-          <div class='alignright'>
-            <input id='bc-search-field' type='text'>
+          <div class='alignleft'>
+            <input placeholder=' Search by name, short description, long description, tag or custom field' id='bc-search-field' type='text'>
             <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
+          </div>
+          <div class='align-right'>
+            <button class='button' id='bc_search'>Search</button>
           </div>
           <div class='bc-video-search clearfix' id='bc-video-search-video'></div>
 
