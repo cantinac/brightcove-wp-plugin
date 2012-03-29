@@ -313,12 +313,23 @@ BCL.insertShortcode = function() {
 BCL.mediaAPISearch = function() {
   jQuery('#bc-video-search-video').html("<p> Searching...</p>");
   BCL.searchParams = jQuery('#bc-search-field').val();
-  BCMAPI.token = jQuery('#bc_api_key').val();
+
+  BCL.token = jQuery('#bc_api_key').val();
+
+  var url= [
+    "http://api.brightcove.com/services/library&command=search_videos",
+    "&token=", encodeURIComponent(BCL.token),
+    "&all=search_text:", encodeURIComponent(BCL.searchParams),
+    "&all=custom_fields:", encodeURIComponent(BCL.searchParams),
+    "&all=tag:",encodeURIComponent(BCL.searchParams),
+    "&callback=",encodeURIComponent(BCL.displaySingleVideo())
+  ].join("");
+
   // Make a call to the API requesting content
   // Note that a callback function is needed to handle the returned data
   /*Show loader*/
   /*Then in callback hide the loader*/
-  BCMAPI.search({ "callback" : "BCL.displaySingleVideo", 'all' : BCL.searchParams}); 
+  BCMAPI.inject(url); 
 };
 
 BCL.seeAllPlaylists = function() {
