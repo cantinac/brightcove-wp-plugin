@@ -265,7 +265,12 @@ var BCL = {};
 
   BCL.displayVideos = function (pResponse) {
     var innerHTML="";
-
+    console.log(pResponse.items.length);
+    if (pResponse.items.length == 0)
+    {
+      innerHTML="<p> Sorry those search parameters did not return any results </p>";
+      $('#bc-video-search-video').html(innerHTML);
+    } else {
     for (var pVideo in pResponse.items) {
       var playlistOrVideo='video';
 
@@ -352,6 +357,7 @@ var BCL = {};
       $('#playlist_preview').bind('click', BCL.getPlaylists);
       $('#bc-video-search-playlist').html(innerHTML);
     }
+  }
   }
 
   // Gather the selected playlists and trigger a player update
