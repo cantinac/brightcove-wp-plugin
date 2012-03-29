@@ -188,5 +188,31 @@ body#media-upload ul#sidemenu
 .id-field
 {
 	width:100%;
+}
 
+div.widefat 
+{
+	height:32.5px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+div.widefat *
+{
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+div.widefat div
+{
+	float:left;
+	text-shadow:0 1px 0 rgba(255, 255, 255, 0.8);
+	font-family:Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+    font-size: 14px;
+    line-height: 1.3em;
+    padding: 7px 7px 8px;
+    text-align: left;
+  	
 }

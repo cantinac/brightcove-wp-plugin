@@ -62,6 +62,10 @@ if ($playerID == '' || $playerID_playlist == '' || $publisherID  == '') {
   <div class='no-error'>
     <div class='outer_container' >
       <input type='hidden' id='bc_api_key' name='bc_api_key' value='<?php echo $apiKey; ?>' >
+       <input type='hidden' id='bc_default_height' name='bc_default_height' value='<?php echo $defaultHeight; ?>' >
+        <input type='hidden' id='bc_default_width' name='bc_default_width' value='<?php echo $defaultWidth; ?>' >
+          <input type='hidden' id='bc_default_thumbnail' value='<?php echo dirname( __FILE__ ).'/admin/brightcove.png';?>' >
+
       <div id='tabs-api'>
         <ul>
           <li ><a class='video-tab-api' href="#tabs-1">Videos</a></li>

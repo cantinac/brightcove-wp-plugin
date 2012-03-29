@@ -310,6 +310,7 @@ BCL.insertShortcode = function() {
 
 
 BCL.mediaAPISearch = function() {
+  jQuery('#bc-video-search-video').html("<p> Searching...</p>");
   BCL.searchParams = jQuery('#bc-search-field').val();
   BCMAPI.token = jQuery('#bc_api_key').val();
   // Make a call to the API requesting content
@@ -320,6 +321,7 @@ BCL.mediaAPISearch = function() {
 };
 
 BCL.seeAllPlaylists = function() {
+  jQuery('#bc-video-search-playlist').html("<p> Loading...</p>");
   BCMAPI.token = jQuery('#bc_api_key').val();
   // Make a call to the API requesting content
   // Note that a callback function is needed to handle the returned data
@@ -346,20 +348,17 @@ BCL.displaySingleVideo = function (pResponse)
 }
 
  BCL.displayVideos = function (pResponse) {
- 
- 
-
   var innerHTML="";
     for (var pVideo in pResponse.items) {
 
     var playlistOrVideo='video';
     if (pResponse.items[pVideo].videos != undefined) {
       playlistOrVideo='playlist';
-      }
-  
+      } 
+
       /*playlists: name, # of videos, last updated*/
       if (playlistOrVideo == 'playlist'){
-        var lastModifiedDate = 99999999999999;
+        var lastModifiedDate = Number.MAX_VALUE;
         jQuery.each(pResponse.items[pVideo].videos, function(key,value) {
           tempDate = value.lastModifiedDate;
           if (tempDate < lastModifiedDate) {
@@ -367,15 +366,20 @@ BCL.displaySingleVideo = function (pResponse)
           }
         });
 
-        var month = new Date(lastModifiedDate*10).getDate();
-        var day = new Date(lastModifiedDate*10).getDay();
-        var year = new Date(lastModifiedDate*10).getYear();
-        console.log(new Date (lastModifiedDate));
+        var month = (new Date(parseInt(lastModifiedDate))).getDay();
+        var day = (new Date(parseInt(lastModifiedDate))).getMonth();
+        var year = (new Date(parseInt(lastModifiedDate))).getFullYear();
         lastModifiedDate ='<span class="title">'+month+'/'+day+'/'+year+'</span>';
 
+        var numVideos=pResponse.items[pVideo].videos.length;
 
-        var numVideos='<span class="title">'+pResponse.items[pVideo].videos.length+'</span>';
-        var heading = '<table class="widefat" cellspacing="0"><thead><tr><th>Name</th><th>Number of videos</th><th>Last Updated</th></tr></thead></table>';
+        if (numVideos == 0) {
+          lastModifiedDate ='<span class="title"></span>';
+        }
+        numVideos='<span class="title">'+numVideos+'</span>';
+
+
+        var heading = '<div class="clearfix widefat"><div>Name</div><div>Number of videos</div><div>Last Updated</div></div>';
         if (pResponse.items[pVideo].videos.length > 0) {
           var imgSrc=pResponse.items[pVideo].videos[0].thumbnailURL;
         }
@@ -386,20 +390,28 @@ BCL.displaySingleVideo = function (pResponse)
 
     } else {
         //videos: small thumbnail, name, duration, published date
-        var currentName="<div class='filename new'><span class='title'>"+BCL.constrain(pResponse.items[pVideo].name,13)+"</span></div>";
+        var currentName="<div class='filename new'><span class='title'>"+BCL.constrain(pResponse.items[pVideo].name,20)+"</span></div>";
+        var imgSrc=pResponse.items[pVideo].thumbnailURL;
+        console.log(imgSrc);
         var currentVid="<img class='pinkynail toggle' src='"+imgSrc+"'/>";
+        
         var lengthMin = Math.floor(pResponse.items[pVideo].length/60000);
         var lengthSec = Math.floor((pResponse.items[pVideo].length%60000)/1000);
         var length = (lengthMin+":"+lengthSec);
-        var date='<span>'+new Date(pResponse.items[pVideo].publishedDate*1000)+'</span>';
-        var imgSrc=pResponse.items[pVideo].thumbnailURL;
+        
+        var date=new Date(parseInt(pResponse.items[pVideo].publishedDate));
+        var month = date.getDay();
+        var day = date.getMonth();
+        var year = date.getFullYear();
+        date='<span>'+month+"/"+day+"/"+year+'</span>';
 
-        var heading = '<table class="widefat" cellspacing="0"><thead><tr><th>Name</th><th>Duration</th><th>Published Date</th></tr></thead></table>';
-        innerHTML = innerHTML+"<div data-videoID='"+pResponse.items[pVideo].id+"' title='"+pResponse.items[pVideo].name+"' class='clearfix bc_video media-item child-of-2 preloaded'>"+currentVid+currentName+numVideos+date+"</div>";  
+        
+        var heading = '<div class="clearfix widefat"><div>Name</div><div>Duration</div><div>Published Date</div></div>';
+        innerHTML = innerHTML+"<div data-videoID='"+pResponse.items[pVideo].id+"' title='"+pResponse.items[pVideo].name+"' class='clearfix bc_video media-item child-of-2 preloaded'>"+currentVid+currentName+length+date+"</div>";  
 
       }
   }
-    innerHTML = '<div id="media-items" style="width:603px" class="ui-sortable">'+innerHTML+'</div>';
+    innerHTML = '<div id="media-items" style="width:100%" class="ui-sortable">'+innerHTML+'</div>';
     
     innerHTML = heading + innerHTML;
 
@@ -438,17 +450,30 @@ BCL.setPlayerDataAPI = function (){
 
   if (BCL.typeOfPlayer == 'single') {
     BCL.playerData = {  "playerID" : jQuery('#bc_default_player').val(),
-                      "width"   : jQuery('#bc-width').val(),
-                      "height"  : jQuery('#bc-height').val(),
+                      "width" : "480", //Fallback height and width
+                      "height" : "270",
                       "videoID" : BCL.playerData.videoID,
                       "isRef"   : ""};
   } else {
     BCL.playerData = {  "playerID" : jQuery('#bc_default_player_playlist').val(),
-                      "width"   : jQuery('#bc-width').val(),
-                      "height"  : jQuery('#bc-height').val(),
+                      "width" : "480", //Fallback height and width
+                      "height" : "270",
                       "playlistID" : BCL.playerData.playlistID,
                       "isRef"   : ""};
                     }
+  
+  //Sets the default height and with incase they aren't set
+  if (jQuery('#bc-width').val() != '') {
+    BCL.playerData.width = jQuery('#bc-width').val();
+  } else if (jQuery('#bc_default_width').val() != '') {
+     BCL.playerData.width = jQuery('#bc_default_width').val();
+  }
+
+  if (jQuery('#bc-height').val() != '') {
+    BCL.playerData.width = jQuery('#bc-height').val();
+  } else if (jQuery('#bc_default_height').val() != '') {
+     BCL.playerData.width = jQuery('#bc_default_height').val();
+  }
                  
   BCL.addPlayer();
 }
