@@ -2,19 +2,17 @@
 
 .bc-container { margin: 10px 28px; }
 .bc-container .ui-widget-header { background: transparent; border-top: 0; border-right: 0; border-left: 0; }
+.bc-container #tabs .tab { padding: 1em .5em; }
+.bc-container #tabs th.label label { font-size: 12px; font-weight: bold; }
 .media-item img, .media-item .filename { float:left; }
+.media-item th.label { width: 60px; padding-left: 8px; }
+.ui-tabs th.label { padding-left: 0; }
 
-.media-item span.title
-{
-	float:left;
-	margin-left:1em;
-	margin-right:1em;
-}
+.media-item span.title { float:left; margin-left:1em; margin-right:1em; }
+.insert-button-container { margin-top: 10px; }
 
-.bc-check span
-{
-	margin-left:1em;
-}
+.bc-check input { margin-top: .5em; }
+.bc-check span { margin-left: .5em; }
 
 #bc-error { line-height:3em; padding: 0 10px; margin: 10px; }
 

@@ -155,7 +155,7 @@ if ($playerID == '' || $playerID_playlist == '') {
                     <span class="alignright"></span>
                   </th>
                   <td>
-                   <input class='id-field' type='text' name='bcPlaylist' id='bc-playlist' placeholder='Playlist ID(s) seperated by commas' onblur="BCL.setPlayerData()"/>
+                   <input class='id-field' type='text' name='bcPlaylist' id='bc-playlist' placeholder='Playlist ID(s) seperated by commas or spaces' onblur="BCL.setPlayerData()"/>
                   </td>
                 </tr>
                 <tr>
@@ -214,7 +214,7 @@ if ($playerID == '' || $playerID_playlist == '') {
       </form>
     </div>
 
-    <div class='media-item no-border'>
+    <div class='media-item no-border insert-button-container'>
       <button class='aligncenter button' onclick="BCL.insertShortcode()" />Insert Shortcode</button>
     </div>
 
