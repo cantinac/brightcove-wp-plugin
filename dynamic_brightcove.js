@@ -380,10 +380,21 @@ var BCL = {};
 
   // MAPI: Updates the player preview and the fields below for overriding settings
   BCL.setHTML =function (videoId) {
+
+    var defaultHeight=$('#bc_default_height').val();
+    if (defaultHeight == '') {
+      defaultHeight="270";
+    }
+
+    var defaultWidth=$('#bc_default_width').val();
+    if (defaultWidth == '') {
+      defaultWidth="480";
+    }
+
     var innerHTML =  '<div id="dynamic-bc-placeholder"></div>';
     innerHTML += '<input class="block" type="text" id="bc-player" placeholder="Player ID" />';
-    innerHTML += '<input class="block player_data_api" id="bc-width" type="text" placeholder="Width (optional)" />';
-    innerHTML += '<input class="block player_data_api" type="text" id="bc-height" placeholder="Height (optional)" />';
+    innerHTML += '<input class="block player_data_api" id="bc-width" type="text" placeholder="'+defaultWidth+'" />';
+    innerHTML += '<input class="block player_data_api" type="text" id="bc-height" placeholder="'+defaultHeight+'" />';
     innerHTML += '<button class="shortcode_button">Insert Video </button>';
     
     if (BCL.typeOfPlayer == 'single') {
@@ -427,7 +438,7 @@ var BCL = {};
     if ($('#bc-height').val() != '') {
       BCL.playerData.width = $('#bc-height').val();
     } else if ($('#bc_default_height').val() != '') {
-       BCL.playerData.width = $('#bc_default_height').val();
+       BCL.playerData.height = $('#bc_default_height').val();
     }
                    
     BCL.addPlayer();

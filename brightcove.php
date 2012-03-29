@@ -41,6 +41,8 @@ add_jquery_scripts();
 add_validation_scripts();
 add_dynamic_brightcove_api_script();
 $playerID=get_option('bc_player_id');
+$defaultHeight=get_option('bc_default_height');
+$defaultWidth=get_option('bc_default_width');
 $playerID_playlist=get_option('bc_player_id_playlist');
 $publisherID=get_option('bc_pub_id');
 $apiKey=get_option('bc_api_key');
