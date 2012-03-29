@@ -18,7 +18,11 @@ require dirname( __FILE__ ) . '/admin/brightcove_admin.php';
 /************************Upload Media Tab ***************************/
 
 function brightcove_media_menu($tabs) {
-  $tabs['brightcove']='Brightcove';
+  if (get_option('bc_api_key') != NULL or get_option('bc_api_key') != '') {
+    $tabs['brightcove_api']='Brightcove'; 
+  } else {
+    $tabs['brightcove']='Brightcove';
+  }
   return $tabs;
 }
 
