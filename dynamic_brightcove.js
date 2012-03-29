@@ -382,7 +382,7 @@ var BCL = {};
   // MAPI: Updates the player preview and the fields below for overriding settings
   BCL.setHTML =function (videoId) {
     var innerHTML =  '<div id="dynamic-bc-placeholder"></div>';
-    innerHTML += '<input class="block" type="text" id="bc-player" placeholder="Player ID" />';
+    innerHTML += '<input class="block" type="text" id="bc-player" placeholder="Player ID (optional)" />';
     innerHTML += '<input class="block player_data_api" id="bc-width" type="text" placeholder="Width (optional)" />';
     innerHTML += '<input class="block player_data_api" type="text" id="bc-height" placeholder="Height (optional)" />';
     innerHTML += '<button class="shortcode_button">Insert Video </button>';

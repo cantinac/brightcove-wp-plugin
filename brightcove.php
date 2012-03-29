@@ -175,7 +175,7 @@ if ($playerID == '' || $playerID_playlist == '') {
                     <span class="alignright"></span>
                   </th>
                   <td>
-                   <input class='id-field player-data' type='text' name='bcPlaylist' id='bc-playlist' placeholder='Playlist ID(s) seperated by commas' />
+                   <input class='id-field player-data' type='text' name='bcPlaylist' id='bc-playlist' placeholder='Playlist ID(s) separated by commas or spaces' />
                   </td>
                 </tr>
                 <tr>
@@ -226,7 +226,7 @@ if ($playerID == '' || $playerID_playlist == '') {
               <span class="alignright"></span>
             </th>
             <td>
-             <input class='digits plaer-data' type='text' name='bcWidth' id='bc-width' placeholder='Default is <?php echo $defaultWidth; ?> px' />
+             <input class='digits player-data' type='text' name='bcWidth' id='bc-width' placeholder='Default is <?php echo $defaultWidth; ?> px' />
             </td>
           </tr>
           </tbody>
