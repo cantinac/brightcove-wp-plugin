@@ -289,9 +289,11 @@ var BCL = {};
         var numVideos=pResponse.items[pVideo].videos.length;
         
          var disable='';
+         var disabled='';
         if (numVideos == 0) {
           lastModifiedDate ='<td class="title"></td>';
           disable='disable';
+          var disabled='disabled=disabled';
         }
         numVideos='<td class="text-align-center title">'+numVideos+'</td>';
 
@@ -303,7 +305,7 @@ var BCL = {};
         var currentName="<td class='title'>"+BCL.constrain(pResponse.items[pVideo].name,25)+"</td>";
         var currentVid="<td><img class='pinkynail toggle' src='"+imgSrc+"'/></td>";
         
-        innerHTML = innerHTML+"<tr data-videoID='"+pResponse.items[pVideo].id+"' title='"+pResponse.items[pVideo].name+"' class='"+disable+" media-item child-of-2 preloaded'><td><input type='checkbox'/></td>"+currentVid+currentName+numVideos+lastModifiedDate+"</tr>";  
+        innerHTML = innerHTML+"<tr data-videoID='"+pResponse.items[pVideo].id+"' title='"+pResponse.items[pVideo].name+"' class='"+disable+" media-item child-of-2 preloaded'><td><input "+disabled+" type='checkbox'/></td>"+currentVid+currentName+numVideos+lastModifiedDate+"</tr>";  
 
       } else {
         // Displaying a single video
@@ -341,8 +343,11 @@ var BCL = {};
       });
     }
     if (BCL.typeOfPlayer == 'playlist') {
-      $('#bc-video-search-playlist').before("<button class='button playlist_preview'>Preview Playlists </button>");
-      $('.playlist_preview').bind('click', BCL.getPlaylists);
+      if ($('#playlist_preview').length == 0)
+      {
+        $('#bc-video-search-playlist').before("<button class='button' id='playlist_preview'>Preview Playlists </button>");
+      }
+      $('#playlist_preview').bind('click', BCL.getPlaylists);
       $('#bc-video-search-playlist').html(innerHTML);
     }
   }
@@ -359,7 +364,7 @@ var BCL = {};
       }
     });
     playlists=playlists.join(',');
-    jQuery('.playlist_preview').remove();
+    jQuery('#playlist_preview').remove();
     BCL.setHTML();
     BCL.playerData.playlistID=playlists;
     BCL.setPlayerDataAPI();

@@ -170,22 +170,17 @@ body#media-upload ul#sidemenu
 	width:100%;
 }
 
-.widefat tr td:nth-child(3), .widefat tr th:nth-child(3)
-{
-	text-align:center;
-}
+/*Styling the tables for brightcove API */
+#bc-video-search-video .widefat tr td:nth-child(3),#bc-video-search-video .widefat tr th:nth-child(3), #bc-video-search-playlist .widefat tr td:nth-child(4),#bc-video-search-playlist .widefat tr th:nth-child(4) { text-align:center; }
 
-.widefat tr td:nth-child(4), .widefat tr th:nth-child(4)
-{
-	text-align:right;
-}
+#bc-video-search-video .widefat tr td:nth-child(4), #bc-video-search-video .widefat tr th:nth-child(4), #bc-video-search-playlist .widefat tr td:nth-child(5), #bc-video-search-playlist .widefat tr th:nth-child(5) { text-align:right; }
 
 /*Styling for search bar on media api video tab*/
 #tabs-api #tabs-1 div:first-child {width:85%;}
-#tabs-api #tabs-1 div:first-child input {width:100%;}
+#tabs-api #tabs-1 div:first-child input {width:100%; margin-bottom:1em;}
 #tabs-api #tabs-1 div:nth-child(2) button {float:right;}
 
-
+.disable {opacity:.5;}
 
 
 
