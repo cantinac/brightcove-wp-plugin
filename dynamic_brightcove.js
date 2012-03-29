@@ -74,6 +74,9 @@ jQuery(document).ready(function() {
 
 /*function ($) {*/
   //Check to see if the default players are set if not return error
+
+  jQuery('.player-data').bind('change',BCL.setPlayerData);
+  jQuery('.shortcode_button').bind('click', BCL.insertShortcode);
   if (jQuery('#defaults_not_set').data('defaultsset') ==  false)
   {
     jQuery('.no-error').addClass('hidden');
@@ -315,7 +318,7 @@ BCL.mediaAPISearch = function() {
   BCL.searchParams = jQuery('#bc-search-field').val();
 
   BCL.token = jQuery('#bc_api_key').val();
-
+  /*Create URL that is called to search for videos*/
   var url= [
     "http://api.brightcove.com/services/library&command=search_videos",
     "&token=", encodeURIComponent(BCL.token),
@@ -325,10 +328,6 @@ BCL.mediaAPISearch = function() {
     "&callback=",encodeURIComponent("BCL.displaySingleVideo")
   ].join("");
 
-  // Make a call to the API requesting content
-  // Note that a callback function is needed to handle the returned data
-  /*Show loader*/
-  /*Then in callback hide the loader*/
   BCMAPI.inject(url); 
 };
 
@@ -442,9 +441,9 @@ BCL.setHTML =function (videoId)
 {
   innerHTML =  '<div id="dynamic-bc-placeholder"></div>';
   innerHTML += '<input class="block" type="text" id="bc-player" placeholder="Player ID" />';
-  innerHTML += '<input onchange="BCL.setPlayerDataAPI()" class="block" id="bc-width" type="text" placeholder="Width (optional)" />';
-  innerHTML += '<input onchange="BCL.setPlayerDataAPI()" class="block" type="text" id="bc-height" placeholder="Height (optional)" />';
-  innerHTML += '<button onclick="BCL.insertShortcode()">Insert Video </button>';
+  innerHTML += '<input class="block player_data_api" id="bc-width" type="text" placeholder="Width (optional)" />';
+  innerHTML += '<input class="block player_data_api" type="text" id="bc-height" placeholder="Height (optional)" />';
+  innerHTML += '<button class="shortcode_button">Insert Video </button>';
   
   if (BCL.typeOfPlayer == 'single') {
     jQuery('#bc-video-search-video').html(innerHTML);
@@ -453,7 +452,8 @@ BCL.setHTML =function (videoId)
     jQuery('#bc-video-search-playlist').html(innerHTML);
       BCL.playerData.playlistID=videoId;
   } 
-
+  jQuery.('.shortcode_button').bind('click', BCL.insertShortcode);
+  jQuery.('.player_data_api').bind('change', BCL.setPlayerDataAPI);
   jQuery('#bc-player').bind('change', BCL.changePlayer);
   BCL.setPlayerDataAPI();
 }

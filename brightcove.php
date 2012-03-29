@@ -131,14 +131,14 @@ if ($playerID == '' || $playerID_playlist == '') {
                   <span class="alignright"></span>
                 </th>
                 <td>
-                  <input class='id-field' placeholder='Video ID' aria-required="true" type='text' name='bcVideo' id='bc-video' placeholder='Video ID or URL' onblur="BCL.setPlayerData()">
+                  <input class='id-field player-data' placeholder='Video ID' aria-required="true" type='text' name='bcVideo' id='bc-video' placeholder='Video ID or URL'>
                 </td>
               </tr>
               <tr>
                 <th valign='top' scope='row' class='label'>
                 </th>
                 <td class='bc-check'>
-                   <input class='alignleft' type='checkbox' name='bc-video-ref' id='bc-video-ref' onblur="BCL.setPlayerData()"/>
+                   <input class='player-data alignleft' type='checkbox' name='bc-video-ref' id='bc-video-ref' />
                    <span class="alignleft"><label for='bc-video-ref'>This is a reference ID, not a video ID </label></span>
                 </td>
               </tr>
@@ -158,14 +158,14 @@ if ($playerID == '' || $playerID_playlist == '') {
                   <span class="alignright"></span>
                 </th>
                 <td>
-                 <input class='id-field' type='text' name='bcPlaylist' id='bc-playlist' placeholder='Playlist ID(s) seperated by commas' onblur="BCL.setPlayerData()"/>
+                 <input class='id-field player-data' type='text' name='bcPlaylist' id='bc-playlist' placeholder='Playlist ID(s) seperated by commas' />
                 </td>
               </tr>
               <tr>
                 <th valign='top' scope='row' class='label'>
                 </th>
                 <td class='bc-check'>
-                 <input class='alignleft' type='checkbox' name='bc-playlist-ref' id='bc-playlist-ref' onblur="BCL.setPlayerData()"/>
+                 <input class='alignleft player-data' type='checkbox' name='bc-playlist-ref' id='bc-playlist-ref'/>
                  <span class="alignleft"><label for='bc-playlist-ref'>These are reference IDs, not playlist IDs </label></span>
                 </td>
               </tr>
@@ -190,7 +190,7 @@ if ($playerID == '' || $playerID_playlist == '') {
                 <span class="alignright"></span>
               </th>
               <td>
-               <input class='digits' type='text' name='bcPlayer' id='bc-player' placeholder='Player ID (optional)' onblur="BCL.setPlayerData()" />
+               <input class='digits player-data' type='text' name='bcPlayer' id='bc-player' placeholder='Player ID (optional)'/>
               </td>
             </tr>
             <tr class='bc-height-row'>
@@ -199,7 +199,7 @@ if ($playerID == '' || $playerID_playlist == '') {
                 <span class="alignright"></span>
               </th>
               <td>
-               <input class='digits'  type='text' name='bcHeight' id='bc-height' placeholder='Height (optional)' onblur="BCL.setPlayerData()" />
+               <input class='digits player-data'  type='text' name='bcHeight' id='bc-height' placeholder='Height (optional)' />
               </td>
             </tr>
             <tr class='bc-width-row'>
@@ -208,7 +208,7 @@ if ($playerID == '' || $playerID_playlist == '') {
                 <span class="alignright"></span>
               </th>
               <td>
-               <input class='digits' type='text' name='bcWidth' id='bc-width' placeholder='Width (optional)' onblur="BCL.setPlayerData()" />
+               <input class='digits plaer-data' type='text' name='bcWidth' id='bc-width' placeholder='Width (optional)' />
               </td>
             </tr>
             </tbody>
@@ -219,7 +219,7 @@ if ($playerID == '' || $playerID_playlist == '') {
     
 
       <div class='media-item no-border'>
-        <button class='aligncenter button' onclick="BCL.insertShortcode()" />Insert Shortcode</button>
+        <button class='shortcode_button aligncenter button' />Insert Shortcode</button>
       </div>
 
       <div class='media-item no-border'>
