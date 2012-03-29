@@ -18,13 +18,8 @@ require dirname( __FILE__ ) . '/admin/brightcove_admin.php';
 /************************Upload Media Tab ***************************/
 
 function brightcove_media_menu($tabs) {
-
-if (get_option('bc_api_key') != NULL or get_option('bc_api_key') != '') {
- $tabs['brightcove_api']='Brightcove Media API'; 
-} else {
   $tabs['brightcove']='Brightcove';
-}
-return $tabs;
+  return $tabs;
 }
 
 function brightcove_menu_handle() {
@@ -85,9 +80,16 @@ if ($playerID == '' || $playerID_playlist == '' || $publisherID  == '') {
           <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
           <div class='bc-video-search clearfix' id='bc-video-search-playlist'></div>
         </div>
+        <div class='bc-video-search clearfix' id='bc-video-search-video'></div>
+
+      </div>
+      <div id='tabs-2'>
+        <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
+        <div class='bc-video-search clearfix' id='bc-video-search-playlist'></div>
       </div>
     </div>
   </div>
+</div>
 <?php
 }
 
@@ -111,140 +113,142 @@ if ($playerID == '' || $playerID_playlist == '') {
   $defaultSet='true';
 }
 ?>
-<div class='hidden error' id='defaults_not_set' data-defaultsSet='<?php echo $defaultSet; ?>'>
-  You have not set up your defaults for this plugin. Please go to the brightcove menu on the side panel of the admin screen.
-</div>
-<div class='no-error'>
-  <div id='tabs'>
-    <ul>
-      <li ><a class='video-tab' href="#tabs-1">Videos</a></li>
-      <li><a class='playlist-tab' href="#tabs-2">Playlists</a></li>
-    </ul>
-
-    <div class='tab video-tab' id='tabs-1'>
-      <div class='media-item no-border'>
-        <form id='validate_video'>
-          <table>
-            <tbody>
-              <tr>
-                <th valign='top' scope='row' class='label'>
-                  <span class="alignleft"><label for="bc-video">Video:</label></span>
-                  <span class="alignright"></span>
-                </th>
-                <td>
-                  <input class='id-field player-data' placeholder='Video ID' aria-required="true" type='text' name='bcVideo' id='bc-video' placeholder='Video ID or URL'>
-                </td>
-              </tr>
-              <tr>
-                <th valign='top' scope='row' class='label'>
-                </th>
-                <td class='bc-check'>
-                   <input class='player-data alignleft' type='checkbox' name='bc-video-ref' id='bc-video-ref' />
-                   <span class="alignleft"><label for='bc-video-ref'>This is a reference ID, not a video ID </label></span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </form>
-      </div>
-    </div>
-    <div class='tab playlist-tab' id='tabs-2'>
-     <div class='media-item no-border'>
-        <form id='validate_playlist'>
-          <table> 
-            <tbody>
-              <tr>
-                <th valign='top' scope='row' class='label' >
-                  <span class="alignleft"><label for="bcPlaylist">Playlist:</label></span>
-                  <span class="alignright"></span>
-                </th>
-                <td>
-                 <input class='id-field player-data' type='text' name='bcPlaylist' id='bc-playlist' placeholder='Playlist ID(s) seperated by commas' />
-                </td>
-              </tr>
-              <tr>
-                <th valign='top' scope='row' class='label'>
-                </th>
-                <td class='bc-check'>
-                 <input class='alignleft player-data' type='checkbox' name='bc-playlist-ref' id='bc-playlist-ref'/>
-                 <span class="alignleft"><label for='bc-playlist-ref'>These are reference IDs, not playlist IDs </label></span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </form>
-      </div>
-    </div>
+<div class="bc-container">
+  <div class='hidden error' id='defaults_not_set' data-defaultsSet='<?php echo $defaultSet; ?>'>
+    You have not set up your defaults for this plugin. Please go to the brightcove menu on the side panel of the admin screen.
   </div>
+  <div class='no-error'>
+    <div id='tabs'>
+      <ul>
+        <li ><a class='video-tab' href="#tabs-1">Videos</a></li>
+        <li><a class='playlist-tab' href="#tabs-2">Playlists</a></li>
+      </ul>
 
-      <div class='media-item'>
-        <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
-        <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
-        <input type='hidden' id='bc_default_height' name='bc_default_height' value='<?php echo $defaultHeight; ?>' >
-        <input type='hidden' id='bc_default_width' name='bc_default_width' value='<?php echo $defaultWidth; ?>' >
-        <form id='validate_settings'>
-          <table>
-            <tbody>
-              <tr class='bc-player-row'>
-              <th valign='top' scope='row' class='label'>
-                <span class="alignleft"><label for="bcPlayer">Player:</label></span>
-                <span class="alignright"></span>
-              </th>
-              <td>
-               <input class='digits player-data' type='text' name='bcPlayer' id='bc-player' placeholder='Player ID (optional)'/>
-              </td>
-            </tr>
-            <tr class='bc-height-row'>
-              <th valign='top' scope='row' class='label'>
-                <span class="alignleft"><label for="bcHeight">Height:</label></span>
-                <span class="alignright"></span>
-              </th>
-              <td>
-               <input class='digits player-data'  type='text' name='bcHeight' id='bc-height' placeholder='Height (optional)' />
-              </td>
-            </tr>
-            <tr class='bc-width-row'>
-              <th valign='top' scope='row' class='label'>
-                <span class="alignleft"><label for="bcWidth">Width:</label></span>
-                <span class="alignright"></span>
-              </th>
-              <td>
-               <input class='digits plaer-data' type='text' name='bcWidth' id='bc-width' placeholder='Width (optional)' />
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </form>
+      <div class='tab video-tab' id='tabs-1'>
+        <div class='media-item no-border'>
+          <form id='validate_video'>
+            <table>
+              <tbody>
+                <tr>
+                  <th valign='top' scope='row' class='label'>
+                    <span class="alignleft"><label for="bc-video">Video:</label></span>
+                    <span class="alignright"></span>
+                  </th>
+                  <td>
+                    <input class='id-field player-data' placeholder='Video ID' aria-required="true" type='text' name='bcVideo' id='bc-video' placeholder='Video ID or URL'>
+                  </td>
+                </tr>
+                <tr>
+                  <th valign='top' scope='row' class='label'>
+                  </th>
+                  <td class='bc-check'>
+                     <input class='player-data alignleft' type='checkbox' name='bc-video-ref' id='bc-video-ref' />
+                     <span class="alignleft"><label for='bc-video-ref'>This is a reference ID, not a video ID </label></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </form>
+        </div>
       </div>
 
-    
-
-      <div class='media-item no-border'>
-        <button class='shortcode_button aligncenter button' />Insert Shortcode</button>
+      <div class='tab playlist-tab' id='tabs-2'>
+       <div class='media-item no-border'>
+          <form id='validate_playlist'>
+            <table> 
+              <tbody>
+                <tr>
+                  <th valign='top' scope='row' class='label' >
+                    <span class="alignleft"><label for="bcPlaylist">Playlist:</label></span>
+                    <span class="alignright"></span>
+                  </th>
+                  <td>
+                   <input class='id-field player-data' type='text' name='bcPlaylist' id='bc-playlist' placeholder='Playlist ID(s) seperated by commas' />
+                  </td>
+                </tr>
+                <tr>
+                  <th valign='top' scope='row' class='label'>
+                  </th>
+                  <td class='bc-check'>
+                   <input class='alignleft player-data' type='checkbox' name='bc-playlist-ref' id='bc-playlist-ref'/>
+                   <span class="alignleft"><label for='bc-playlist-ref'>These are reference IDs, not playlist IDs </label></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </form>
+        </div>
       </div>
+    </div><!-- tabs -->
 
-      <div class='media-item no-border'>
-        <div id='bc-error' class='hidden error'></div>
-      </div>
-
-      <div class='media-item no-border player-preview'>
-       <table>
-         <tbody>
-          <tr>
+    <div class='media-item'>
+      <h3>Customize Player Settings</h3>
+      <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
+      <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
+      <input type='hidden' id='bc_default_height' name='bc_default_height' value='<?php echo $defaultHeight; ?>' >
+      <input type='hidden' id='bc_default_width' name='bc_default_width' value='<?php echo $defaultWidth; ?>' >
+      <form id='validate_settings'>
+        <table>
+          <tbody>
+            <tr class='bc-player-row'>
+            <th valign='top' scope='row' class='label'>
+              <span class="alignleft"><label for="bcPlayer">Player:</label></span>
+              <span class="alignright"></span>
+            </th>
             <td>
-              <div class='alignleft'>
-                  <h3 id='bc_title'></h3>
-                  <p id='bc_description'></p>
-                  <p> Video Preview: </p>
-                  <div id="dynamic-bc-placeholder"> </div>
-              </div>
-              <div class='alignleft'>
-              </div>
+             <input class='digits player-data' type='text' name='bcPlayer' id='bc-player' placeholder='Player ID (optional)'/>
             </td>
           </tr>
-          <tbody>
+          <tr class='bc-height-row'>
+            <th valign='top' scope='row' class='label'>
+              <span class="alignleft"><label for="bcHeight">Height:</label></span>
+              <span class="alignright"></span>
+            </th>
+            <td>
+             <input class='digits player-data'  type='text' name='bcHeight' id='bc-height' placeholder='Height (optional)' />
+            </td>
+          </tr>
+          <tr class='bc-width-row'>
+            <th valign='top' scope='row' class='label'>
+              <span class="alignleft"><label for="bcWidth">Width:</label></span>
+              <span class="alignright"></span>
+            </th>
+            <td>
+             <input class='digits plaer-data' type='text' name='bcWidth' id='bc-width' placeholder='Width (optional)' />
+            </td>
+          </tr>
+          </tbody>
         </table>
-      </div>
+      </form>
+    </div>
+
+    <div class='media-item no-border insert-button-container'>
+      <button class='aligncenter button' onclick="BCL.insertShortcode()" />Insert Shortcode</button>
+    </div>
+
+    <div class='media-item no-border'>
+      <div id='bc-error' class='hidden error'></div>
+    </div>
+
+    <div class='media-item no-border player-preview'>
+     <table>
+       <tbody>
+        <tr>
+          <td>
+            <div class='alignleft'>
+                <h3 id='bc_title'></h3>
+                <p id='bc_description'></p>
+                <p> Video Preview: </p>
+                <div id="dynamic-bc-placeholder"> </div>
+            </div>
+            <div class='alignleft'>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 	<?php

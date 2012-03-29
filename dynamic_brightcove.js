@@ -346,8 +346,8 @@ var BCL = {};
       $('#bc-video-search-playlist').html(innerHTML);
         BCL.playerData.playlistID=videoId;
     } 
-    $.('.shortcode_button').bind('click', BCL.insertShortcode);
-    $.('.player_data_api').bind('change', BCL.setPlayerDataAPI);
+    $('.shortcode_button').bind('click', BCL.insertShortcode);
+    $('.player_data_api').bind('change', BCL.setPlayerDataAPI);
     $('#bc-player').bind('change', BCL.changePlayer);
     BCL.setPlayerDataAPI();
   }
