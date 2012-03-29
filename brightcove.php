@@ -111,11 +111,11 @@ add_dynamic_brightcove_api_script();
 $playerID=get_option('bc_player_id');
 $defaultHeight=get_option('bc_default_height');
 if ($defaultHeight == '') {
-  $defaultHeight='480';
+  $defaultHeight='270';
 }
 $defaultWidth=get_option('bc_default_width');
 if ($defaultWidth == '') {
-  $defaultWidth='270';
+  $defaultWidth='480';
 }
 $playerID_playlist=get_option('bc_player_id_playlist');
 
@@ -217,7 +217,7 @@ if ($playerID == '' || $playerID_playlist == '') {
               <span class="alignright"></span>
             </th>
             <td>
-             <input class='digits player-data'  type='text' name='bcHeight' id='bc-height' placeholder='<?php echo $defaultHeight; ?>' />
+             <input class='digits player-data'  type='text' name='bcHeight' id='bc-height' placeholder='Default is  <?php echo $defaultHeight; ?> px' />
             </td>
           </tr>
           <tr class='bc-width-row'>
@@ -226,7 +226,7 @@ if ($playerID == '' || $playerID_playlist == '') {
               <span class="alignright"></span>
             </th>
             <td>
-             <input class='digits plaer-data' type='text' name='bcWidth' id='bc-width' placeholder='<?php echo $defaultWidth; ?>' />
+             <input class='digits plaer-data' type='text' name='bcWidth' id='bc-width' placeholder='Default is <?php echo $defaultWidth; ?> px' />
             </td>
           </tr>
           </tbody>
