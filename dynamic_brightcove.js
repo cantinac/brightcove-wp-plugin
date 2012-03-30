@@ -305,7 +305,7 @@ var BCL = {};
         numVideos='<td class="text-align-center title">'+numVideos+'</td>';
 
 
-        var heading = '<table class="widefat"><thead><tr><th></th><th></th><th>Name</th><th>Number of videos</th><th>Last Updated</th></tr></thead>';
+        var heading = '<table class="widefat"><thead><tr><th></th><th></th><th>Name</th><th>Number of Videos</th><th>Last Updated</th></tr></thead>';
         if (pResponse.items[pVideo].videos.length > 0) {
           var imgSrc=pResponse.items[pVideo].videos[0].thumbnailURL;
         }
@@ -394,8 +394,8 @@ var BCL = {};
 
     var innerHTML =  '<div id="dynamic-bc-placeholder"></div>';
     innerHTML += '<input class="block" type="text" id="bc-player" placeholder="Player ID (optional)" />';
-    innerHTML += '<input class="block player_data_api" id="bc-width" type="text" placeholder="'+defaultWidth+'" />';
-    innerHTML += '<input class="block player_data_api" type="text" id="bc-height" placeholder="'+defaultHeight+'" />';
+    innerHTML += '<input class="block player_data_api" id="bc-width" type="text" placeholder="Default is '+defaultWidth+' px" />';
+    innerHTML += '<input class="block player_data_api" type="text" id="bc-height" placeholder="Default is '+defaultHeight+' px" />';
     innerHTML += '<button class="shortcode_button">Insert Video </button>';
     
     if (BCL.typeOfPlayer == 'single') {
