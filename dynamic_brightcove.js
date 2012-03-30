@@ -361,22 +361,20 @@ var BCL = {};
   }
 
   // Gather the selected playlists and trigger a player update
-  BCL.getPlaylists = function ()
-  {
-    var playlists = []
-    $.each($('#bc-video-search-playlist tr'), function (key, value)
-    {
-      if ($(value).find('input').attr('checked'))
-      {
-        playlists.push($(value).data('videoid'));
+  BCL.getPlaylists = function() {
+    var playlists = [];
+    $('#bc-video-search-playlist tr').each(function() {
+      if ($(this).find('input').is(':checked')) {
+        playlists.push($(this).data('videoid'));
       }
     });
-    playlists=playlists.join(',');
-    jQuery('#playlist_preview').remove();
-    BCL.setHTML();
-    BCL.playerData.playlistID=playlists;
-    BCL.setPlayerDataAPI();
 
+    playlists = playlists.join(',');
+    // console.log(playlists);
+    // BCL.playerData.playlistID = playlists;
+    $('#playlist_preview').remove();
+    BCL.setHTML(playlists);
+    // BCL.setPlayerDataAPI();
   }
 
   // MAPI: Updates the player preview and the fields below for overriding settings
