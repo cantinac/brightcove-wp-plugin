@@ -106,12 +106,7 @@ getDefaultPlayerPlaylist = function () {
 	return $('#bc-default-player-playlist').val();
 }
 
-$(function ()
-{
-	if ($('#tabs').length > 0) {
-	    $("#tabs").tabs();
-	}
-});
+
 
 
 
