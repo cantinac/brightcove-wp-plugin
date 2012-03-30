@@ -54,6 +54,7 @@ if ($playerID == '' || $playerID_playlist == '' || $publisherID  == '') {
 }
 ?>
 <script src="/wp-content/plugins/brightcove/bc-mapi.js" type="text/javascript"></script>
+<div class="bc-container">
 <div class='hidden error' id='defaults_not_set' data-defaultsSet='<?php echo $defaultSet; ?>'>
   You have not set up your defaults for this plugin. Please click on the link to set your defaults.
   <a target="_top" href="admin.php?page=brightcove_menu">Brightcove Settings</a>
@@ -90,10 +91,6 @@ if ($playerID == '' || $playerID_playlist == '' || $publisherID  == '') {
         </div>
         <div class='bc-video-search clearfix' id='bc-video-search-video'></div>
 
-      </div>
-      <div id='tabs-2'>
-        <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
-        <div class='bc-video-search clearfix' id='bc-video-search-playlist'></div>
       </div>
     </div>
   </div>

@@ -391,11 +391,14 @@ var BCL = {};
       defaultWidth="480";
     }
 
-    var innerHTML =  '<div id="dynamic-bc-placeholder"></div>';
-    innerHTML += '<input class="block" type="text" id="bc-player" placeholder="Player ID (optional)" />';
-    innerHTML += '<input class="block player_data_api" id="bc-width" type="text" placeholder="Default is '+defaultWidth+' px" />';
-    innerHTML += '<input class="block player_data_api" type="text" id="bc-height" placeholder="Default is '+defaultHeight+' px" />';
-    innerHTML += '<button class="shortcode_button">Insert Video </button>';
+    var innerHTML = [
+      '<div id="dynamic-bc-placeholder"></div>',
+      '<h3>Customizer Player Settings</h3>',
+      '<div class="field-row"><label for="bc-player">Player ID:</label><input class="block" type="text" id="bc-player" placeholder="Player ID (optional)" /></div>',
+      '<div class="field-row"><label for="bc-width">Width:</label><input class="block player_data_api" id="bc-width" type="text" placeholder="Default is ',defaultWidth,' px" /></div>',
+      '<div class="field-row"><label for="bc-height">Height:</label><input class="block player_data_api" type="text" id="bc-height" placeholder="Default is ',defaultHeight,' px" /></div>',
+      '<button class="shortcode_button">Insert Video </button>'
+    ].join('');
     
     if (BCL.typeOfPlayer == 'single') {
       $('#bc-video-search-video').html(innerHTML);
