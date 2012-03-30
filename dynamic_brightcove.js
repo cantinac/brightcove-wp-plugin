@@ -141,7 +141,7 @@ var BCL = {};
     var playerHTML;
     // set the playerID to the selected player
     // populate the player object template
-    console.log(BCL.playerData);
+    /*console.log(BCL.playerData);*/
     if ( BCL.playerData.videoID != '' && BCL.playerData.videoID != undefined) {
       //If a single video id is entered
       playerHTML = BCL.markup(BCL.singlePlayerTemplate, BCL.playerData);
@@ -198,13 +198,13 @@ var BCL = {};
     var isRef='', shortcode;
 
     if (BCL.playerData.isRef) {
-      isRef="isRef='true'";
+      isRef="isRef=true";
     }
 
     if (BCL.playerData.videoID != undefined && BCL.playerData.videoID != '') {
-      var shortcode = '[brightcove videoID='+BCL.playerData.videoID+' '+isRef+' playerID='+BCL.playerData.playerID+' height='+BCL.playerData.height+' width='+BCL.playerData.width+']';
+      shortcode = '[brightcove videoID='+BCL.playerData.videoID+' '+isRef+' playerID='+BCL.playerData.playerID+' height='+BCL.playerData.height+' width='+BCL.playerData.width+']';
     } else if (BCL.playerData.playlistID != undefined) {
-       var shortcode = '[brightcove playlistID='+BCL.playerData.playlistID+' '+isRef+' playerID='+BCL.playerData.playerID+' height='+BCL.playerData.height+' width='+BCL.playerData.width+']';
+        shortcode = '[brightcove playlistID='+BCL.playerData.playlistID+' '+isRef+' playerID='+BCL.playerData.playerID+' height='+BCL.playerData.height+' width='+BCL.playerData.width+']';
     }
        
     var win = window.dialogArguments || opener || parent || top;
@@ -222,6 +222,7 @@ var BCL = {};
 
   // MAPI: Performs a search against the API
   BCL.mediaAPISearch = function() {
+    $('#bc-error').addClass('hidden');
     BCL.searchParams = $.trim($('#bc-search-field').val());
     if (!BCL.searchParams) return;
 
@@ -243,6 +244,7 @@ var BCL = {};
 
   // MAPI: Loads all the playlists
   BCL.seeAllPlaylists = function() {
+    $('#bc-error').addClass('hidden');
     $('#bc-video-search-playlist').html("<p> Loading...</p>");
     BCMAPI.token = $('#bc_api_key').val();
     // Make a call to the API requesting content
@@ -256,7 +258,6 @@ var BCL = {};
   // MAPI: Called by the API response
   BCL.displayPlaylist = function (pResponse) {
     if (BCL.dontDisplay) return;
-
     BCL.typeOfPlayer='playlist';
     BCL.displayVideos(pResponse); 
   }
@@ -268,8 +269,9 @@ var BCL = {};
   }
 
   BCL.displayVideos = function (pResponse) {
+    $('#bc-error').addClass('hidden');
     var innerHTML="";
-    console.log(pResponse.items.length);
+    /*console.log(pResponse.items.length);*/
     if (pResponse.items.length == 0) {
       innerHTML='<div class="no-results bc-error error clear">No results were found for this search.</div>';
       $('#bc-video-search-video').html(innerHTML);
@@ -384,7 +386,7 @@ var BCL = {};
 
   // MAPI: Updates the player preview and the fields below for overriding settings
   BCL.setHTML =function (videoId) {
-
+    $('#bc-error').addClass('hidden');
     var defaultHeight=$('#bc_default_height').val();
     if (defaultHeight == '') {
       defaultHeight="270";
@@ -409,53 +411,85 @@ var BCL = {};
       BCL.playerData.videoID=videoId;
     } else {
       $('#bc-video-search-playlist').html(innerHTML);
+      $('#bc-width').removeAttr('id').attr('id','bc-width-playlist').bind('change', BCL.setPlayerDataAPI);
+      $('#bc-height').removeAttr('id').attr('id','bc-height-playlist').bind('change',BCL.setPlayerDataAPI);
       BCL.playerData.playlistID=videoId;
     } 
 
     $('.shortcode_button').bind('click', BCL.insertShortcode);
     $('.player_data_api').bind('change', BCL.setPlayerDataAPI);
-    $('#bc-player').bind('change', BCL.changePlayer);
+    $('#bc-player').bind('change', BCL.setPlayerDataAPI);
     BCL.setPlayerDataAPI();
   }
 
   // MAPI: Updates the player preview
   BCL.setPlayerDataAPI = function () {
+   
+    $('#bc-error').addClass('hidden');
     if (BCL.typeOfPlayer == 'single') {
       BCL.playerData = {  "playerID" : $('#bc_default_player').val(),
                         "width" : "480", //Fallback height and width
                         "height" : "270",
                         "videoID" : BCL.playerData.videoID,
                         "isRef"   : false};
-    } else {
+       //Sets the default height and width in case they aren't set
+      if ($('#bc-width').val() != '') {
+        BCL.playerData.width = $('#bc-width').val();
+      } else if ($('#bc_default_width').val() != '') {
+         BCL.playerData.width = $('#bc_default_width').val();
+      }
+
+      if ($('#bc-height').val() != '') {
+        BCL.playerData.height = $('#bc-height').val();
+      } else if ($('#bc_default_height').val() != '') {
+         BCL.playerData.height = $('#bc_default_height').val();
+      }  
+  } else {
       BCL.playerData = {  "playerID" : $('#bc_default_player_playlist').val(),
                         "width" : "480", //Fallback height and width
                         "height" : "270",
                         "playlistID" : BCL.playerData.playlistID,
                         "isRef"   : false
                       };
-    }
+      console.log($('#bc-width-playlist'));
+       //Sets the default height and width in case they aren't set
+      if ($('#bc-width-playlist').val() != undefined) {
+        BCL.playerData.width = $('#bc-width-playlist').val();
+      } else if ($('#bc_default_width').val() != '') {
+         BCL.playerData.width = $('#bc_default_width').val();
+      }
+
+      if ($('#bc-height-playlist').val() != undefined) {
+        BCL.playerData.height = $('#bc-height-playlist').val();
+      } else if ($('#bc_default_height').val() != '') {
+         BCL.playerData.height = $('#bc_default_height').val();
+      } 
+      console.log(BCL.playerData);
+  }
     
-    //Sets the default height and with incase they aren't set
-    if ($('#bc-width').val() != '') {
-      BCL.playerData.width = $('#bc-width').val();
-    } else if ($('#bc_default_width').val() != '') {
-       BCL.playerData.width = $('#bc_default_width').val();
+    if ($('#bc-player').val() != '')
+    {
+      BCL.playerData.playerID = $('#bc-player').val();
     }
 
-    if ($('#bc-height').val() != '') {
-      BCL.playerData.width = $('#bc-height').val();
-    } else if ($('#bc_default_height').val() != '') {
-       BCL.playerData.height = $('#bc_default_height').val();
-    }
+   
+
+
                    
     BCL.addPlayer();
   }
 
   // MAPI: Updates the player after the changing the overridden player ID
-  BCL.changePlayer = function() {
+  /*BCL.changePlayer = function() {
+    $('#bc-error').addClass('hidden');
     BCL.playerData.playerID = $('#bc-player').val();
+    if (BCL.playerData.playerID == '')  {
+    BCL.playerData.playerID = $('#bc_default_player_playlist').val();
+    }
+    console.log(BCL.playerData.playerID);
+  
     BCL.addPlayer();
-  }
+  }*/
 
   ///////////////////////////////////  Helper Functions //////////////////////////////////////////
   BCL.constrain = function (str,n){
@@ -597,11 +631,18 @@ $(function() {
 
       } //Bind search functionality to media API
 
-      var search = function() { BCL.mediaAPISearch(); return false; }
+      var search = function() { 
+        $('#bc-error').addClass('hidden');
+        BCL.mediaAPISearch(); 
+        return false; 
+      }
       $('#bc_search').bind('click', search);
       $('#search_form').bind('submit', search);
       
       $('.playlist-tab-api').bind('click', BCL.showPlaylists);
+      $('.video-tab-api').bind('click', function() {
+        $('#bc-error').addClass('hidden');
+      });
     }
 
 

@@ -43,6 +43,8 @@ add_dynamic_brightcove_api_script();
 $playerID=get_option('bc_player_id');
 $defaultHeight=get_option('bc_default_height');
 $defaultWidth=get_option('bc_default_width');
+$defaultHeightPlaylist=get_option('bc_default_height_playlist');
+$defaultWidthPlaylist=get_option('bc_default_width_playlist');
 $playerID_playlist=get_option('bc_player_id_playlist');
 $publisherID=get_option('bc_pub_id');
 $apiKey=get_option('bc_api_key');
@@ -63,9 +65,11 @@ if ($playerID == '' || $playerID_playlist == '' || $publisherID  == '') {
   <div class='no-error'>
     <div class='outer_container' >
       <input type='hidden' id='bc_api_key' name='bc_api_key' value='<?php echo $apiKey; ?>' >
-       <input type='hidden' id='bc_default_height' name='bc_default_height' value='<?php echo $defaultHeight; ?>' >
-        <input type='hidden' id='bc_default_width' name='bc_default_width' value='<?php echo $defaultWidth; ?>' >
-          <input type='hidden' id='bc_default_thumbnail' value='<?php echo dirname( __FILE__ ).'/admin/brightcove.png';?>' >
+      <input type='hidden' id='bc_default_height' name='bc_default_height' value='<?php echo $defaultHeight; ?>' >
+      <input type='hidden' id='bc_default_width' name='bc_default_width' value='<?php echo $defaultWidth; ?>' >
+      <input type='hidden' id='bc_default_height_playlist' name='bc_default_height_playlist' value='<?php echo $defaultHeightPlaylist; ?>' >
+      <input type='hidden' id='bc_default_width_playlist' name='bc_default_width_playlist' value='<?php echo $defaultWidthPlaylist; ?>' >
+        <input type='hidden' id='bc_default_thumbnail' value='<?php echo dirname( __FILE__ ).'/admin/brightcove.png';?>' >
 
       <div id='tabs-api'>
         <ul>
@@ -116,6 +120,16 @@ $defaultWidth=get_option('bc_default_width');
 if ($defaultWidth == '') {
   $defaultWidth='480';
 }
+
+$defaultHeightPlaylist=get_option('bc_default_height_playlist');
+if ($defaultHeightPlaylist == '') {
+  $defaultHeightPlaylist='400';
+}
+$defaultWidthPlaylist=get_option('bc_default_width_playlist');
+if ($defaultWidthPlaylist == '') {
+  $defaultWidthPlaylist='940';
+}
+
 $playerID_playlist=get_option('bc_player_id_playlist');
 
 if ($playerID == '' || $playerID_playlist == '') {
@@ -198,6 +212,8 @@ if ($playerID == '' || $playerID_playlist == '') {
       <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
       <input type='hidden' id='bc_default_height' name='bc_default_height' value='<?php echo $defaultHeight; ?>' >
       <input type='hidden' id='bc_default_width' name='bc_default_width' value='<?php echo $defaultWidth; ?>' >
+      <input type='hidden' id='bc_default_height_playlist' name='bc_default_height_playlist' value='<?php echo $defaultHeightPlaylist; ?>' >
+      <input type='hidden' id='bc_default_width_playlist' name='bc_default_width_playlist' value='<?php echo $defaultWidthPlaylist; ?>' >
       <form id='validate_settings'>
         <table>
           <tbody>

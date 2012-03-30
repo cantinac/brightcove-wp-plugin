@@ -98,6 +98,24 @@ $publisherID = get_option('bc_pub_id');
               <span class='description'>Default width for video players</span>
             </td>
           </tr>
+          <tr valign="top">
+            <th scope="row">
+              <label for="bc_default_height">Default Playlist Player Height </label>
+            </th>
+            <td>
+              <input value = '<? echo get_option('bc_default_height_playlist'); ?>' name="bc_default_height_playlist" type="text" id="bc_default_height_playlist" class="number regular-text" placeholder='Default playlist player height'>
+              <span class='description'>Default height for playlist players</span>
+            </td>
+          </tr>
+          <tr valign="top">
+            <th scope="row">
+              <label for="bc_default_width_playlist">Default Playlist Player Width </label>
+            </th>
+            <td>
+              <input value = '<? echo get_option('bc_default_width_playlist'); ?>' name="bc_default_width_playlist" type="text" id="bc_default_width_playlist" class="number regular-text" placeholder='Default playlist player width'>
+              <span class='description'>Default width for playlist players</span>
+            </td>
+          </tr>
         </tbody>
       </table>
       <p class="submit">
@@ -136,4 +154,6 @@ function register_brightcove_settings() { // whitelist options
   register_setting( 'brightcove-settings-group', 'bc_api_key' );
   register_setting( 'brightcove-settings-group', 'bc_default_height' );
   register_setting( 'brightcove-settings-group', 'bc_default_width' );
+  register_setting( 'brightcove-settings-group', 'bc_default_height_playlist' );
+  register_setting( 'brightcove-settings-group', 'bc_default_width_playlist' );
 }
