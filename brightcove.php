@@ -43,7 +43,6 @@ function brightcove_api_menu_handle() {
 
 //Adds all the scripts nessesary for plugin to work
 function add_all_scripts() {
-	media_upload_header();
 	add_brightcove_script();
 	add_jquery_scripts();
 	add_validation_scripts();
@@ -150,15 +149,18 @@ function add_player_settings($playlistOrVideo) {
 		$width = $defaultWidthPlaylist;
 		$player = $playerIDPlaylist;
 		$id='playlist-settings';
+		$class='playlist-hide';
 	} else {
 		$setting = '';
 		$height = $defaultHeight;
 		$width = $defaultWidth;
 		$player = $playerID;
 		$id='video-settings';
+		$class='video-hide';
 	}
+
 	?>
-	<form id='validate_settings <?php echo $id; ?>'>
+	<form class='validate_settings <?php echo $class;?>' id='<?php echo $id; ?>'>
         <table>
           <tbody>
             <tr class='bc-player-row'>
@@ -167,7 +169,7 @@ function add_player_settings($playlistOrVideo) {
               <span class="alignright"></span>
             </th>
             <td>
-             <input class='digits player-data' type='text' name='bcPlayer' id='bc-player<?echo $setting; ?>' placeholder='Default is <?php $player ?>'/>
+             <input class='digits player-data' type='text' name='bcPlayer' id='bc-player<?echo $setting; ?>' placeholder='Default ID is <?php echo $player; ?>'/>
             </td>
           </tr>
           <tr class='bc-height-row'>
@@ -193,7 +195,40 @@ function add_player_settings($playlistOrVideo) {
       </form> <?php
 }
 
+function add_preview_area ($playlistOrVideo) {
+
+	if ($playlistOrVideo == 'playlist') {
+		$id='dynamic-bc-placeholder-playlist';
+		$class='playlist-hide';
+	} else {
+		$id='dynamic-bc-placeholder-video';
+		$class='video-hide';
+	}
+
+?>
+	<div class='<?php echo $class; ?> media-item no-border player-preview preview-container hidden'>
+      <h3>Video Preview</h3>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <div class='alignleft'>
+              <h4 id='bc_title'></h4>
+              <p id='bc_description'></p>
+              <div id="<?php echo $id; ?>"></div>
+              </div>
+            <div class='alignleft'>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <?php
+}
+
 function bc_media_upload_form () {
+	media_upload_header();
 	add_all_scripts();
 ?>
 <div class="bc-container">
@@ -265,25 +300,14 @@ function bc_media_upload_form () {
 		      </div>
 		    </div><!-- End of tabs --> 
 <?php
-	add_player_settings('playlist');
+	
 	add_player_settings('video');
+	add_preview_area('video');
+	add_player_settings('playlist');
+	add_preview_area('playlist');
 
 ?>
 </div> <?php	
 }
 
 ?>
-
-
-
-
-
-
-
-
-
-
-
-
-
-

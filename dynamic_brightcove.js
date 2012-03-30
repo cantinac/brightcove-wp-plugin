@@ -21,14 +21,13 @@ playerDataPlayer = {
   
 addPlayer = function (typeOfPlayer)	{
 	var playerHTML;
-
 	if (typeOfPlayer == 'single')	{
-		playerHTML = markup(singlePlayerTemplate, playerData);
+		playerHTML = markup(singlePlayerTemplate, playerDataPlayer);
 		$('#dynamic-bc-placeholder-video').html(playerHTML);
 
 	} else if (typeOfPlayer == 'playlist') {
 		playerHTML = markup(playlistPlayerTemplate, playerDataPlaylist);
-		$('#dynamic-bc-placeholder-video').html(playerHTML);	
+		$('#dynamic-bc-placeholder-playlist').html(playerHTML);	
 	}
 }
 
@@ -46,37 +45,39 @@ changeHeight = function (typeOfPlayer) {
 			playerDataPlayer.height=getDefaultHeight();
 		}
 	} else if (typeOfPlayer == 'playlist') {
-		playerDataPlayerPlayerlist.height = $('#bc-height-playlist').val();
-		if (playerDataPlayerPlaylist.height == ''){
-			playerDataPlayerPlaylist.height=getDefaultHeightPlaylist();
+		playerDataPlaylist.height = $('#bc-height-playlist').val();
+		if (playerDataPlaylist.height == ''){
+			playerDataPlaylist.height=getDefaultHeightPlaylist();
 		}
 	}
 }
 
 changeWidth = function (typeOfPlayer) {
+		
 	if (typeOfPlayer == 'single') {
 		playerDataPlayer.width = $('#bc-width').val();
 		if (playerDataPlayer.width == ''){
-			playerDataPlayer.width=getDefaultwidth();
+			playerDataPlayer.width=getDefaultWidth();
 		}
 	} else if (typeOfPlayer == 'playlist') {
-		playerDataPlayerPlayerlist.width = $('#bc-width-playlist').val();
-		if (playerDataPlayerPlaylist.width == ''){
-			playerDataPlayerPlaylist.width=getDefaultwidthPlaylist();
+		playerDataPlaylist.width = $('#bc-width-playlist').val();
+		if (playerDataPlaylist.width == ''){
+			playerDataPlaylist.width=getDefaultWidthPlaylist();
 		}
 	}
+
 }
 
 changePlayer = function (typeOfPlayer) {
 	if (typeOfPlayer == 'single') {
-		playerDataPlayer.playerID = $('#bc-playerID-playlist').val();
+		playerDataPlayer.playerID = $('#bc-playerID').val();
 		if (playerDataPlayer.playerID == ''){
-			playerDataPlayer.playerID=getDefaultwidth();
+			playerDataPlayer.playerID=getDefaultPLayer();
 		}
 	} else if (typeOfPlayer == 'playlist') {
 		playerDataPlayerPlayerlist.playerID = $('#bc-playerID-playlist').val();
 		if (playerDataPlayerPlaylist.playerID == ''){
-			playerDataPlayerPlaylist.playerID=getDefaultwidthPlaylist();
+			playerDataPlayerPlaylist.playerID=getDefaultPlayerPlaylist();
 		}
 	}
 }
@@ -106,11 +107,52 @@ getDefaultPlayerPlaylist = function () {
 	return $('#bc-default-player-playlist').val();
 }
 
-$(function ()
-{
+switchSettings =function (typeOfPlayer) {	
+	if (typeOfPlayer == 'playlist'){
+		$('.video-hide').addClass('hidden');
+		$('.playlist-hide').removeClass('hidden');
+	} else if (typeOfPlayer == 'single') {
+		$('.video-hide').removeClass('hidden');
+		$('.playlist-hide').addClass('hidden');
+	}	
+}
+////////////////////////General Helper Functions/////////////////
+
+markup = function (html, data) {
+      var m;
+      var i = 0;
+      var match = html.match(data instanceof Array ? /{{\d+}}/g : /{{\w+}}/g) || [];
+      while (m = match[i++]) {
+          html = html.replace(m, data[m.substr(2, m.length-4)]);
+      }
+      return html;
+  };
+
+$(function () {
 	if ($('#tabs').length > 0) {
 	    $("#tabs").tabs();
+	    $('.video-tab').bind('click', function (){
+			switchSettings('single');
+		});
+		$('.playlist-tab').bind('click', function (){
+			switchSettings('playlist');
+		})
 	}
+
+	$('#bc-video').bind('change', function () {
+
+		setPlayerData('single');
+		addPlayer('single');
+	})
+
+	$('#bc-playlist').bind('change', function () {
+		setPlayerData('playlist');
+		addPlayer('playlist');
+	})
+
+
+
+	$('#playlist-settings').addClass('hidden');
 });
 
 
