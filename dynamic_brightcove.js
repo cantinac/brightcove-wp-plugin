@@ -370,6 +370,8 @@ var BCL = {};
       }
     });
 
+    if (!playlists.length) return;
+
     playlists = playlists.join(',');
     // console.log(playlists);
     // BCL.playerData.playlistID = playlists;

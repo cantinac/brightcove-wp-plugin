@@ -75,7 +75,7 @@ if ($playerID == '' || $playerID_playlist == '' || $publisherID  == '') {
         <div id='tabs-1'>
           <form id='search_form'>
             <div class='alignleft'>
-              <input placeholder=' Search by name, short description, long description, tag or custom field' id='bc-search-field' type='text'>
+              <input placeholder=' Search by name, description, tag or custom field' id='bc-search-field' type='text'>
               <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
             </div>
             <div class='align-right'>
