@@ -322,7 +322,7 @@ var BCL = {};
         //videos: small thumbnail, name, duration, published date
         var currentName="<td class='title'>"+BCL.constrain(pResponse.items[pVideo].name,25)+"</td>";
         var imgSrc=pResponse.items[pVideo].thumbnailURL;
-        var currentVid="<td><img class='pinkynail toggle' src='"+imgSrc+"'/></td>";
+        var currentVid = imgSrc ? "<td><img class='pinkynail toggle' src='"+imgSrc+"'/></td>" : '<td class="no-thumbnail"></td>';
         
         var lengthMin = Math.floor(pResponse.items[pVideo].length/60000);
         var lengthSec = Math.floor((pResponse.items[pVideo].length%60000)/1000);
