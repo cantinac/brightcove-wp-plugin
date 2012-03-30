@@ -92,13 +92,13 @@ var BCL = {};
   }
 
   // Ignore the tab we are not on from any field updates
-  BCL.ignoreOtherTab = function () {
+  BCL.ignoreOtherTab = function (el) {
     BCL.playerData.playlistID='';
     BCL.playerData.videoID='';
     
     $('.ignore').removeClass('ignore');
     
-    var currentTab = $(this).attr('class');
+    var currentTab = $(el).attr('class');
 
     if (currentTab == 'playlist-tab') {
       BCL.tempVideoPlayer=$('#bc-player').val();
@@ -589,7 +589,7 @@ $(function() {
       //Check to see if the tabs on the express tab exist
       if ($('#tabs').length > 0) {
         $("#tabs").tabs();
-        $('#tabs li a').bind('click', function() { BCL.ignoreOtherTab(); BCL.setPlayerData(); });
+        $('#tabs li a').bind('click', function() { BCL.ignoreOtherTab(this); BCL.setPlayerData(); });
       }
       //Check to see if the media api tabs exist
       if ($('#tabs-api').length > 0) {
