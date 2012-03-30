@@ -124,6 +124,12 @@ var BCL = {};
     });
   }
 
+  BCL.showPlaylists = function() {
+    BCL.dontDisplay = false;
+    BCL.seeAllPlaylists();
+    $('.see_all_playlists').remove();
+  };
+
   // Renders the preview player
   BCL.addPlayer = function () { 
 
@@ -154,11 +160,7 @@ var BCL = {};
         $('#bc-video-search-playlist').before('<button class="see_all_playlists button">See all playlists</button>');
       }
 
-      $('.see_all_playlists').bind('click',function() {
-        BCL.dontDisplay = false;
-        BCL.seeAllPlaylists();
-        $('.see_all_playlists').remove();
-      });
+      $('.see_all_playlists').bind('click', BCL.showPlaylists);
     } else {
 
       $('#dynamic-bc-placeholder').closest('.preview-container').show();
@@ -599,7 +601,7 @@ $(function() {
       $('#bc_search').bind('click', search);
       $('#search_form').bind('submit', search);
       
-      $('.playlist-tab-api').bind('click', BCL.seeAllPlaylists);
+      $('.playlist-tab-api').bind('click', BCL.showPlaylists);
     }
 
 
