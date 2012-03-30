@@ -104,6 +104,27 @@ $publisherID = get_option('bc_pub_id');
         <input type="submit" name="submit" id="submit" class="button-primary" value="Save Changes">
       </p>
     </form>
+
+    <div class="brightcove-settings-help">
+      <h2>Getting Your Brightcove Settings</h2>
+      <p>Each of the following settings can be retrieved by <a href="https://my.brightcove.com/" target="_blank">logging in to your Brightcove Video Cloud account</a>.</p>
+
+      <h3>Publisher ID</h3>
+      <p>To retrieve your Publisher ID, go to <strong>Home &gt; Profile</strong>. It is located under the account name.</p>
+
+      <h3>Player ID(s)</h3>
+      <p>To retrieve the ID for a player:
+        <ol>
+          <li>Open the <strong>Publishing</strong> tab</li>
+          <li>Click a player</li>
+          <li>Copy the <strong>Player ID</strong> under the player preview in the right hand panel.</li>
+        </ol>
+      </p>
+
+      <h3>API Read Key</h3>
+      <p>For Video Cloud Professional and Video Cloud Enterprise Brightcove customers, the API Read Key is required for enhanced functionality such as searching of videos and playlists via the Brightcove Media API. To retrieve your API Read Key, go to <strong>Home &gt; Account Settings &gt; API Management</strong>. See <a href="http://support.brightcove.com/en/docs/managing-media-api-tokens" target="_blank">this support article</a> for detailed information on API Key management.</p>
+    </div>
+
   </div>
   <?php
 }
