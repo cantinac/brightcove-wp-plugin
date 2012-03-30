@@ -173,6 +173,8 @@ body#media-upload ul#sidemenu
 	width:100%;
 }
 
+#bc-video-search-video tr:hover td { background-color: #e6e6e6; }
+
 /*Styling the tables for brightcove API */
 #bc-video-search-video .widefat tr td:nth-child(3),#bc-video-search-video .widefat tr th:nth-child(3), #bc-video-search-playlist .widefat tr td:nth-child(4),#bc-video-search-playlist .widefat tr th:nth-child(4) { text-align:center; }
 
