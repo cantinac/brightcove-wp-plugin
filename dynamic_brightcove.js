@@ -220,8 +220,10 @@ var BCL = {};
 
   // MAPI: Performs a search against the API
   BCL.mediaAPISearch = function() {
+    BCL.searchParams = $.trim($('#bc-search-field').val());
+    if (!BCL.searchParams) return;
+
     $('#bc-video-search-video').html("<p> Searching...</p>");
-    BCL.searchParams = $('#bc-search-field').val();
 
     BCL.token = $('#bc_api_key').val();
     /*Create URL that is called to search for videos*/
@@ -266,9 +268,8 @@ var BCL = {};
   BCL.displayVideos = function (pResponse) {
     var innerHTML="";
     console.log(pResponse.items.length);
-    if (pResponse.items.length == 0)
-    {
-      innerHTML="<p> Sorry those search parameters did not return any results </p>";
+    if (pResponse.items.length == 0) {
+      innerHTML='<div class="no-results bc-error error clear">No results were found for this search.</div>';
       $('#bc-video-search-video').html(innerHTML);
     } else {
     for (var pVideo in pResponse.items) {
