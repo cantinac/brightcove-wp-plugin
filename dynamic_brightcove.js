@@ -253,7 +253,7 @@ validate = function () {
 	validatePlayerSettings('#playlist-settings');
 
     //Sets up validation for the video so that if reference ID is not checked then it does not have to be a number
-      $('#validate_video').validate({
+      $('#validate-video').validate({
         rules : {
           bcVideo : {
             number : { depends: function(element) {
@@ -284,7 +284,7 @@ validate = function () {
     }, "Please enter a single playlist ID or a list of IDs seperated by commas or spaces.");
 
     //Validates the list of playlist IDs
-    $('#validate_playlist').validate({
+    $('#validate-playlist').validate({
       rules: {
         bcPlaylist : {
           listOfIds : { 
@@ -313,13 +313,13 @@ validate = function () {
     $('#bc-video-ref').bind('change',function() {
       $('#bc-video').removeClass('valid').removeClass('error');
       //TODO check for underscores
-      $('#validate_video').valid();
+      $('#validate-video').valid();
     });
 
     $('#bc-playlist-ref').bind('change',function() {
       $('#bc-playlist').removeClass('valid').removeClass('error');
       //TODO check for underscores
-      $('#validate_playlist').valid();
+      $('#validate-playlist').valid();
     });
 }
 
@@ -372,6 +372,7 @@ $(function () {
 	});
 
 	$('#video-settings').bind('submit', shortcodeHandlerVideo);
+	$('#validate-video').bind('submit', shortcodeHandlerVideo);
 	$('#video-shortcode-button').bind('click', shortcodeHandlerVideo);
 
 
@@ -416,7 +417,8 @@ $(function () {
 		addPlayer('playlist');
 	});
 
-	$('#video-settings').bind('submit', shortcodeHandlerPlaylist);
+	$('#playlist-settings').bind('submit', shortcodeHandlerPlaylist);
+	$('#validate-playlist').bind('submit', shortcodeHandlerPlaylist);
 	$('#playlist-shortcode-button').bind('click', shortcodeHandlerPlaylist);
 
 	validate();

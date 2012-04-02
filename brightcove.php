@@ -268,7 +268,7 @@ function bc_media_upload_form () {
 	      </ul>
 	    <div class='tab video-tab' id='tabs-1'>
 	        <div class='media-item no-border'>
-	          <form id='validate_video'>
+	          <form id='validate-video'>
 	            <table>
 	              <tbody>
 	                <tr>
@@ -295,7 +295,7 @@ function bc_media_upload_form () {
 	      </div>
 	      <div class='tab playlist-tab' id='tabs-2'>
 		       <div class='media-item no-border'>
-		          <form id='validate_playlist'>
+		          <form id='validate-playlist'>
 		            <table> 
 		              <tbody>
 		                <tr>
