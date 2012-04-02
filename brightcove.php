@@ -13,10 +13,13 @@ Author URI:
 */
 
 require dirname( __FILE__ ) . '/admin/brightcove_admin.php';
+require dirname( __FILE__ ) . '/brightcove_shortcode.php';
+
 
 /************************Upload Media Tab ***************************/
 
 function brightcove_media_menu($tabs) {
+	//TODO Check for isset or empty instead
   if (get_option('bc_api_key') != NULL or get_option('bc_api_key') != '') {
     $tabs['brightcove_api']='Brightcove'; 
   } else {
@@ -26,14 +29,18 @@ function brightcove_media_menu($tabs) {
 }
 
 add_filter('media_upload_tabs', 'brightcove_media_menu');
+
 add_action('media_upload_brightcove', 'brightcove_menu_handle');
 add_action('media_upload_brightcove_api', 'brightcove_api_menu_handle');
+
 $myStyleUrl = plugins_url('brightcove.css', __FILE__);
 wp_register_style('myStyleSheets', $myStyleUrl);
 wp_enqueue_style( 'myStyleSheets');
-/*add_shortcode('brightcove','add_brightcove');*/
 
 function brightcove_menu_handle() {
+	//TODO check to see what $errors is being used for
+	//TODO check to see if parameters can be passed in here
+	//if not then have bc_media_upload_form call function
 	return wp_iframe('bc_media_upload_form',$errors);
 }
 
@@ -55,6 +62,21 @@ wp_register_script( 'brightcove_script', 'http://admin.brightcove.com/js/Brightc
 wp_enqueue_script( 'brightcove_script' );
 }
 
+function add_jquery_scripts() {
+/*wp_deregister_script('jQuery');
+  wp_register_script( 'jQuery', '/wp-content/plugins/brightcove/jQueryUI/js/jquery-1.7.1.min.js');
+  wp_enqueue_script( 'jQuery' );*/
+
+  //TODO check to see about registering and deregistering scripts
+  //TODO use google CDN versions
+  wp_deregister_script('jQueryUI');
+  wp_register_script( 'jQueryUI', '/wp-content/plugins/brightcove/jQueryUI/js/jquery-ui-1.8.18.custom.min.js');
+  wp_enqueue_script( 'jQueryUI' );
+
+  wp_register_style('jQueryStyle', '/wp-content/plugins/brightcove/jQueryUI/css/smoothness/jquery-ui-1.8.18.custom.css');
+  wp_enqueue_style( 'jQueryStyle');
+}
+
 function add_validation_scripts()
 {
   wp_deregister_script('jQueryValidate');
@@ -66,25 +88,6 @@ function add_validation_scripts()
   wp_enqueue_script( 'jQueryValidateAddional' );
 }
 
-function add_jquery_scripts()
-{/*
-  wp_deregister_script('jQuery');
-  wp_register_script( 'jQuery', '/wp-content/plugins/brightcove/jQueryUI/js/jquery-1.7.1.min.js');
-  wp_enqueue_script( 'jQuery' );*/
-
-  wp_deregister_script('jQueryUI');
-  wp_register_script( 'jQueryUI', '/wp-content/plugins/brightcove/jQueryUI/js/jquery-ui-1.8.18.custom.min.js');
-  wp_enqueue_script( 'jQueryUI' );
-
-  wp_register_style('jQueryStyle', '/wp-content/plugins/brightcove/jQueryUI/css/smoothness/jquery-ui-1.8.18.custom.css');
-  wp_enqueue_style( 'jQueryStyle');
-}
-/*
-function add_api_brightcove_script() {	
-wp_deregister_script( 'api_brightcove_script' );
-wp_register_script( 'api_brightcove_script', 'http://admin.brightcove.com/js/APIModules_all.js');
-wp_enqueue_script( 'api_brightcove_script' );
-}*/
 
 function add_dynamic_brightcove_api_script() {	
 wp_deregister_script( 'dynamic_brightcove_script' );
@@ -92,8 +95,8 @@ wp_register_script( 'dynamic_brightcove_script', '/wp-content/plugins/brightcove
 wp_enqueue_script( 'dynamic_brightcove_script' );
 }
 
-//global variables 
 
+//global variables 
 GLOBAL $playerID, $defaultHeight, $defaultWidth, 
 $defaultIDPlaylist, $defaultHeightPlaylist, $defaultWidthPlaylist,
 $defaultSet, $defaultSetErrorMessage, $defaultsSection;
@@ -121,12 +124,12 @@ if ($defaultWidthPlaylist == '') {
   $defaultWidthPlaylist='940';
 }
 //Checks to see if both those variables are set
-if ($playerID == '' || $playerID_playlist == '') {
+if ($playerID == '' || $playerIDPlaylist == '') {
   $defaultSet='false';
 } else  {
   $defaultSet='true';
 }
-
+//TODO get link from older version of error message
 $defaultSetErrorMessage = "<div class='hidden error' id='defaults-not-set' data-defaultsSet='$defaultSet'>
     You have not set up your defaults for this plugin. Please go to the brightcove menu on the side panel of the admin screen.
   </div>";
@@ -141,6 +144,23 @@ $defaultsSection =
 	<input type='hidden' id='bc-default-height-playlist' name='bc-default-height-playlist' value='$defaultHeightPlaylist' >
 	</div>";
 
+
+function set_shortcode_button ($playlistOrVideo) {
+
+if ($playlistOrVideo == 'playlist') {
+	$id='playlist-shortcode-button';
+} else {
+	$id='video-shortcode-button';
+}
+
+?>
+	<div class='media-item no-border insert-button-container'>
+      <button disabled='disabled' id='<?php echo $id; ?>' class='aligncenter button'/>Insert Shortcode</button>
+    </div> <?php
+	
+} 
+
+//TODO Pass in as map
 function add_player_settings($playlistOrVideo) { 
 	GLOBAL $defaultHeight, $defaultWidth, $defaultHeightPlaylist, $defaultWidthPlaylist, $playerID, $playerIDPlaylist;
 	if ($playlistOrVideo == 'playlist') {
@@ -160,7 +180,7 @@ function add_player_settings($playlistOrVideo) {
 	}
 
 	?>
-	<form class='validate_settings <?php echo $class;?>' id='<?php echo $id; ?>'>
+	<form class='<?php echo $class;?>' id='<?php echo $id; ?>'>
         <table>
           <tbody>
             <tr class='bc-player-row'>
@@ -178,7 +198,7 @@ function add_player_settings($playlistOrVideo) {
               <span class="alignright"></span>
             </th>
             <td>
-             <input class='digits player-data'  type='text' name='bcHeight' id='bc-height' placeholder='Default is  <?php echo $height; ?> px' />
+             <input class='digits player-data'  type='text' name='bcHeight' id='bc-height<?echo $setting; ?>' placeholder='Default is <?php echo $height; ?> px' />
             </td>
           </tr>
           <tr class='bc-width-row'>
@@ -187,12 +207,14 @@ function add_player_settings($playlistOrVideo) {
               <span class="alignright"></span>
             </th>
             <td>
-             <input class='digits player-data' type='text' name='bcWidth' id='bc-width' placeholder='Default is <?php echo $width; ?> px' />
+             <input class='digits player-data' type='text' name='bcWidth' id='bc-width<?echo $setting; ?>' placeholder='Default is <?php echo $width; ?> px' />
             </td>
           </tr>
           </tbody>
         </table>
-      </form> <?php
+        <?php set_shortcode_button($playlistOrVideo); ?>
+      </form> 
+      <?php
 }
 
 function add_preview_area ($playlistOrVideo) {
@@ -212,13 +234,13 @@ function add_preview_area ($playlistOrVideo) {
         <tbody>
           <tr>
             <td>
-              <div class='alignleft'>
-              <h4 id='bc_title'></h4>
-              <p id='bc_description'></p>
-              <div id="<?php echo $id; ?>"></div>
-              </div>
-            <div class='alignleft'>
-              </div>
+				<div class='alignleft'>
+					<h4 id='bc_title'></h4>
+					<p id='bc_description'></p>
+					<div id="<?php echo $id; ?>"></div>
+				</div>
+				<div class='alignleft'>
+				</div>
             </td>
           </tr>
         </tbody>
@@ -299,9 +321,13 @@ function bc_media_upload_form () {
 		        </div>
 		      </div>
 		    </div><!-- End of tabs --> 
+		    <div id='bc-error' class='hidden error'>An error has occured, please check to make sure that you have a valid video or playlist ID</div>
+
 <?php
+	//TODO pass in map of defaults
+	add_player_settings('video');?> 
 	
-	add_player_settings('video');
+<?php
 	add_preview_area('video');
 	add_player_settings('playlist');
 	add_preview_area('playlist');
@@ -309,5 +335,60 @@ function bc_media_upload_form () {
 ?>
 </div> <?php	
 }
+
+function bc_media_api_upload_form () {
+	media_upload_header();
+	add_all_scripts();
+?>
+	<div class="bc-container">
+	<?php
+		GLOBAL $defaultSetErrorMessage; 
+		echo $defaultSetErrorMessage; 
+		GLOBAL $defaultsSection;
+		echo $defaultsSection;
+	?>
+<div id='tabs-api'>
+	<ul>
+		<li ><a class='video-tab-api' href="#tabs-1">Videos</a></li>
+		<li><a class='playlist-tab-api' href="#tabs-2">Playlists</a></li>
+	</ul>
+	<div id='tabs-1' class='tabs video-tabs'>
+		<form id='search_form'>
+			<div class='alignleft'>
+			  <input placeholder=' Search by name, description, tag or custom field' id='bc-search-field' type='text'>
+			</div>
+			<div class='align-right'>
+			  <button class='button' type='submit' id='bc_search'>Search</button>
+			</div>
+		</form>
+		<div class='bc-video-search clearfix' id='bc-video-search-video'></div>
+		<?php add_player_settings('video');
+			  add_preview_area('video'); ?>
+	</div>
+	<div id='tabs-2' class='tabs playlist-tab'>
+		<div class='bc-video-search clearfix' id='bc-video-search-playlist'></div>
+		<?php add_player_settings('playlist');
+	    	  add_preview_area('playlist'); ?>
+	</div>
+</div>
+
+	<?php
+	
+	
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
 
 ?>
