@@ -259,6 +259,7 @@ function bc_media_upload_form () {
 		echo $defaultSetErrorMessage; 
 		GLOBAL $defaultsSection;
 		echo $defaultsSection;
+
 	?>
 	<div class='no-error'>
 	    <div id='tabs'>
@@ -339,36 +340,40 @@ function bc_media_upload_form () {
 function bc_media_api_upload_form () {
 	media_upload_header();
 	add_all_scripts();
+	$apiKey = get_option('bc_api_key');
 ?>
+<!--TODO add MAPI script -->
+<script src="/wp-content/plugins/brightcove/bc-mapi.js" type="text/javascript"></script>
+
 	<div class="bc-container">
 	<?php
 		GLOBAL $defaultSetErrorMessage; 
 		echo $defaultSetErrorMessage; 
 		GLOBAL $defaultsSection;
 		echo $defaultsSection;
+
 	?>
+<input type='hidden' id='bc-api-key' name='bc-api-key' value='<?php echo $apiKey; ?>'>
 <div id='tabs-api'>
 	<ul>
 		<li ><a class='video-tab-api' href="#tabs-1">Videos</a></li>
 		<li><a class='playlist-tab-api' href="#tabs-2">Playlists</a></li>
 	</ul>
 	<div id='tabs-1' class='tabs video-tabs'>
-		<form id='search_form'>
+		<form id='search-form'>
 			<div class='alignleft'>
 			  <input placeholder=' Search by name, description, tag or custom field' id='bc-search-field' type='text'>
 			</div>
 			<div class='align-right'>
-			  <button class='button' type='submit' id='bc_search'>Search</button>
+			  <button class='button' type='submit' id='bc-search'>Search</button>
 			</div>
 		</form>
 		<div class='bc-video-search clearfix' id='bc-video-search-video'></div>
-		<?php add_player_settings('video');
-			  add_preview_area('video'); ?>
+		<?php add_player_settings('video'); ?>
 	</div>
 	<div id='tabs-2' class='tabs playlist-tab'>
 		<div class='bc-video-search clearfix' id='bc-video-search-playlist'></div>
-		<?php add_player_settings('playlist');
-	    	  add_preview_area('playlist'); ?>
+		<?php add_player_settings('playlist');?>
 	</div>
 </div>
 
