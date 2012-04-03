@@ -63,18 +63,18 @@ wp_enqueue_script( 'brightcove_script' );
 }
 
 function add_jquery_scripts() {
-/*wp_deregister_script('jQuery');
-  wp_register_script( 'jQuery', '/wp-content/plugins/brightcove/jQueryUI/js/jquery-1.7.1.min.js');
-  wp_enqueue_script( 'jQuery' );*/
+  wp_deregister_script('jquery');
+  wp_register_script( 'jquery', 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js');
+  wp_enqueue_script( 'jquery' );
 
   //TODO check to see about registering and deregistering scripts
   //TODO use google CDN versions
-  wp_deregister_script('jQueryUI');
-  wp_register_script( 'jQueryUI', '/wp-content/plugins/brightcove/jQueryUI/js/jquery-ui-1.8.18.custom.min.js');
-  wp_enqueue_script( 'jQueryUI' );
+  wp_deregister_script('jquery-ui-core');
+  wp_register_script( 'jquery-ui-core', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js');
+  wp_enqueue_script( 'jquery-ui-core' );
 
-  wp_register_style('jQueryStyle', '/wp-content/plugins/brightcove/jQueryUI/css/smoothness/jquery-ui-1.8.18.custom.css');
-  wp_enqueue_style( 'jQueryStyle');
+  wp_register_style('jqueryStyle', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css');
+  wp_enqueue_style( 'jqueryStyle');
 }
 
 function add_validation_scripts()
@@ -268,7 +268,7 @@ function bc_media_upload_form () {
 	        <li ><a class='video-tab' href="#tabs-1">Videos</a></li>
 	        <li><a class='playlist-tab' href="#tabs-2">Playlists</a></li>
 	      </ul>
-	    <div class='tab video-tab' id='tabs-1'>
+	    <div class='tab clearfix video-tab' id='tabs-1'>
 	        <div class='media-item no-border'>
 	          <form id='validate-video'>
 	            <table>
@@ -295,7 +295,7 @@ function bc_media_upload_form () {
 	          </form>
 	        </div>
 	      </div>
-	      <div class='tab playlist-tab' id='tabs-2'>
+	      <div class='tab clearfix playlist-tab' id='tabs-2'>
 		       <div class='media-item no-border'>
 		          <form id='validate-playlist'>
 		            <table> 
@@ -338,13 +338,19 @@ function bc_media_upload_form () {
 </div> <?php	
 }
 
+function add_mapi_script() {
+	wp_deregister_script( 'mapi_script' );
+	wp_register_script( 'mapi_script', '/wp-content/plugins/brightcove/bc-mapi.js');
+	wp_enqueue_script( 'mapi_script' );
+}
+
 function bc_media_api_upload_form () {
 	media_upload_header();
 	add_all_scripts();
+	add_mapi_script();
 	$apiKey = get_option('bc_api_key');
 ?>
 <!--TODO add MAPI script -->
-<script src="/wp-content/plugins/brightcove/bc-mapi.js" type="text/javascript"></script>
 
 	<div class="bc-container">
 	<?php
@@ -360,7 +366,7 @@ function bc_media_api_upload_form () {
 		<li ><a class='video-tab-api' href="#tabs-1">Videos</a></li>
 		<li><a class='playlist-tab-api' href="#tabs-2">Playlists</a></li>
 	</ul>
-	<div id='tabs-1' class='tabs video-tabs'>
+	<div id='tabs-1' class='tabs clearfix video-tabs'>
 		<form class='clearfix' id='search-form'>
 			<div class='alignleft'>
 			  <input placeholder=' Search by name, description, tag or custom field' id='bc-search-field' type='text'>
@@ -372,7 +378,7 @@ function bc_media_api_upload_form () {
 		<div class='bc-video-search clearfix' id='bc-video-search-video'></div>
 		<?php add_player_settings('video', 'Insert Video'); ?>
 	</div>
-	<div id='tabs-2' class='tabs playlist-tab'>
+	<div id='tabs-2' class='tabs clearfix playlist-tab'>
 		<div class='bc-video-search clearfix' id='bc-video-search-playlist'></div>
 		<?php add_player_settings('playlist', 'Insert Playlists');?>
 	</div>
