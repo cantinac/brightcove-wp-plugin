@@ -237,7 +237,7 @@ setPlayerDataMediaAPI = function (typeOfPlayer, videoID) {
 
 seeAllPlaylists = function() {
 	clearPlayerData('playlist');
-    $('#bc-video-search-playlist').html("<p class='loading-message'> Loading...</p>");
+    $('#bc-video-search-playlist').html("<img class='loading-img-api' src='/wp-includes/js/tinymce/themes/advanced/skins/default/img/progress.gif' />");
     BCMAPI.token = $('#bc-api-key').val();
     // Make a call to the API requesting content
     // Note that a callback function is needed to handle the returned data
@@ -355,7 +355,8 @@ searchForVideos = function () {
     searchParams = $.trim($('#bc-search-field').val());
     if (!searchParams) return;
 
-    $('#bc-video-search-video').html("<p class='loading-message'> Searching...</p>");
+	$('#bc-video-search-video').addClass('disable');    
+    $('#bc-video-search-video').prepend("<img class='loading-img-api' src='/wp-includes/js/tinymce/themes/advanced/skins/default/img/progress.gif' />");
     token = $('#bc-api-key').val();
     /*Create URL that is called to search for videos*/
     var url= [
@@ -377,7 +378,7 @@ displayVideoSearchResults = function (pResponse) {
  	//Checks to see if any results are returned, if not display error message
  	if (pResponse.items.length == 0) {
 		innerHTML='<div class="no-results bc-error error clear">No results were found for this search.</div>';
-		$('#bc-video-search-video').html(innerHTML);
+		$('#bc-video-search-video').html(innerHTML).removeClass('disable');
     
     //If results are returned display them
 	} else {
@@ -410,7 +411,7 @@ displayVideoSearchResults = function (pResponse) {
 	    innerHTML = heading + innerHTML +"</table>" ;
 
 	    //Add results to window
-		$('#bc-video-search-video').html(innerHTML);
+		$('#bc-video-search-video').html(innerHTML).removeClass('disable');
 
 		//Bind video preview function to onClick event for all rows
 		$('.bc-video').bind('click', function() {
@@ -729,7 +730,7 @@ $(function () {
 	$('#playlist-shortcode-button').bind('click', shortcodeHandlerPlaylist);
 
 	validate();
-
+	$('.loading-img').remove();
 	$('.no-error').css('visibility','visible');
 });
 

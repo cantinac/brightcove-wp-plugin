@@ -99,7 +99,7 @@ wp_enqueue_script( 'dynamic_brightcove_script' );
 //global variables 
 GLOBAL $playerID, $defaultHeight, $defaultWidth, 
 $defaultIDPlaylist, $defaultHeightPlaylist, $defaultWidthPlaylist,
-$defaultSet, $defaultSetErrorMessage, $defaultsSection;
+$defaultSet, $defaultSetErrorMessage, $defaultsSection, $loading;
 
 //Player ID for single videos
 $playerID=get_option('bc_player_id');
@@ -144,6 +144,10 @@ $defaultsSection =
 	<input type='hidden' id='bc-default-width-playlist' name='bc-default-width-playlist' value='$defaultWidthPlaylist' >
 	<input type='hidden' id='bc-default-height-playlist' name='bc-default-height-playlist' value='$defaultHeightPlaylist' >
 	</div>";
+
+$loading = "<img class='loading-img' src='/wp-includes/js/thickbox/loadingAnimation.gif' />";
+
+
 
 
 function set_shortcode_button ($playlistOrVideo, $buttonText) {
@@ -260,8 +264,10 @@ function bc_media_upload_form () {
 		echo $defaultSetErrorMessage; 
 		GLOBAL $defaultsSection;
 		echo $defaultsSection;
-
+		GLOBAL $loading;
+		echo $loading;
 	?>
+
 	<div class='no-error'>
 	    <div id='tabs'>
 	      <ul>
@@ -345,6 +351,7 @@ function add_mapi_script() {
 }
 
 function bc_media_api_upload_form () {
+	global $loading;
 	media_upload_header();
 	add_all_scripts();
 	add_mapi_script();
@@ -358,32 +365,35 @@ function bc_media_api_upload_form () {
 		echo $defaultSetErrorMessage; 
 		GLOBAL $defaultsSection;
 		echo $defaultsSection;
+		GLOBAL $loading;
+		echo $loading; 
 
 	?>
 <input type='hidden' id='bc-api-key' name='bc-api-key' value='<?php echo $apiKey; ?>'>
-<div id='tabs-api'>
-	<ul>
-		<li ><a class='video-tab-api' href="#tabs-1">Videos</a></li>
-		<li><a class='playlist-tab-api' href="#tabs-2">Playlists</a></li>
-	</ul>
-	<div id='tabs-1' class='tabs clearfix video-tabs'>
-		<form class='clearfix' id='search-form'>
-			<div class='alignleft'>
-			  <input placeholder=' Search by name, description, tag or custom field' id='bc-search-field' type='text'>
-			</div>
-			<div class='align-right'>
-			  <button class='button' type='submit' id='bc-search'>Search</button>
-			</div>
-		</form>
-		<div class='bc-video-search clearfix' id='bc-video-search-video'></div>
-		<?php add_player_settings('video', 'Insert Video'); ?>
-	</div>
-	<div id='tabs-2' class='tabs clearfix playlist-tab'>
-		<div class='bc-video-search clearfix' id='bc-video-search-playlist'></div>
-		<?php add_player_settings('playlist', 'Insert Playlists');?>
+<div class='no-error'>
+	<div id='tabs-api'>
+		<ul>
+			<li ><a class='video-tab-api' href="#tabs-1">Videos</a></li>
+			<li><a class='playlist-tab-api' href="#tabs-2">Playlists</a></li>
+		</ul>
+		<div id='tabs-1' class='tabs clearfix video-tabs'>
+			<form class='clearfix' id='search-form'>
+				<div class='alignleft'>
+				  <input placeholder=' Search by name, description, tag or custom field' id='bc-search-field' type='text'>
+				</div>
+				<div class='align-right'>
+				  <button class='button' type='submit' id='bc-search'>Search</button>
+				</div>
+			</form>
+			<div class='bc-video-search clearfix' id='bc-video-search-video'></div>
+			<?php add_player_settings('video', 'Insert Video'); ?>
+		</div>
+		<div id='tabs-2' class='tabs clearfix playlist-tab'>
+			<div class='bc-video-search clearfix' id='bc-video-search-playlist'></div>
+			<?php add_player_settings('playlist', 'Insert Playlists');?>
+		</div>
 	</div>
 </div>
-
 	<?php
 	
 	
