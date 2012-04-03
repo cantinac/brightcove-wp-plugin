@@ -7,19 +7,18 @@ jQuery(document).ready(function() {
 
 	if ( defaultPlayer == '' || defaultPlayerPlaylist == '' || publisherID == '') {
 		//Adds an error message to the administrator page
-		jQuery('.required').prepend('<div class="error"> Please make sure that Publisher ID, Player ID and Player ID playlist are filled out </div>');
+		jQuery('#brightcove_menu').prepend('<div class="error"> Please make sure that Publisher ID, Player ID and Player ID playlist are filled out </div>');
 		//Highlights the field that is not filled in
 		if (defaultPlayer == '') {
-			jQuery('.required tr:nth-child(2)').addClass('not-filled');
+			jQuery('.required-settings tr:nth-child(2)').addClass('not-filled');
 		}
 		if (defaultPlayerPlaylist == '') {
-			jQuery('.required tr:nth-child(3)').addClass('not-filled');
+			jQuery('.required-settings tr:nth-child(3)').addClass('not-filled');
 		}
 		if (publisherID == ''){
-			jQuery('.required tr:nth-child(1)').addClass('not-filled');
+			jQuery('.required-settings tr:nth-child(1)').addClass('not-filled');
 		}
 	}
-
 
 	jQuery('#brightcove_menu').validate();
 });

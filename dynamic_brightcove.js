@@ -4,8 +4,8 @@ var BCL = {};
 (function ($) {
 //brightcove.wordpress = { 
 //TODO make ID more dynamic
-var singlePlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperienceVideo\" class=\"BrightcoveExperience singlePlayer\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@videoPlayer\" value=\"{{videoID}}\" /><param name='includeAPI' value='true' /><param name='templateReadyHandler' value='BCL.onTemplateReady' /><param name='templateErrorHandler' value='BCL.onTemplateError' /></object>";
-var playlistPlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperiencePlaylist\" class=\"BrightcoveExperience playlistPlayer\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@playlistTabs\" value=\"{{playlistID}}\"; /><param name=\"@videoList\" value=\"{{playlistID}}\"; /><param name=\"@playlistCombo\" value=\"{{playlistID}}\"; /><param name='includeAPI' value='true' /><param name='templateReadyHandler' value='BCL.onTemplateReady' /><param name='templateErrorHandler' value='BCL.onTemplateError' /></object>";
+var singlePlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperienceVideo\" class=\"BrightcoveExperience singlePlayer\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@videoPlayer\" value=\"{{videoID}}\" /><param name='includeAPI' value='true' /><param name='templateReadyHandler' value='BCL.onTemplateReady' /><param name='templateErrorHandler' value='BCL.onTemplateErrorVideo' /></object>";
+var playlistPlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperiencePlaylist\" class=\"BrightcoveExperience playlistPlayer\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@playlistTabs\" value=\"{{playlistID}}\"; /><param name=\"@videoList\" value=\"{{playlistID}}\"; /><param name=\"@playlistCombo\" value=\"{{playlistID}}\"; /><param name='includeAPI' value='true' /><param name='templateReadyHandler' value='BCL.onTemplateReady' /><param name='templateErrorHandler' value='BCL.onTemplateErrorPlaylist' /></object>";
 
 playerDataPlaylist = {
     "playerID" : "",
@@ -26,7 +26,7 @@ playerDataPlayer = {
 addPlayer = function (typeOfPlayer)	{
 	hideErrorMessage();
 	var playerHTML;
-	if (typeOfPlayer == 'single')	{
+	if (typeOfPlayer == 'video')	{
 		playerHTML = replaceTokens(singlePlayerTemplate, playerDataPlayer);
 		$('#dynamic-bc-placeholder-video').html(playerHTML);
 		$('.video-hide').removeClass('hidden');
@@ -48,7 +48,7 @@ setPlayerDataExpress = function (typeOfPlayer) {
 }
 
 getVideoID = function (typeOfPlayer) {
-	if (typeOfPlayer == 'single') {
+	if (typeOfPlayer == 'video') {
 		playerDataPlayer.videoID = $('#bc-video').val();
 	} else if (typeOfPlayer == 'playlist') {;
 		playerDataPlaylist.playlistID = parsePlaylistIds($('#bc-playlist').val());
@@ -63,7 +63,7 @@ parsePlaylistIds = function (listOfIds) {
 
 //Helper functions to set height, width and playerID
 changeHeight = function (typeOfPlayer) {
-	if (typeOfPlayer == 'single') {
+	if (typeOfPlayer == 'video') {
 		playerDataPlayer.height = $('#bc-height').val();
 		//TODO check javascript is value set?
 		if (playerDataPlayer.height == '' || playerDataPlaylist.height == undefined){
@@ -79,7 +79,7 @@ changeHeight = function (typeOfPlayer) {
 
 changeWidth = function (typeOfPlayer) {
 		
-	if (typeOfPlayer == 'single') {
+	if (typeOfPlayer == 'video') {
 		playerDataPlayer.width = $('#bc-width').val();
 		if (playerDataPlayer.width == '' || playerDataPlaylist.width == undefined){
 			playerDataPlayer.width=getDefaultWidth();
@@ -94,7 +94,7 @@ changeWidth = function (typeOfPlayer) {
 }
 
 changePlayerID = function (typeOfPlayer) {
-	if (typeOfPlayer == 'single') {
+	if (typeOfPlayer == 'video') {
 		playerDataPlayer.playerID = $('#bc-playerID').val();
 		if (playerDataPlayer.playerID == undefined || playerDataPlayer.playerID == ''){
 			playerDataPlayer.playerID=getDefaultPlayerID();
@@ -140,7 +140,7 @@ updateTab =function (typeOfPlayer) {
 			$('.playlist-hide.player-preview').addClass('hidden');
 		}
 		
-	} else if (typeOfPlayer == 'single') {
+	} else if (typeOfPlayer == 'video') {
 		$('.playlist-hide').addClass('hidden');
 		$('.video-hide').removeClass('hidden');
 		if ($('#bc-video').val() == undefined || $('#bc-video').val() == '') {
@@ -422,8 +422,8 @@ displayVideoSearchResults = function (pResponse) {
 previewVideo = function (videoID) {	
 	showSettings('video');
 	generateHTMLForVideo();
-	setPlayerDataMediaAPI('single',videoID);
-	addPlayer('single');
+	setPlayerDataMediaAPI('video',videoID);
+	addPlayer('video');
 }
 
 generateHTMLForVideo = function () {
@@ -432,12 +432,22 @@ generateHTMLForVideo = function () {
 
 /////////////////// Template Functions ////////////////////////////
 
-BCL.onTemplateError = function (event) {
+BCL.onTemplateErrorVideo = function (event) {
+	clearPlayerData('video');
     var errorType = ("errorType: " + event.errorType)
  	$('#specific-error').remove();
     $('#bc-error').removeClass('hidden');
 	$('#bc-error').append('<div id="specific-error">'+errorType+'</div>');
   }
+
+BCL.onTemplateErrorPlaylist = function (event) {
+	clearPlayerData('playlist');
+    var errorType = ("errorType: " + event.errorType)
+ 	$('#specific-error').remove();
+    $('#bc-error').removeClass('hidden');
+	$('#bc-error').append('<div id="specific-error">'+errorType+'</div>');
+  }
+ 
 
 //TODO check onTemplateReady to see if ID gets passed through
 BCL.onTemplateReady = function(event) {  
@@ -588,12 +598,20 @@ $(function () {
 	}
 
 ////////////////////////////Express tab//////////////////////////////
+
+
+	if ($('#defaults-not-set').data('defaultsset') == false) {
+		$('#defaults-not-set').removeClass('hidden');
+		$('.no-error').addClass('hidden');
+	}
+
+
 	//Checks to see if we are in express tabs or media API tabs
 	if ($('#tabs').length > 0) {
 	    $("#tabs").tabs();
 	    $('.video-tab').bind('click', function (){
 	    	hideErrorMessage();
-			updateTab('single');
+			updateTab('video');
 		});
 		$('.playlist-tab').bind('click', function (){
 			hideErrorMessage();
@@ -603,24 +621,38 @@ $(function () {
 
 	//Binds changes for video tab
 	//TODO bind onto keydown in autocomplete fashion
-	$('#bc-video').bind('change', function () {
-		setPlayerDataExpress('single');
-		addPlayer('single');
+	$('#bc-video').keydown( function () {
+		window.clearTimeout(this.timeOut);
+		this.timeOut = window.setTimeout (function() {
+			setPlayerDataExpress('video');
+			addPlayer('video');
+		}, 100);
+		
 	});
 
-	$('#bc-player').bind('change', function () {
-		changePlayerID('single');
-		addPlayer('single');
+	$('#bc-player').keydown( function () {
+		window.clearTimeout(this.timeOut);
+		this.timeOut = window.setTimeout (function() {
+			changePlayerID('video');
+			addPlayer('video');
+		}, 100);
 	});
 
-	$('#bc-width').bind('change', function () {
-		changeWidth('single');
-		addPlayer('single');
+	$('#bc-width').keydown( function () {
+		window.clearTimeout(this.timeOut);
+		this.timeOut = window.setTimeout (function() {
+			changeWidth('video');
+			addPlayer('video');
+		}, 100);
+
 	});
 
-	$('#bc-height').bind('change', function () {
-		changeHeight('single');
-		addPlayer('single');
+	$('#bc-height').keydown( function () {
+		window.clearTimeout(this.timeOut);
+		this.timeOut = window.setTimeout (function() {
+		changeHeight('video');
+		addPlayer('video');
+		}, 100);
 	});
 
 	$('#video-settings').bind('submit', shortcodeHandlerVideo);
@@ -640,7 +672,7 @@ $(function () {
 	    $('.video-tab-api').bind('click', function (){
 	    	hideSettings('video');
 	    	hideErrorMessage();
-			updateTab('single');
+			updateTab('video');
 			if (playerDataPlayer.videoID == '' || playerDataPlayer.videoID == undefined) {
 				hideSettings('video');
 			}
@@ -661,24 +693,36 @@ $(function () {
 		}	
 	});
 
-	$('#bc-playlist').bind('change', function () {
-		setPlayerDataExpress('playlist');
-		addPlayer('playlist');
+	$('#bc-playlist').bind('keydown', function () {
+		window.clearTimeout(this.timeOut);
+		this.timeOut = window.setTimeout (function() {
+			setPlayerDataExpress('playlist');
+			addPlayer('playlist');
+		}, 100);
 	});
 
-	$('#bc-player-playlist').bind('change', function () {
-		changePlayerID('playlist');
-		addPlayer('playlist');
+	$('#bc-player-playlist').bind('keydown', function () {
+		window.clearTimeout(this.timeOut);
+		this.timeOut = window.setTimeout (function() {
+			changePlayerID('playlist');
+			addPlayer('playlist');
+		}, 100);
 	});
 
-	$('#bc-width-playlist').bind('change', function () {
-		changeWidth('playlist');
-		addPlayer('playlist');
+	$('#bc-width-playlist').bind('keydown', function () {
+		window.clearTimeout(this.timeOut);
+		this.timeOut = window.setTimeout (function() {
+			changeWidth('playlist');
+			addPlayer('playlist');
+		}, 100);
 	});
 
-	$('#bc-height-playlist').bind('change', function () {
-		changeHeight('playlist');
-		addPlayer('playlist');
+	$('#bc-height-playlist').bind('keydown', function () {
+		window.clearTimeout(this.timeOut);
+		this.timeOut = window.setTimeout (function() {
+			changeHeight('playlist');
+			addPlayer('playlist');
+		}, 100);
 	});
 
 	$('#playlist-settings').bind('submit', shortcodeHandlerPlaylist);

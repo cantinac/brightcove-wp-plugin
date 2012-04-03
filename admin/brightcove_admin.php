@@ -4,9 +4,9 @@ add_action('admin_menu', 'brightcove_menu');
 add_action( 'admin_init', 'register_brightcove_settings' );
 
 function brightcove_menu() {
-wp_deregister_script( 'brightcove__menu_script' );
-wp_register_script( 'brightcove_menu_script', '/wp-content/plugins/brightcove/admin/brightcove_admin.js');
-wp_enqueue_script( 'brightcove_menu_script' );
+wp_deregister_script( 'brightcove_admin_script' );
+wp_register_script( 'brightcove_admin_script', '/wp-content/plugins/brightcove/admin/brightcove_admin.js');
+wp_enqueue_script( 'brightcove_admin_script');
 
 wp_register_style( 'brightcove_menu_style', '/wp-content/plugins/brightcove/admin/brightcove_admin.css');
 wp_enqueue_style( 'brightcove_menu_style' );
@@ -25,21 +25,30 @@ function brightcove_menu_render() {
 $playerID = get_option('bc_player_id');
 $playerID_playlist = get_option('bc_player_id_playlist'); 
 $publisherID = get_option('bc_pub_id');
+
+if (isset($_GET['settings-updated'])) {
+  $isTrue = $_GET['settings-updated'];
+  if ($isTrue == true) {
+    echo '<div class="settings-saved"> Your settings have been saved </div>';
+  }
+}
+
 ?>
+
 <input id='dataSet' type='hidden' data-defaultPlayer="<?php echo $playerID; ?>" data-defaultPlayerPlaylist="<?php echo $playerID_playlist; ?>" data-publisherID="<?php echo $publisherID; ?>"/>
   <div class='wrap'>
     <h2>Brightcove Settings </h2>
     <form id='brightcove_menu' method='post' action='options.php'>
     <?php settings_fields( 'brightcove-settings-group' ); ?>
       <h3> Required Settings </h3>
-      <table class='required form-table'> 
+      <table class='form-table required-settings'> 
         <tbody>
          <tr valign="top">
           <th scope="row">
             <label for="bc_pub_id">Publisher ID</label>
           </th>
           <td>
-            <input class='number regular-text required' value = "<?php echo $publisherID; ?>" name="bc_pub_id" type="text" id="bc_pub_id" placeholder='Publisher ID for accessing the API' class="regular-text">
+            <input class='digits regular-text required' value = "<?php echo $publisherID; ?>" name="bc_pub_id" type="text" id="bc_pub_id" placeholder='Publisher ID for accessing the API' class="regular-text">
             <span class='description'>Publisher ID for accessing the API.</span>
           </td>
         </tr>
@@ -48,7 +57,7 @@ $publisherID = get_option('bc_pub_id');
               <label for="bc_player_id">Default Player ID - Single Video</label>
             </th>
             <td>
-              <input value ="<?php echo $playerID; ?>" name="bc_player_id" type="text" id="bc_player_id" class="required regular-text number" placeholder='Default player ID'>
+              <input value ="<?php echo $playerID; ?>" name="bc_player_id" type="text" id="bc_player_id" class="required regular-text digits" placeholder='Default player ID'>
               <span class='description'>Default player ID for setting a custom player template across the site.</span>
             </td>
           </tr>
@@ -57,7 +66,7 @@ $publisherID = get_option('bc_pub_id');
               <label for="bc_player_id_playlist">Default Player ID - Playlist</label>
             </th>
             <td>
-              <input value ="<?php echo $playerID_playlist; ?>"  name="bc_player_id_playlist" type="text" id="bc_player_id_playlist" class="required number regular-text" placeholder='Default player ID for Playlists'>
+              <input value ="<?php echo $playerID_playlist; ?>"  name="bc_player_id_playlist" type="text" id="bc_player_id_playlist" class="required digits regular-text" placeholder='Default player ID for Playlists'>
               <span class='description'>Default player ID for setting a custom player template across the site for playlists.</span>
             </td>
           </tr>

@@ -1,9 +1,12 @@
-.not-filled
-{
-	background-color:#FFEBE8;
-}
+.not-filled { background-color:#FFEBE8; }
 
-.error
-{
-	color:red;
-}
+.error { color:red; }
+
+.settings-saved {
+    line-height: 3em;
+    margin: 10px;
+    padding: 0 10px;
+    background-color: #D0F7CD;
+    border-color: #098C00;
+    border-width:1px;
+    border-style:solid; }

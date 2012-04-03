@@ -131,7 +131,8 @@ if ($playerID == '' || $playerIDPlaylist == '') {
 }
 //TODO get link from older version of error message
 $defaultSetErrorMessage = "<div class='hidden error' id='defaults-not-set' data-defaultsSet='$defaultSet'>
-    You have not set up your defaults for this plugin. Please go to the brightcove menu on the side panel of the admin screen.
+     You have not set up your defaults for this plugin. Please click on the link to set your defaults.
+  <a target='_top' href='admin.php?page=brightcove_menu'>Brightcove Settings</a>
   </div>";
 
 $defaultsSection = 
