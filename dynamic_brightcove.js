@@ -433,7 +433,7 @@ generateHTMLForVideo = function () {
 /////////////////// Template Functions ////////////////////////////
 
 BCL.onTemplateErrorVideo = function (event) {
-	clearPlayerData('video');
+	$('.video-hide.player-preview').addClass('hidden');
     var errorType = ("errorType: " + event.errorType)
  	$('#specific-error').remove();
     $('#bc-error').removeClass('hidden');
@@ -441,7 +441,7 @@ BCL.onTemplateErrorVideo = function (event) {
   }
 
 BCL.onTemplateErrorPlaylist = function (event) {
-	clearPlayerData('playlist');
+	$('.playlist-hide.player-preview').addClass('hidden');
     var errorType = ("errorType: " + event.errorType)
  	$('#specific-error').remove();
     $('#bc-error').removeClass('hidden');
@@ -619,8 +619,7 @@ $(function () {
 		})
 	}
 
-	//Binds changes for video tab
-	//TODO bind onto keydown in autocomplete fashion
+	//Binds keydown for video tab
 	$('#bc-video').keydown( function () {
 		window.clearTimeout(this.timeOut);
 		this.timeOut = window.setTimeout (function() {
@@ -731,6 +730,7 @@ $(function () {
 
 	validate();
 
+	$('.no-error').css('visibility','visible');
 });
 
 })(jQuery);

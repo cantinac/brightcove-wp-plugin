@@ -189,6 +189,9 @@ body#media-upload ul#sidemenu
 
 .loading-message {float:left;}
 
-
+.no-error
+{
+	visibility:hidden;
+}
 
 
