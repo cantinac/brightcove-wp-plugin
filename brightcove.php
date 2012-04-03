@@ -145,7 +145,7 @@ $defaultsSection =
 	</div>";
 
 
-function set_shortcode_button ($playlistOrVideo) {
+function set_shortcode_button ($playlistOrVideo, $buttonText) {
 
 if ($playlistOrVideo == 'playlist') {
 	$id='playlist-shortcode-button';
@@ -155,13 +155,13 @@ if ($playlistOrVideo == 'playlist') {
 
 ?>
 	<div class='media-item no-border insert-button-container'>
-      <button disabled='disabled' id='<?php echo $id; ?>' class='aligncenter button'/>Insert Shortcode</button>
+      <button disabled='disabled' id='<?php echo $id; ?>' class='aligncenter button'/><?php echo $buttonText; ?></button>
     </div> <?php
 	
 } 
 
 //TODO Pass in as map
-function add_player_settings($playlistOrVideo) { 
+function add_player_settings($playlistOrVideo, $buttonText) { 
 	GLOBAL $defaultHeight, $defaultWidth, $defaultHeightPlaylist, $defaultWidthPlaylist, $playerID, $playerIDPlaylist;
 	if ($playlistOrVideo == 'playlist') {
 		$setting = '-playlist';
@@ -212,7 +212,7 @@ function add_player_settings($playlistOrVideo) {
           </tr>
           </tbody>
         </table>
-        <?php set_shortcode_button($playlistOrVideo); ?>
+        <?php set_shortcode_button($playlistOrVideo, $buttonText); ?>
       </form> 
       <?php
 }
@@ -326,11 +326,11 @@ function bc_media_upload_form () {
 
 <?php
 	//TODO pass in map of defaults
-	add_player_settings('video');?> 
+	add_player_settings('video', 'Insert Shortcode');?> 
 	
 <?php
 	add_preview_area('video');
-	add_player_settings('playlist');
+	add_player_settings('playlist', 'Insert Shortcode');
 	add_preview_area('playlist');
 
 ?>
@@ -360,7 +360,7 @@ function bc_media_api_upload_form () {
 		<li><a class='playlist-tab-api' href="#tabs-2">Playlists</a></li>
 	</ul>
 	<div id='tabs-1' class='tabs video-tabs'>
-		<form id='search-form'>
+		<form class='clearfix' id='search-form'>
 			<div class='alignleft'>
 			  <input placeholder=' Search by name, description, tag or custom field' id='bc-search-field' type='text'>
 			</div>
@@ -369,11 +369,11 @@ function bc_media_api_upload_form () {
 			</div>
 		</form>
 		<div class='bc-video-search clearfix' id='bc-video-search-video'></div>
-		<?php add_player_settings('video'); ?>
+		<?php add_player_settings('video', 'Insert Video'); ?>
 	</div>
 	<div id='tabs-2' class='tabs playlist-tab'>
 		<div class='bc-video-search clearfix' id='bc-video-search-playlist'></div>
-		<?php add_player_settings('playlist');?>
+		<?php add_player_settings('playlist', 'Insert Playlists');?>
 	</div>
 </div>
 

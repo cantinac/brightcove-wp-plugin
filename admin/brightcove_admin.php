@@ -63,12 +63,12 @@ $publisherID = get_option('bc_pub_id');
           </tr>
         </tbody>
       </table>
-      <h3> Required Only for Accessing Media API, not required for express users </h3>
+      <h3> Required Only for Accessing Media API</h3>
       <table class='form-table'> 
         <tbody>
           <tr valign="top">
             <th scope="row">
-              <label for="bc_api_key">API Read Key</label>
+              <label for="bc_api_key">API Read Token</label>
             </th>
             <td>
               <input value = '<? echo get_option('bc_api_key'); ?>' name="bc_api_key" type="text" id="bc_api_key" placeholder='API Key' class="regular-text">
