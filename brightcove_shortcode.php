@@ -6,10 +6,7 @@ function add_brightcove($atts) {
 add_brightcove_script();
 isset($atts['playerid']) ? $playerId=($atts['playerid']): $playerId=get_option('bc_player_id');
 ?>
-
-<!-- Start of Brightcove Player -->
 <div style="display:none"></div>
-
 <object id="<?php echo rand() ?>" class="BrightcoveExperience">
   <param name="bgcolor" value="#FFFFFF" />
   <param name="width" value="<?php echo $atts['width']; ?>" />
@@ -43,10 +40,6 @@ isset($atts['playerid']) ? $playerId=($atts['playerid']): $playerId=get_option('
   <?php }
   ?>
 </object>
-
-<!-- End of Brightcove Player -->	
-
-
 <?php
 
 }

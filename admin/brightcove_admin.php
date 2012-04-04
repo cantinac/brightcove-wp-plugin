@@ -59,8 +59,8 @@ if (isset($_GET['settings-updated'])) {
             <label for="bc_pub_id">Publisher ID</label>
           </th>
           <td>
-            <input class='digits regular-text' value = "<?php echo $publisherID; ?>" name="bc_pub_id" type="text" id="bc_pub_id" placeholder='Publisher ID for accessing the API' class="regular-text">
-            <span class='description'>Publisher ID for accessing the API.</span>
+            <input class='digits required regular-text' value = "<?php echo $publisherID; ?>" name="bc_pub_id" type="text" id="bc_pub_id" placeholder='Publisher ID' class="regular-text">
+            <span class='description'>Publisher ID</span>
           </td>
         </tr>
          <tr valign="top">
@@ -68,7 +68,7 @@ if (isset($_GET['settings-updated'])) {
               <label for="bc_player_id">Default Player ID - Single Video</label>
             </th>
             <td>
-              <input value ="<?php echo $playerID; ?>" name="bc_player_id" type="text" id="bc_player_id" class="regular-text digits" placeholder='Default player ID'>
+              <input value ="<?php echo $playerID; ?>" name="bc_player_id" type="text" id="bc_player_id" class="required regular-text digits" placeholder='Default player ID'>
               <span class='description'>Default player ID for setting a custom player template across the site.</span>
             </td>
           </tr>
@@ -77,7 +77,7 @@ if (isset($_GET['settings-updated'])) {
               <label for="bc_player_id_playlist">Default Player ID - Playlist</label>
             </th>
             <td>
-              <input value ="<?php echo $playerID_playlist; ?>"  name="bc_player_id_playlist" type="text" id="bc_player_id_playlist" class="digits regular-text" placeholder='Default player ID for Playlists'>
+              <input value ="<?php echo $playerID_playlist; ?>"  name="bc_player_id_playlist" type="text" id="bc_player_id_playlist" class="required digits regular-text" placeholder='Default player ID for Playlists'>
               <span class='description'>Default player ID for setting a custom player template across the site for playlists.</span>
             </td>
           </tr>

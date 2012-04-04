@@ -132,7 +132,7 @@ if ($playerID == '' || $playerIDPlaylist == '' || $publisherID == '') {
   $BCdefaultSet=true;
 }
 //TODO get link from older version of error message
-$defaultSetErrorMessage = "<div class='hidden error' id='defaults-not-set' data-defaultsSet='$defaultSet'>
+$defaultSetErrorMessage = "<div class='hidden error' id='defaults-not-set' data-defaultsSet='$BCdefaultSet'>
      You have not set up your defaults for this plugin. Please click on the link to set your defaults.
   <a target='_top' href='admin.php?page=brightcove_menu'>Brightcove Settings</a>
   </div>";
