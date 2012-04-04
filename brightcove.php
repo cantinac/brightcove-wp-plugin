@@ -15,7 +15,6 @@ Author URI:
 require dirname( __FILE__ ) . '/admin/brightcove_admin.php';
 require dirname( __FILE__ ) . '/brightcove_shortcode.php';
 
-
 /************************Upload Media Tab ***************************/
 
 function brightcove_media_menu($tabs) {
@@ -99,7 +98,10 @@ wp_enqueue_script( 'dynamic_brightcove_script' );
 //global variables 
 GLOBAL $playerID, $defaultHeight, $defaultWidth, 
 $defaultIDPlaylist, $defaultHeightPlaylist, $defaultWidthPlaylist,
-$defaultSet, $defaultSetErrorMessage, $defaultsSection, $loading;
+$BCdefaultSet, $defaultSetErrorMessage, $defaultsSection, $loading, $publisherID;
+
+//Publisher ID 
+$publisherID=get_option('bc_pub_id');
 
 //Player ID for single videos
 $playerID=get_option('bc_player_id');
@@ -124,10 +126,10 @@ if ($defaultWidthPlaylist == '') {
   $defaultWidthPlaylist='940';
 }
 //Checks to see if both those variables are set
-if ($playerID == '' || $playerIDPlaylist == '') {
-  $defaultSet='false';
+if ($playerID == '' || $playerIDPlaylist == '' || $publisherID == '') {
+  $BCdefaultSet=false;
 } else  {
-  $defaultSet='true';
+  $BCdefaultSet=true;
 }
 //TODO get link from older version of error message
 $defaultSetErrorMessage = "<div class='hidden error' id='defaults-not-set' data-defaultsSet='$defaultSet'>

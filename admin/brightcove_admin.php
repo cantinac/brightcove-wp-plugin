@@ -1,5 +1,16 @@
 <?php 
-/*var_dump('Something here');*/
+
+/* Sets up an admin notice notifying the user that they have not registered their brightcove settings */
+add_action('admin_notices', 'brightcove_settings_notice');
+
+/*Checks to see if defaults are set, displays error if not set*/
+function brightcove_settings_notice() {
+  global $BCdefaultSet;
+  if ($BCdefaultSet == false) {
+    echo "<div class='error'><p>You have not setup your settings for the Brightcove Plugin. Please set them up here <a href='admin.php?page=brightcove_menu'>Brightcove Settings</a></p></div>";
+  }
+}
+
 add_action('admin_menu', 'brightcove_menu');
 add_action( 'admin_init', 'register_brightcove_settings' );
 
@@ -29,7 +40,7 @@ $publisherID = get_option('bc_pub_id');
 if (isset($_GET['settings-updated'])) {
   $isTrue = $_GET['settings-updated'];
   if ($isTrue == true) {
-    echo '<div class="settings-saved"> Your settings have been saved </div>';
+    echo '<div class="updated"><p> Your settings have been saved </p></div>';
   }
 }
 
@@ -37,10 +48,10 @@ if (isset($_GET['settings-updated'])) {
 
 <input id='dataSet' type='hidden' data-defaultPlayer="<?php echo $playerID; ?>" data-defaultPlayerPlaylist="<?php echo $playerID_playlist; ?>" data-publisherID="<?php echo $publisherID; ?>"/>
   <div class='wrap'>
-    <h2>Brightcove Settings </h2>
+    <h2>Brightcove Settings </h2> 
     <form id='brightcove_menu' method='post' action='options.php'>
     <?php settings_fields( 'brightcove-settings-group' ); ?>
-      <h3> Required Settings </h3>
+      <h3> Required Settings </h3><a href='#brightcove-settings-help'> Where do I find these? </a>
       <table class='form-table required-settings'> 
         <tbody>
          <tr valign="top">
@@ -48,7 +59,7 @@ if (isset($_GET['settings-updated'])) {
             <label for="bc_pub_id">Publisher ID</label>
           </th>
           <td>
-            <input class='digits regular-text ' value = "<?php echo $publisherID; ?>" name="bc_pub_id" type="text" id="bc_pub_id" placeholder='Publisher ID for accessing the API' class="regular-text">
+            <input class='digits regular-text' value = "<?php echo $publisherID; ?>" name="bc_pub_id" type="text" id="bc_pub_id" placeholder='Publisher ID for accessing the API' class="regular-text">
             <span class='description'>Publisher ID for accessing the API.</span>
           </td>
         </tr>
@@ -57,7 +68,7 @@ if (isset($_GET['settings-updated'])) {
               <label for="bc_player_id">Default Player ID - Single Video</label>
             </th>
             <td>
-              <input value ="<?php echo $playerID; ?>" name="bc_player_id" type="text" id="bc_player_id" class=" regular-text digits" placeholder='Default player ID'>
+              <input value ="<?php echo $playerID; ?>" name="bc_player_id" type="text" id="bc_player_id" class="regular-text digits" placeholder='Default player ID'>
               <span class='description'>Default player ID for setting a custom player template across the site.</span>
             </td>
           </tr>
@@ -77,11 +88,11 @@ if (isset($_GET['settings-updated'])) {
         <tbody>
           <tr valign="top">
             <th scope="row">
-              <label for="bc_api_key">API Read Token</label>
+              <label for="bc_api_key">API Read Token </label> 
             </th>
             <td>
               <input value = '<? echo get_option('bc_api_key'); ?>' name="bc_api_key" type="text" id="bc_api_key" placeholder='API Key' class="regular-text">
-              <span class='description'>Media API Key</span>
+              <span class='description'>Media API Key <a href='#read-key-help'>?</a></span>
             </td>
           </tr>
         </tbody>
@@ -132,7 +143,7 @@ if (isset($_GET['settings-updated'])) {
       </p>
     </form>
 
-    <div class="brightcove-settings-help">
+    <div id="brightcove-settings-help" class="brightcove-settings-help">
       <h2>Getting Your Brightcove Settings</h2>
       <p>Each of the following settings can be retrieved by <a href="https://my.brightcove.com/" target="_blank">logging in to your Brightcove Video Cloud account</a>.</p>
 
@@ -148,7 +159,7 @@ if (isset($_GET['settings-updated'])) {
         </ol>
       </p>
 
-      <h3>API Read Key</h3>
+      <h3 id='read-key-help'>API Read Key</h3>
       <p>For Video Cloud Professional and Video Cloud Enterprise Brightcove customers, the API Read Key is required for enhanced functionality such as searching of videos and playlists via the Brightcove Media API. To retrieve your API Read Key, go to <strong>Home &gt; Account Settings &gt; API Management</strong>. See <a href="http://support.brightcove.com/en/docs/managing-media-api-tokens" target="_blank">this support article</a> for detailed information on API Key management.</p>
     </div>
 
