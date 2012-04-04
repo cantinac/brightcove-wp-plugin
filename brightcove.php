@@ -199,15 +199,6 @@ function add_player_settings($playlistOrVideo, $buttonText) {
              <input class='digits player-data' type='text' name='bcPlayer' id='bc-player<?echo $setting; ?>' placeholder='Default ID is <?php echo $player; ?>'/>
             </td>
           </tr>
-          <tr class='bc-height-row'>
-            <th valign='top' scope='row' class='label'>
-              <span class="alignleft"><label for="bcHeight">Height:</label></span>
-              <span class="alignright"></span>
-            </th>
-            <td>
-             <input class='digits player-data'  type='text' name='bcHeight' id='bc-height<?echo $setting; ?>' placeholder='Default is <?php echo $height; ?> px' />
-            </td>
-          </tr>
           <tr class='bc-width-row'>
             <th valign='top' scope='row' class='label'>
               <span class="alignleft"><label for="bcWidth">Width:</label></span>
@@ -215,6 +206,15 @@ function add_player_settings($playlistOrVideo, $buttonText) {
             </th>
             <td>
              <input class='digits player-data' type='text' name='bcWidth' id='bc-width<?echo $setting; ?>' placeholder='Default is <?php echo $width; ?> px' />
+            </td>
+          </tr>
+          <tr class='bc-height-row'>
+            <th valign='top' scope='row' class='label'>
+              <span class="alignleft"><label for="bcHeight">Height:</label></span>
+              <span class="alignright"></span>
+            </th>
+            <td>
+             <input class='digits player-data'  type='text' name='bcHeight' id='bc-height<?echo $setting; ?>' placeholder='Default is <?php echo $height; ?> px' />
             </td>
           </tr>
           </tbody>

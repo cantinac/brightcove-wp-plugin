@@ -350,13 +350,157 @@ generateHTMLForPlaylist = function () {
 
 /////////////////////// Videos /////////////////////////
 
-searchForVideos = function () {
+getAllVideos = function (pageNumber)
+{
+	clearPlayerData('video');
+
+	
+	if (pageNumber == 0) {
+		$('#bc-video-search-video').addClass('disable');
+		$('#bc-video-search-video').prepend("<img class='loading-img-api' src='/wp-includes/js/tinymce/themes/advanced/skins/default/img/progress.gif' />");
+	}    
+    token = $('#bc-api-key').val();
+    /*Create URL that is called to search for videos*/
+    var url= [
+      "http://api.brightcove.com/services/library&command=find_all_videos",
+      "&token=", encodeURIComponent(token),
+      '&page_size=25',
+      '&page_number=',encodeURIComponent(pageNumber),
+      '&get_item_count=true',
+      "&callback=",encodeURIComponent("displayAllVideos")
+    ].join("");
+    
+    BCMAPI.inject(url);
+};
+
+displayAllVideos = function (pResponse) {
+	displayPagedVideoSearchResults (pResponse, "all"); 
+}
+
+displaySearchedVideos = function (pResponse) {
+	displayPagedVideoSearchResults (pResponse, "search"); 
+}
+
+displayPagedVideoSearchResults = function (pResponse, allOrSearch) {
+	console.log(pResponse);
+	var html = videoResults (pResponse), 
+	pageNumber = pResponse.page_number, 
+	totalCount = pResponse.total_count, 
+	totalNumberOfPages = Math.ceil(totalCount/pResponse.page_size), 
+	prevButton ='', 
+	nextButton = '',
+	pageClass='';
+
+	if (pageNumber > 0) {
+		pageClass='hidden';
+		prevButton = "<button class='prev-page button' data-prevPage='"+(pageNumber-1)+"'> Previous Page </button>";
+	} 
+	if (pageNumber+1 < totalNumberOfPages ){
+		nextButton = "<button class='next-page button' data-nextPage='"+(pageNumber+1)+"'> Next Page </button>";	
+	}
+	html = "<div id='video-page-"+pageNumber+"' class='"+pageClass+"'>"+html+"<div class='button-bar'>"+prevButton+nextButton+"</div></div>";
+	if (pageNumber == 0) {
+		$('#bc-video-search-video').html(html).removeClass('disable');
+	} else {
+		$('#bc-video-search-video').append(html).removeClass('disable');
+	}
+	$('.bc-video').bind('click', function() {
+			previewVideo($(this).data('videoid'));
+		}); 
+	$('.prev-page').bind('click', function() {
+		var pageNumber = $(this).data('prevpage');
+		showPage(pageNumber);
+	});
+
+	$('.next-page').bind('click', function() {
+		var pageNumber = $(this).data('nextpage');
+		showPage(pageNumber);
+	});
+	
+	if (allOrSearch == 'all') {
+		if (pageNumber+1 < totalNumberOfPages){
+		getAllVideos(pageNumber+1);	
+		}
+	} else if (allOrSearch == 'search') {
+		if (pageNumber+1 < totalNumberOfPages){
+		searchForVideos(pageNumber+1);	
+		}
+	}
+	
+}
+/*
+displayPagedVideoSearchResults = function (pResponse) {
+	
+	var pages = [], i=0, items = [], display, prevButton = '', nextButton = '',resultsPerPage=25, totalLength = pResponse.items.length, numPages = Math.ceil((totalLength/resultsPerPage));
+
+	while (pResponse.items.length > 0 ) {
+		items = pResponse.items.splice(0 , resultsPerPage);
+		pages[i]= {
+			items: items
+		};
+		display = '';
+		prevButton='';
+		if ( i > 0 ) {
+			display='class="hidden"';
+			prevButton = "<button class='prev-page button' data-prevPage='"+(i-1)+"'> Previous Page </button>";
+		} 
+		nextButton ='';
+		if ( (i) < numPages ) {
+			nextButton = "<button class='next-page button' data-nextPage='"+(i+1)+"'> Next Page </button>";	
+		} else if ((i+1) < numPages){
+			nextButton = "<button class='next-page load-more-pages button' data-nextPage='"+(i+1)+"'> Next Page </button>";	
+		}
+		pages[i] = "<div "+display+" id='video-page-"+i+"'>"+videoResults(pages[i])+"<div class='button-bar clearfix'>"+prevButton+nextButton+"</div></div>";
+		i++;
+	}
+	pages=pages.join('');
+	if (pResponse.page_number == 0) {
+		$('#bc-video-search-video').html(pages).removeClass('disable');
+	} else {
+		$('#bc-video-search-video').append(pages).removeClass('disable');
+	}
+	
+
+	$('.prev-page').bind('click', function() {
+		console.log(this);
+		var pageNumber = $(this).data('prevpage');
+		showPage(pageNumber);
+	});
+
+	$('.next-page').bind('click', function() {
+		console.log(this);
+		var pageNumber = $(this).data('nextpage');
+		showPage(pageNumber);
+	});
+	$('.bc-video').bind('click', function() {
+			previewVideo($(this).data('videoid'));
+		}); 
+		console.log(pResponse);
+	if (pResponse.total_count > (pResponse.page_size * (pResponse.page_number+1))) {
+		$('.load-more-pages').bind('click', function () {
+		
+		});	
+	}	
+}
+*/
+
+showPage = function (pageNumber) {
+	var nextPage = pageNumber + 1, prevPage = pageNumber - 1;
+	$('#video-page-' + pageNumber).removeClass('hidden');
+	$('#video-page-' + prevPage).addClass('hidden');
+	$('#video-page-' + nextPage).addClass('hidden');
+}
+
+
+searchForVideos = function (pageNumber) {
 	clearPlayerData('video');
     searchParams = $.trim($('#bc-search-field').val());
     if (!searchParams) return;
 
 	$('#bc-video-search-video').addClass('disable');    
-    $('#bc-video-search-video').prepend("<img class='loading-img-api' src='/wp-includes/js/tinymce/themes/advanced/skins/default/img/progress.gif' />");
+	if (pageNumber == 0) {
+    	$('#bc-video-search-video').prepend("<img class='loading-img-api' src='/wp-includes/js/tinymce/themes/advanced/skins/default/img/progress.gif' />");
+    }
     token = $('#bc-api-key').val();
     /*Create URL that is called to search for videos*/
     var url= [
@@ -365,14 +509,17 @@ searchForVideos = function () {
       "&any=search_text:", encodeURIComponent(searchParams),
       "&any=custom_fields:", encodeURIComponent(searchParams),
       "&any=tag:",encodeURIComponent(searchParams),
-      "&callback=",encodeURIComponent("displayVideoSearchResults")
+      '&page_size=25',
+      '&page_number=',encodeURIComponent(pageNumber),
+      '&get_item_count=true',
+      "&callback=",encodeURIComponent("displaySearchedVideos")
     ].join("");
     
     BCMAPI.inject(url);
 };
 
 
-displayVideoSearchResults = function (pResponse) {
+videoResults = function (pResponse) {
  	var currentName, imgSrc, currentVid, lengthMin, lengthSec, length, date, heading, innerHTML = '';
  	
  	//Checks to see if any results are returned, if not display error message
@@ -410,15 +557,21 @@ displayVideoSearchResults = function (pResponse) {
 	    //Add the heading to all the table rows and close the table
 	    innerHTML = heading + innerHTML +"</table>" ;
 
-	    //Add results to window
-		$('#bc-video-search-video').html(innerHTML).removeClass('disable');
+	    return innerHTML;
+	}
+}
 
-		//Bind video preview function to onClick event for all rows
-		$('.bc-video').bind('click', function() {
+displayVideoSearchResults = function (pResponse) {
+	var innerHTML = videoResults (pResponse);
+	//Add results to window
+	$('#bc-video-search-video').html(innerHTML).removeClass('disable');
+
+	//Bind video preview function to onClick event for all rows
+	$('.bc-video').bind('click', function() {
 			previewVideo($(this).data('videoid'));
 		}); 
 	}
-};
+
 
 previewVideo = function (videoID) {	
 	showSettings('video');
@@ -435,6 +588,9 @@ generateHTMLForVideo = function () {
 
 BCL.onTemplateErrorVideo = function (event) {
 	$('.video-hide.player-preview').addClass('hidden');
+
+	if (event.erroType == 'serviceUnavailable') return;
+
     var errorType = ("errorType: " + event.errorType)
  	$('#specific-error').remove();
     $('#bc-error').removeClass('hidden');
@@ -594,7 +750,7 @@ $(function () {
 
 	var searchForVideosHandler = function () {
 		hideSettings('video');
-		searchForVideos();
+		searchForVideos(0);
 		return false;
 	}
 
@@ -669,6 +825,7 @@ $(function () {
 	if ($('#tabs-api').length > 0) {
 	    $("#tabs-api").tabs();
 	  	hideSettings('video');
+	  	getAllVideos(0);
 	    $('.video-tab-api').bind('click', function (){
 	    	hideSettings('video');
 	    	hideErrorMessage();
