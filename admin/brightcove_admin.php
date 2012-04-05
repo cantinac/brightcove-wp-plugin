@@ -5,9 +5,10 @@ add_action('admin_notices', 'brightcove_settings_notice');
 
 /*Checks to see if defaults are set, displays error if not set*/
 function brightcove_settings_notice() {
-  global $BCdefaultSet;
-  if ($BCdefaultSet == false) {
-    echo "<div class='error'><p>You have not setup your settings for the Brightcove Plugin. Please set them up here <a href='admin.php?page=brightcove_menu'>Brightcove Settings</a></p></div>";
+  global $bcGlobalVariables;
+
+  if ($bcGlobalVariables['defaultSet'] == false) {
+    echo "<div class='error'><p>You have not entered your settings for the Brightcove Plugin. Please set them up at <a href='admin.php?page=brightcove_menu'>Brightcove Settings</a></p></div>";
   }
 }
 
@@ -92,7 +93,7 @@ if (isset($_GET['settings-updated'])) {
             </th>
             <td>
               <input value = '<? echo get_option('bc_api_key'); ?>' name="bc_api_key" type="text" id="bc_api_key" placeholder='API Key' class="regular-text">
-              <span class='description'>Media API Key <a href='#read-key-help'>?</a></span>
+              <span class='description'>API Read Token <a href='#read-key-help'>?</a></span>
             </td>
           </tr>
         </tbody>

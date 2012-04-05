@@ -3,9 +3,8 @@ var BCL = {};
 
 (function ($) {
 //brightcove.wordpress = { 
-//TODO make ID more dynamic
-var singlePlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperienceVideo\" class=\"BrightcoveExperience singlePlayer\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@videoPlayer\" value=\"{{videoID}}\" /><param name='includeAPI' value='true' /><param name='templateReadyHandler' value='BCL.onTemplateReady' /><param name='templateErrorHandler' value='BCL.onTemplateErrorVideo' /></object>";
-var playlistPlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperiencePlaylist\" class=\"BrightcoveExperience playlistPlayer\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@playlistTabs\" value=\"{{playlistID}}\"; /><param name=\"@videoList\" value=\"{{playlistID}}\"; /><param name=\"@playlistCombo\" value=\"{{playlistID}}\"; /><param name='includeAPI' value='true' /><param name='templateReadyHandler' value='BCL.onTemplateReady' /><param name='templateErrorHandler' value='BCL.onTemplateErrorPlaylist' /></object>";
+var singlePlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperienceVideo\" class=\"BrightcoveExperience singlePlayer\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@videoPlayer\" value=\"{{videoID}}\" /><param name='includeAPI' value='true' /><param name='templateReadyHandler' value='BCL.onTemplateReadyVideo' /><param name='templateErrorHandler' value='BCL.onTemplateErrorVideo' /></object>";
+var playlistPlayerTemplate = "<div style=\"display:none\"></div><object id=\"myExperiencePlaylist\" class=\"BrightcoveExperience playlistPlayer\"><param name=\"bgcolor\" value=\"#64AAB2\" /><param name=\"width\" value=\"{{width}}\" /><param name=\"height\" value=\"{{height}}\" /><param name=\"playerID\" value=\"{{playerID}}\" /><param name=\"isVid\" value=\"true\" /><param name=\"isUI\" value=\"true\" /><param name=\"dynamicStreaming\" value=\"true\" /><param name=\"@playlistTabs\" value=\"{{playlistID}}\"; /><param name=\"@videoList\" value=\"{{playlistID}}\"; /><param name=\"@playlistCombo\" value=\"{{playlistID}}\"; /><param name='includeAPI' value='true' /><param name='templateReadyHandler' value='BCL.onTemplateReadyPlaylist' /><param name='templateErrorHandler' value='BCL.onTemplateErrorPlaylist' /></object>";
 
 playerDataPlaylist = {
     "playerID" : "",
@@ -235,19 +234,89 @@ setPlayerDataMediaAPI = function (typeOfPlayer, videoID) {
 
 /////////////////////// Playlists /////////////////////////
 
-seeAllPlaylists = function() {
-	clearPlayerData('playlist');
-    $('#bc-video-search-playlist').html("<img class='loading-img-api' src='/wp-includes/js/tinymce/themes/advanced/skins/default/img/progress.gif' />");
-    BCMAPI.token = $('#bc-api-key').val();
-    // Make a call to the API requesting content
-    // Note that a callback function is needed to handle the returned data
+seeAllPlaylists = function(pageNumber) {
 
-    BCMAPI.find('find_all_playlists',{ "callback" : "displayPlaylists"});
+	clearPlayerData('playlist');
+	if (pageNumber == 0) {
+		$('#bc-video-search-playlist').addClass('disable');
+		$('#bc-video-search-playlist').prepend("<img class='loading-img-api' src='/wp-includes/js/tinymce/themes/advanced/skins/default/img/progress.gif' />");
+	}    
+    token = $('#bc-api-key').val();
+    /*Create URL that is called to search for videos*/
+    var url= [
+      "http://api.brightcove.com/services/library&command=find_all_playlists",
+      "&token=", encodeURIComponent(token),
+      '&page_size=25',
+      '&page_number=',encodeURIComponent(pageNumber),
+      '&get_item_count=true',
+      "&callback=",encodeURIComponent("displayPlaylists")
+    ].join("");
+
+    BCMAPI.inject(url);
   };
 
 displayPlaylists = function (pResponse) {
+	var innerHTML = playlistResults(pResponse), 
+	pageNumber = pResponse.page_number, 
+	totalCount = pResponse.total_count, 
+	totalNumberOfPages = Math.ceil(totalCount/pResponse.page_size), 
+	prevButton ='', 
+	nextButton = '',
+	pageClass='';
+	
+	$('#bc-video-search-playlist').removeClass('disable');
 	$('#playlist-preview').remove();
-	//Defined heading and other variables
+	
+	if (pageNumber > 0) {
+		pageClass='hidden';
+		prevButton = "<button class='prev-page button' data-prevPage='"+(pageNumber-1)+"'> Previous Page </button>";
+	} 
+	if (pageNumber+1 < totalNumberOfPages ){
+		nextButton = "<button class='next-page button' data-nextPage='"+(pageNumber+1)+"'> Next Page </button>";	
+	}
+	innerHTML = "<div id='playlist-page-"+pageNumber+"' class='"+pageClass+"'>"+innerHTML+"<div class='button-bar'>"+prevButton+nextButton+"</div></div>";
+
+	//Add table to window
+	if (pageNumber == 0) {
+		$('#bc-video-search-playlist').html(innerHTML);
+	} else {
+		$('#bc-video-search-playlist').append(innerHTML);
+	}
+	
+	//Add Playlists button
+	//Button is intitally disabled until at least one playlist is checked
+	$('#bc-video-search-playlist').before("<button class='button' disabled='disabled' id='playlist-preview'>Add Playlists</button>");
+
+	//Binds the preview playlists function to the Add Playlists button
+	$('#playlist-preview').bind('click', function () {
+		previewPlaylist();
+		$('#playlist-preview').remove();
+	});
+
+	//Once a playlist is checked the Add Playlists button is enabled
+	$('.playlist-checkbox').bind('change', function () {
+		$('#playlist-preview').removeAttr('disabled');
+	});
+
+	$('.prev-page').bind('click', function() {
+		var pageNumber = $(this).data('prevpage');
+		showPage(pageNumber, 'playlist');
+	});
+
+	$('.next-page').bind('click', function() {
+		var pageNumber = $(this).data('nextpage');
+		showPage(pageNumber, 'playlist');
+	});
+
+	//Loads the next page of playlist results silently in background
+	if (pageNumber+1 < totalNumberOfPages){
+		seeAllPlaylists(pageNumber+1);	
+	}
+};
+
+playlistResults = function (pResponse) {
+	
+//Defined heading and other variables
   	var heading = '<table class="widefat"><thead><tr><th></th><th></th><th>Name</th><th>Number of Videos</th><th>Last Updated</th></tr></thead>',
 	  	lastModifiedDate,numVideos,disable, disableClass, currentName, currentVid, imgSrc, innerHTML='';
 	
@@ -295,25 +364,8 @@ displayPlaylists = function (pResponse) {
     }
 	//Add heading to table and close table tag
 	innerHTML = heading + innerHTML +"</table>" ;
-	
-	//Add table to window
-	$('#bc-video-search-playlist').html(innerHTML);
-
-	//Add Add Playlists button
-	//Button is intitally disabled until at least one playlist is checked
-	$('#bc-video-search-playlist').before("<button class='button' disabled='disabled' id='playlist-preview'>Add Playlists</button>");
-
-	//Binds the preview playlists function to the Add Playlists button
-	$('#playlist-preview').bind('click', function () {
-		previewPlaylist();
-		$('#playlist-preview').remove();
-	});
-
-	//Once a playlist is checked the Add Playlists button is enabled
-	$('.playlist-checkbox').bind('change', function () {
-		$('#playlist-preview').removeAttr('disabled');
-	});
-};
+	return innerHTML;
+}
 
 previewPlaylist = function () {
 	showSettings('playlists');
@@ -341,7 +393,7 @@ generateHTMLForPlaylist = function () {
 	//Adds the functionality of hiding the settings and showing the playlists when clicked, then removing itself from the DOM
 	$('.see-all-playlists').bind('click', function() {
 		hideSettings('playlist');
-		seeAllPlaylists();
+		seeAllPlaylists(0);
 		$('.see-all-playlists').remove();
 	})
 	
@@ -353,8 +405,6 @@ generateHTMLForPlaylist = function () {
 getAllVideos = function (pageNumber)
 {
 	clearPlayerData('video');
-
-	
 	if (pageNumber == 0) {
 		$('#bc-video-search-video').addClass('disable');
 		$('#bc-video-search-video').prepend("<img class='loading-img-api' src='/wp-includes/js/tinymce/themes/advanced/skins/default/img/progress.gif' />");
@@ -382,7 +432,6 @@ displaySearchedVideos = function (pResponse) {
 }
 
 displayPagedVideoSearchResults = function (pResponse, allOrSearch) {
-	console.log(pResponse);
 	var html = videoResults (pResponse), 
 	pageNumber = pResponse.page_number, 
 	totalCount = pResponse.total_count, 
@@ -409,12 +458,12 @@ displayPagedVideoSearchResults = function (pResponse, allOrSearch) {
 		}); 
 	$('.prev-page').bind('click', function() {
 		var pageNumber = $(this).data('prevpage');
-		showPage(pageNumber);
+		showPage(pageNumber, 'video');
 	});
 
 	$('.next-page').bind('click', function() {
 		var pageNumber = $(this).data('nextpage');
-		showPage(pageNumber);
+		showPage(pageNumber, 'video');
 	});
 	
 	if (allOrSearch == 'all') {
@@ -428,69 +477,13 @@ displayPagedVideoSearchResults = function (pResponse, allOrSearch) {
 	}
 	
 }
-/*
-displayPagedVideoSearchResults = function (pResponse) {
-	
-	var pages = [], i=0, items = [], display, prevButton = '', nextButton = '',resultsPerPage=25, totalLength = pResponse.items.length, numPages = Math.ceil((totalLength/resultsPerPage));
 
-	while (pResponse.items.length > 0 ) {
-		items = pResponse.items.splice(0 , resultsPerPage);
-		pages[i]= {
-			items: items
-		};
-		display = '';
-		prevButton='';
-		if ( i > 0 ) {
-			display='class="hidden"';
-			prevButton = "<button class='prev-page button' data-prevPage='"+(i-1)+"'> Previous Page </button>";
-		} 
-		nextButton ='';
-		if ( (i) < numPages ) {
-			nextButton = "<button class='next-page button' data-nextPage='"+(i+1)+"'> Next Page </button>";	
-		} else if ((i+1) < numPages){
-			nextButton = "<button class='next-page load-more-pages button' data-nextPage='"+(i+1)+"'> Next Page </button>";	
-		}
-		pages[i] = "<div "+display+" id='video-page-"+i+"'>"+videoResults(pages[i])+"<div class='button-bar clearfix'>"+prevButton+nextButton+"</div></div>";
-		i++;
-	}
-	pages=pages.join('');
-	if (pResponse.page_number == 0) {
-		$('#bc-video-search-video').html(pages).removeClass('disable');
-	} else {
-		$('#bc-video-search-video').append(pages).removeClass('disable');
-	}
-	
-
-	$('.prev-page').bind('click', function() {
-		console.log(this);
-		var pageNumber = $(this).data('prevpage');
-		showPage(pageNumber);
-	});
-
-	$('.next-page').bind('click', function() {
-		console.log(this);
-		var pageNumber = $(this).data('nextpage');
-		showPage(pageNumber);
-	});
-	$('.bc-video').bind('click', function() {
-			previewVideo($(this).data('videoid'));
-		}); 
-		console.log(pResponse);
-	if (pResponse.total_count > (pResponse.page_size * (pResponse.page_number+1))) {
-		$('.load-more-pages').bind('click', function () {
-		
-		});	
-	}	
-}
-*/
-
-showPage = function (pageNumber) {
+showPage = function (pageNumber,videoOrPlaylist) {
 	var nextPage = pageNumber + 1, prevPage = pageNumber - 1;
-	$('#video-page-' + pageNumber).removeClass('hidden');
-	$('#video-page-' + prevPage).addClass('hidden');
-	$('#video-page-' + nextPage).addClass('hidden');
+	$('#'+videoOrPlaylist+'-page-' + pageNumber).removeClass('hidden');
+	$('#'+videoOrPlaylist+'-page-' + prevPage).addClass('hidden');
+	$('#'+videoOrPlaylist+'-page-' + nextPage).addClass('hidden');
 }
-
 
 searchForVideos = function (pageNumber) {
 	clearPlayerData('video');
@@ -572,7 +565,6 @@ displayVideoSearchResults = function (pResponse) {
 		}); 
 	}
 
-
 previewVideo = function (videoID) {	
 	showSettings('video');
 	generateHTMLForVideo();
@@ -587,35 +579,44 @@ generateHTMLForVideo = function () {
 /////////////////// Template Functions ////////////////////////////
 
 BCL.onTemplateErrorVideo = function (event) {
-	$('.video-hide.player-preview').addClass('hidden');
-
-	if (event.erroType == 'serviceUnavailable') return;
-
-    var errorType = ("errorType: " + event.errorType)
- 	$('#specific-error').remove();
-    $('#bc-error').removeClass('hidden');
-	$('#bc-error').append('<div id="specific-error">'+errorType+'</div>');
+	if (event.errorType != 'serviceUnavailable') {
+		$('.video-hide.player-preview').addClass('hidden');
+	    var errorType = ("errorType: " + event.errorType)
+	 	$('#specific-error').remove();
+	    $('#bc-error').removeClass('hidden');
+		$('#bc-error').append('<div id="specific-error">'+errorType+'</div>');
+	}
   }
 
 BCL.onTemplateErrorPlaylist = function (event) {
-	$('.playlist-hide.player-preview').addClass('hidden');
-    var errorType = ("errorType: " + event.errorType)
- 	$('#specific-error').remove();
-    $('#bc-error').removeClass('hidden');
-	$('#bc-error').append('<div id="specific-error">'+errorType+'</div>');
-  }
+	if (event.errorType != 'serviceUnavailable') {
+		$('.playlist-hide.player-preview').addClass('hidden');
+	    var errorType = ("errorType: " + event.errorType)
+	 	$('#specific-error').remove();
+	    $('#bc-error').removeClass('hidden');
+		$('#bc-error').append('<div id="specific-error">'+errorType+'</div>');
+	}  
+}
  
-
-//TODO check onTemplateReady to see if ID gets passed through
-BCL.onTemplateReady = function(event) {  
-	//TODO set different ID's based on template
-    player = brightcove.api.getExperience("myExperience");
+BCL.onTemplateReadyVideo = function(event) {  
+    player = brightcove.api.getExperience("myExperienceVideo");
     // get a reference to the video player
     videoPlayer = player.getModule(brightcove.api.modules.APIModules.VIDEO_PLAYER);
     videoPlayer.getCurrentVideo(function(videoDTO) {
       currentVideo = videoDTO;
-      $('#bc_title').html(currentVideo.displayName);
-      $('#bc_description').html(currentVideo.shortDescription);
+      $('#bc-title-video').html(currentVideo.displayName);
+      $('#bc-description-video').html(currentVideo.shortDescription);
+    });
+  }
+
+  BCL.onTemplateReadyPlaylist = function(event) {  
+    player = brightcove.api.getExperience("myExperiencePlaylist");
+    // get a reference to the video player
+    videoPlayer = player.getModule(brightcove.api.modules.APIModules.VIDEO_PLAYER);
+    videoPlayer.getCurrentVideo(function(videoDTO) {
+      currentVideo = videoDTO;
+      $('#bc-title-playlist').html(currentVideo.displayName);
+      $('#bc-description-playlist').html(currentVideo.shortDescription);
     });
   }
 
@@ -846,7 +847,7 @@ $(function () {
 		updateTab('playlist');
 		if (playerDataPlaylist.playlistID == '' || playerDataPlaylist.playlistID == undefined) {
 			hideSettings('playlist');
-			seeAllPlaylists();
+			seeAllPlaylists(0);
 		}	
 	});
 

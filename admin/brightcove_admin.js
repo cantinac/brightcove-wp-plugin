@@ -7,7 +7,7 @@ jQuery(document).ready(function() {
 
 	if ( defaultPlayer == '' || defaultPlayerPlaylist == '' || publisherID == '') {
 		//Adds an error message to the administrator page
-		jQuery('#brightcove_menu').prepend('<div class="error"> Please make sure that Publisher ID, Player ID and Player ID playlist are filled out </div>');
+		jQuery('#brightcove_menu').prepend('<div class="error"><p> Please make sure that Publisher ID, Player ID and Player ID playlist are filled out </p> </div>');
 		//Highlights the field that is not filled in
 		if (defaultPlayer == '') {
 			jQuery('.required-settings tr:nth-child(2)').addClass('not-filled');

@@ -1,14 +1,14 @@
 <?php
 /**
  * @package Brightcove
- * @version 1.1
+ * @version 1.0
  */
 /*
 Plugin Name: Brightcove
-Plugin URI: 
-Description: Brightcove plugin
-Author: Nancy Decker
-Version: 1.1
+Plugin URL: 
+Description: An easy to use plugin that inserts Brightcove Video into your Wordpress site. 
+Author: Brightcove
+Version: 1.0
 Author URI: 
 */
 
@@ -28,7 +28,6 @@ function brightcove_media_menu($tabs) {
 }
 
 add_filter('media_upload_tabs', 'brightcove_media_menu');
-
 add_action('media_upload_brightcove', 'brightcove_menu_handle');
 add_action('media_upload_brightcove_api', 'brightcove_api_menu_handle');
 
@@ -66,8 +65,6 @@ function add_jquery_scripts() {
   wp_register_script( 'jquery', 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js');
   wp_enqueue_script( 'jquery' );
 
-  //TODO check to see about registering and deregistering scripts
-  //TODO use google CDN versions
   wp_deregister_script('jquery-ui-core');
   wp_register_script( 'jquery-ui-core', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js');
   wp_enqueue_script( 'jquery-ui-core' );
@@ -78,13 +75,13 @@ function add_jquery_scripts() {
 
 function add_validation_scripts()
 {
-  wp_deregister_script('jQueryValidate');
-  wp_register_script( 'jQueryValidate', '/wp-content/plugins/brightcove/jQueryValidation/jquery.validate.min.js');
-  wp_enqueue_script( 'jQueryValidate' );
+  wp_deregister_script('jquery-validate');
+  wp_register_script( 'jquery-validate', '/wp-content/plugins/brightcove/jQueryValidation/jquery.validate.min.js');
+  wp_enqueue_script( 'jquery-validate' );
 
-  wp_deregister_script('jQueryValidateAddional');
-  wp_register_script( 'jQueryValidateAddional', '/wp-content/plugins/brightcove/jQueryValidation/additional-methods.min.js');
-  wp_enqueue_script( 'jQueryValidateAddional' );
+  wp_deregister_script('jquery-validat-addional');
+  wp_register_script( 'jquery-validate-addional', '/wp-content/plugins/brightcove/jQueryValidation/additional-methods.min.js');
+  wp_enqueue_script( 'jquery-validate-addional' );
 }
 
 
@@ -94,60 +91,70 @@ wp_register_script( 'dynamic_brightcove_script', '/wp-content/plugins/brightcove
 wp_enqueue_script( 'dynamic_brightcove_script' );
 }
 
-
 //global variables 
-GLOBAL $playerID, $defaultHeight, $defaultWidth, 
-$defaultIDPlaylist, $defaultHeightPlaylist, $defaultWidthPlaylist,
-$BCdefaultSet, $defaultSetErrorMessage, $defaultsSection, $loading, $publisherID;
+
+GLOBAL $bcGlobalVariables;
+
+$bcGlobalVariables = Array('playerID'=>null, 
+'defaultHeight' => null, 
+'defaultWidth' => null, 
+'defaultIDPlaylist' => null, 
+'defaultHeightPlaylist' => null, 
+'defaultWidthPlaylist' => null,
+'defaultSet' => null, 
+'defaultSetErrorMessage' => null, 
+'defaultsSection' => null, 
+'loadingImg' => null, 
+'publisherID' => null);
 
 //Publisher ID 
-$publisherID=get_option('bc_pub_id');
+$bcGlobalVariables['publisherID']=get_option('bc_pub_id');
 
 //Player ID for single videos
-$playerID=get_option('bc_player_id');
+$bcGlobalVariables['playerID']=get_option('bc_player_id');
 //Default height & width for single video players
-$defaultHeight=get_option('bc_default_height');
-if ($defaultHeight == '') {
-  $defaultHeight='270';
+$bcGlobalVariables['defaultHeight']=get_option('bc_default_height');
+if ($bcGlobalVariables['defaultHeight'] == '') {
+  $bcGlobalVariables['defaultHeight']='270';
 }
-$defaultWidth=get_option('bc_default_width');
-if ($defaultWidth == '') {
-  $defaultWidth='480';
+$bcGlobalVariables['defaultWidth']=get_option('bc_default_width');
+if ($bcGlobalVariables['defaultWidth'] == '') {
+  $bcGlobalVariables['defaultWidth']='480';
 }
 //Player ID for playlists
-$playerIDPlaylist=get_option('bc_player_id_playlist');
+$bcGlobalVariables['playerIDPlaylist']=get_option('bc_player_id_playlist');
 //Default height & width for playlist players
-$defaultHeightPlaylist=get_option('bc_default_height_playlist');
-if ($defaultHeightPlaylist == '') {
-  $defaultHeightPlaylist='400';
+$bcGlobalVariables['defaultHeightPlaylist']=get_option('bc_default_height_playlist');
+if ($bcGlobalVariables['defaultHeightPlaylist'] == '') {
+  $bcGlobalVariables['defaultHeightPlaylist']='400';
 }
-$defaultWidthPlaylist=get_option('bc_default_width_playlist');
-if ($defaultWidthPlaylist == '') {
-  $defaultWidthPlaylist='940';
+$bcGlobalVariables['defaultWidthPlaylist']=get_option('bc_default_width_playlist');
+if ($bcGlobalVariables['defaultWidthPlaylist'] == '') {
+  $bcGlobalVariables['defaultWidthPlaylist']='940';
 }
 //Checks to see if both those variables are set
-if ($playerID == '' || $playerIDPlaylist == '' || $publisherID == '') {
-  $BCdefaultSet=false;
+if ($bcGlobalVariables['playerID'] == '' || $bcGlobalVariables['playerIDPlaylist'] == '' || $bcGlobalVariables['publisherID'] == '') {
+  $bcGlobalVariables['defaultSet']=false;
 } else  {
-  $BCdefaultSet=true;
+  $bcGlobalVariables['defaultSet']=true;
 }
-//TODO get link from older version of error message
-$defaultSetErrorMessage = "<div class='hidden error' id='defaults-not-set' data-defaultsSet='$BCdefaultSet'>
+
+$bcGlobalVariables['defaultSetErrorMessage'] = "<div class='hidden error' id='defaults-not-set' data-defaultsSet='".$bcGlobalVariables['defaultSet']."'>
      You have not set up your defaults for this plugin. Please click on the link to set your defaults.
   <a target='_top' href='admin.php?page=brightcove_menu'>Brightcove Settings</a>
   </div>";
 
-$defaultsSection = 
+$bcGlobalVariables['defaultsSection'] = 
 	"<div class='defaults'>
-	<input type='hidden' id='bc-default-player' name='bc-default-player' value='$playerID' >
-	<input type='hidden' id='bc-default-width' name='bc-default-width' value='$defaultWidth' >
-	<input type='hidden' id='bc-default-height' name='bc-default-height' value='$defaultHeight' >
-	<input type='hidden' id='bc-default-player-playlist' name='bc-default-player-playlist' value='$playerIDPlaylist' >
-	<input type='hidden' id='bc-default-width-playlist' name='bc-default-width-playlist' value='$defaultWidthPlaylist' >
-	<input type='hidden' id='bc-default-height-playlist' name='bc-default-height-playlist' value='$defaultHeightPlaylist' >
+	<input type='hidden' id='bc-default-player' name='bc-default-player' value='".$bcGlobalVariables['playerID']."' >
+	<input type='hidden' id='bc-default-width' name='bc-default-width' value='".$bcGlobalVariables['defaultWidth']."' >
+	<input type='hidden' id='bc-default-height' name='bc-default-height' value='".$bcGlobalVariables['defaultHeight']."' >
+	<input type='hidden' id='bc-default-player-playlist' name='bc-default-player-playlist' value='".$bcGlobalVariables['playerIDPlaylist']."' >
+	<input type='hidden' id='bc-default-width-playlist' name='bc-default-width-playlist' value='".$bcGlobalVariables['defaultWidthPlaylist']."' >
+	<input type='hidden' id='bc-default-height-playlist' name='bc-default-height-playlist' value='".$bcGlobalVariables['defaultHeightPlaylist']."' >
 	</div>";
 
-$loading = "<img class='loading-img' src='/wp-includes/js/thickbox/loadingAnimation.gif' />";
+$bcGlobalVariables['loadingImg'] = "<img class='loading-img' src='/wp-includes/js/thickbox/loadingAnimation.gif' />";
 
 
 
@@ -169,19 +176,20 @@ if ($playlistOrVideo == 'playlist') {
 
 //TODO Pass in as map
 function add_player_settings($playlistOrVideo, $buttonText) { 
-	GLOBAL $defaultHeight, $defaultWidth, $defaultHeightPlaylist, $defaultWidthPlaylist, $playerID, $playerIDPlaylist;
+	GLOBAL $bcGlobalVariables;
+	/*GLOBAL $defaultHeight, $defaultWidth, $defaultHeightPlaylist, $defaultWidthPlaylist, $playerID, $playerIDPlaylist;*/
 	if ($playlistOrVideo == 'playlist') {
 		$setting = '-playlist';
-		$height = $defaultHeightPlaylist;
-		$width = $defaultWidthPlaylist;
-		$player = $playerIDPlaylist;
+		$height = $bcGlobalVariables['defaultHeightPlaylist'];
+		$width = $bcGlobalVariables['defaultWidthPlaylist'];
+		$player = $bcGlobalVariables['playerIDPlaylist'];
 		$id='playlist-settings';
 		$class='playlist-hide';
 	} else {
 		$setting = '';
-		$height = $defaultHeight;
-		$width = $defaultWidth;
-		$player = $playerID;
+		$height = $bcGlobalVariables['defaultHeight'];
+		$width = $bcGlobalVariables['defaultWidth'];
+		$player = $bcGlobalVariables['playerID'];
 		$id='video-settings';
 		$class='video-hide';
 	}
@@ -229,21 +237,23 @@ function add_preview_area ($playlistOrVideo) {
 	if ($playlistOrVideo == 'playlist') {
 		$id='dynamic-bc-placeholder-playlist';
 		$class='playlist-hide';
+		$otherClass='playlist';
 	} else {
 		$id='dynamic-bc-placeholder-video';
 		$class='video-hide';
+		$otherClass='video';
 	}
 
 ?>
 	<div class='<?php echo $class; ?> media-item no-border player-preview preview-container hidden'>
-      <h3>Video Preview</h3>
+      <h3 class='preview-header'>Video Preview</h3>
       <table>
         <tbody>
           <tr>
             <td>
 				<div class='alignleft'>
-					<h4 id='bc_title'></h4>
-					<p id='bc_description'></p>
+					<h4 id='bc-title-<?php echo $otherClass; ?>' class='bc-title'></h4>
+					<p id='bc-description-<?php echo $otherClass; ?>' class='bc-description'></p>
 					<div id="<?php echo $id; ?>"></div>
 				</div>
 				<div class='alignleft'>
@@ -262,12 +272,10 @@ function bc_media_upload_form () {
 ?>
 <div class="bc-container">
 	<?php
-		GLOBAL $defaultSetErrorMessage; 
-		echo $defaultSetErrorMessage; 
-		GLOBAL $defaultsSection;
-		echo $defaultsSection;
-		GLOBAL $loading;
-		echo $loading;
+	GLOBAL $bcGlobalVariables;
+		echo $bcGlobalVariables['defaultSetErrorMessage']; 
+		echo $bcGlobalVariables['defaultsSection'];
+		echo $bcGlobalVariables['loadingImg'];
 	?>
 
 	<div class='no-error'>
@@ -353,22 +361,17 @@ function add_mapi_script() {
 }
 
 function bc_media_api_upload_form () {
-	global $loading;
+	GLOBAL $bcGlobalVariables;
 	media_upload_header();
 	add_all_scripts();
 	add_mapi_script();
 	$apiKey = get_option('bc_api_key');
 ?>
-<!--TODO add MAPI script -->
-
 	<div class="bc-container">
 	<?php
-		GLOBAL $defaultSetErrorMessage; 
-		echo $defaultSetErrorMessage; 
-		GLOBAL $defaultsSection;
-		echo $defaultsSection;
-		GLOBAL $loading;
-		echo $loading; 
+		echo $bcGlobalVariables['defaultSetErrorMessage']; 
+		echo $bcGlobalVariables['defaultsSection'];
+		echo $bcGlobalVariables['loadingImg'];
 
 	?>
 <input type='hidden' id='bc-api-key' name='bc-api-key' value='<?php echo $apiKey; ?>'>
