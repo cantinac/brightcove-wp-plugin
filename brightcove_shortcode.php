@@ -19,28 +19,16 @@ $html = '<div style="display:none"></div>
   <param name="isUI" value="true" />
   <param name="dynamicStreaming" value="true" />';
 
- 
-  if ($atts['videoid'] != NULL && $atts['isref'] == NULL)
+  if ($atts['videoid'] != NULL)
   { 
     $html = $html . '<param name="@videoPlayer" value="'.$atts['videoid'].'" />';
-  } 
-  if ($atts['videoid'] != NULL && $atts['isref'] != NULL)
-  { 
-    $html = $html . '<param name="@videoPlayer" value="ref:'.$atts['videoid'].'" />';
- }
-  if ($atts['playlistid'] != NULL && $atts['isref'] == NULL)
+  }
+  if ($atts['playlistid'] != NULL)
   { 
     $html = $html . '<param name="@playlistTabs" value="'.$atts['playlistid'].'" />';
     $html = $html . '<param name="@videoList" value="'.$atts['playlistid'].'" />';
     $html = $html . '<param name="@playlistCombo" value="'.$atts['playlistid'].'" />';
   } 
-  if ($atts['playlistid'] != NULL && $atts['isref'] != NULL)
-  { 
-    $html = $html . '<param name="@playlistTabs" value="ref:'.$atts['playlistid'].'" />';
-    $html = $html . '<param name="@videoList" value="ref:'. $atts['playlistid'].' />';
-    $html = $html . '<param name="@playlistCombo" value="ref:'.$atts['playlistid'].'" />';
- }
-
 $html = $html . '</object>';
 
 return $html;

@@ -26,24 +26,33 @@ addPlayer = function (typeOfPlayer)	{
 	hideErrorMessage();
 	var playerHTML;
 	if (typeOfPlayer == 'video')	{
+		if (playerDataPlayer.isRef == true) {
+			playerDataPlayer.videoID = "ref:"+ playerDataPlayer.videoID;
+		}
 		playerHTML = replaceTokens(singlePlayerTemplate, playerDataPlayer);
 		$('#dynamic-bc-placeholder-video').html(playerHTML);
 		$('.video-hide').removeClass('hidden');
 		$('#video-shortcode-button').removeAttr('disabled');
+
 	} else if (typeOfPlayer == 'playlist') {
+		if (playerDataPlaylist.isRef == true) {
+			playerDataPlaylist.playlistID = "ref:"+playerDataPlaylist.playlistID;
+		}
 		playerHTML = replaceTokens(playlistPlayerTemplate, playerDataPlaylist);
 		$('#dynamic-bc-placeholder-playlist').html(playerHTML);	
 		$('.playlist-hide').removeClass('hidden');
 		$('#playlist-shortcode-button').removeAttr('disabled');
-	}
-	brightcove.createExperiences();  
+	} 
+	brightcove.createExperiences();
 }
 
 setPlayerDataExpress = function (typeOfPlayer) {
 	getVideoID(typeOfPlayer);
 	changeHeight(typeOfPlayer);
 	changeWidth(typeOfPlayer);
+	changeRef(typeOfPlayer);
 	changePlayerID(typeOfPlayer);
+
 }
 
 getVideoID = function (typeOfPlayer) {
@@ -106,6 +115,23 @@ changePlayerID = function (typeOfPlayer) {
 	}
 }
 
+changeRef = function (typeOfPlayer) {
+
+	if (typeOfPlayer == 'playlist'){
+		if ($('#bc-playlist-ref').attr('checked') == 'checked'){
+			playerDataPlaylist.isRef = true;
+		} else {
+			playerDataPlaylist.isRef = false;
+		}
+	} else {
+		if ($('#bc-video-ref').attr('checked') == 'checked'){
+			playerDataPlayer.isRef = true;
+		} else {
+			playerDataPlayer.isRef = false;
+		}
+	}
+}
+
 //Helper functions for video player
 getDefaultHeight = function () {
 	return $('#bc-default-height').val();
@@ -131,6 +157,9 @@ getDefaultPlayerIDPlaylist = function () {
 	return $('#bc-default-player-playlist').val();
 }
 
+
+
+
 updateTab =function (typeOfPlayer) {	
 	if (typeOfPlayer == 'playlist'){
 		$('.video-hide').addClass('hidden');
@@ -149,18 +178,11 @@ updateTab =function (typeOfPlayer) {
 }
 
 insertShortcode = function(typeOfPlayer) {
-    var isRef='', shortcode;
-
+ var shortcode;
     if (typeOfPlayer == 'video') {
-    	if (playerDataPlayer.isRef) {
-      		isRef="isRef=true";
-    	}
-      shortcode = '[brightcove videoID='+playerDataPlayer.videoID+' '+isRef+' playerID='+playerDataPlayer.playerID+' height='+playerDataPlayer.height+' width='+playerDataPlayer.width+']';
+      shortcode = '[brightcove videoID='+playerDataPlayer.videoID+' playerID='+playerDataPlayer.playerID+' height='+playerDataPlayer.height+' width='+playerDataPlayer.width+']';
     } else if (typeOfPlayer == 'playlist') {
-    	if (playerDataPlaylist.isRef) {
-      		isRef="isRef=true";
-    	}
-      shortcode = '[brightcove playlistID='+playerDataPlaylist.playlistID+' '+isRef+' playerID='+playerDataPlaylist.playerID+' height='+playerDataPlaylist.height+' width='+playerDataPlaylist.width+']';
+      shortcode = '[brightcove playlistID='+playerDataPlaylist.playlistID+' playerID='+playerDataPlaylist.playerID+' height='+playerDataPlaylist.height+' width='+playerDataPlaylist.width+']';
     }
        
     var win = window.dialogArguments || opener || parent || top;
@@ -787,6 +809,10 @@ $(function () {
 		
 	});
 
+	$('#bc-video-ref').bind('change', function () {
+		changeRef('video');
+	});
+
 	$('#bc-player').keydown( function () {
 		window.clearTimeout(this.timeOut);
 		this.timeOut = window.setTimeout (function() {
@@ -857,6 +883,10 @@ $(function () {
 			setPlayerDataExpress('playlist');
 			addPlayer('playlist');
 		}, 100);
+	});
+
+	$('#bc-playlist-ref').bind('change', function () {
+		changeRef('playlist');
 	});
 
 	$('#bc-player-playlist').bind('keydown', function () {
