@@ -177,7 +177,6 @@ if ($playlistOrVideo == 'playlist') {
 //TODO Pass in as map
 function add_player_settings($playlistOrVideo, $buttonText) { 
 	GLOBAL $bcGlobalVariables;
-	/*GLOBAL $defaultHeight, $defaultWidth, $defaultHeightPlaylist, $defaultWidthPlaylist, $playerID, $playerIDPlaylist;*/
 	if ($playlistOrVideo == 'playlist') {
 		$setting = '-playlist';
 		$height = $bcGlobalVariables['defaultHeightPlaylist'];
@@ -204,7 +203,7 @@ function add_player_settings($playlistOrVideo, $buttonText) {
               <span class="alignright"></span>
             </th>
             <td>
-             <input class='digits player-data' type='text' name='bcPlayer' id='bc-player<?echo $setting; ?>' placeholder='Default ID is <?php echo $player; ?>'/>
+             <input class='digits player-data' type='text' name='bcPlayer' id='bc-player<? echo $setting; ?>' placeholder='Default ID is <?php echo $player; ?>'/>
             </td>
           </tr>
           <tr class='bc-width-row'>
