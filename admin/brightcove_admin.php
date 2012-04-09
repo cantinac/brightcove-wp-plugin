@@ -8,7 +8,12 @@ function brightcove_settings_notice() {
   global $bcGlobalVariables;
 
   if ($bcGlobalVariables['defaultSet'] == false) {
-    echo "<div class='error'><p>You have not entered your settings for the Brightcove Plugin. Please set them up at <a href='admin.php?page=brightcove_menu'>Brightcove Settings</a></p></div>";
+    if (current_user_can('administrator')) {
+      echo "<div class='error'><p>You have not entered your settings for the Brightcove Plugin. Please set them up at <a href='admin.php?page=brightcove_menu'>Brightcove Settings</a></p></div>";
+    } else {
+      echo "<div class='error'><p>  You have not set up your defaults for this plugin. Please contact your site administrator to set these defaults.</p></div>";
+    } 
+    
   }
 }
 

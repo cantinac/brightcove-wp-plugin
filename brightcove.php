@@ -149,7 +149,7 @@ if ( current_user_can('administrator') ) {
   </div>";
 } else  {
 	 $bcGlobalVariables['defaultSetErrorMessage'] = "<div class='hidden error' id='defaults-not-set' data-defaultsSet='".$bcGlobalVariables['defaultSet']."'>
-     You have not set up your defaults for this plugin. Please contact your site administrator to set these defaults
+     You have not set up your defaults for this plugin. Please contact your site administrator to set these defaults.
   </div>";	
 }
 
