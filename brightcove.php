@@ -15,6 +15,9 @@ Author URI:
 require dirname( __FILE__ ) . '/admin/brightcove_admin.php';
 require dirname( __FILE__ ) . '/brightcove_shortcode.php';
 
+//Nessesary to fix wordpress bug where wp_get_current_user is undefined
+require_once(ABSPATH."wp-includes/pluggable.php");
+
 /************************Upload Media Tab ***************************/
 
 function brightcove_media_menu($tabs) {
@@ -139,10 +142,18 @@ if ($bcGlobalVariables['playerID'] == '' || $bcGlobalVariables['playerIDPlaylist
   $bcGlobalVariables['defaultSet']=true;
 }
 
-$bcGlobalVariables['defaultSetErrorMessage'] = "<div class='hidden error' id='defaults-not-set' data-defaultsSet='".$bcGlobalVariables['defaultSet']."'>
+if ( current_user_can('administrator') ) {
+    $bcGlobalVariables['defaultSetErrorMessage'] = "<div class='hidden error' id='defaults-not-set' data-defaultsSet='".$bcGlobalVariables['defaultSet']."'>
      You have not set up your defaults for this plugin. Please click on the link to set your defaults.
   <a target='_top' href='admin.php?page=brightcove_menu'>Brightcove Settings</a>
   </div>";
+} else  {
+	 $bcGlobalVariables['defaultSetErrorMessage'] = "<div class='hidden error' id='defaults-not-set' data-defaultsSet='".$bcGlobalVariables['defaultSet']."'>
+     You have not set up your defaults for this plugin. Please contact your site administrator to set these defaults
+  </div>";	
+}
+
+
 
 $bcGlobalVariables['defaultsSection'] = 
 	"<div class='defaults'>
