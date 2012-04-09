@@ -250,7 +250,8 @@ displayPlaylists = function (pResponse) {
 	totalNumberOfPages = Math.ceil(totalCount/pResponse.page_size), 
 	prevButton ='', 
 	nextButton = '',
-	pageClass='';
+	pageClass='',
+	pagesHTML = "<p class='pageOfPage'>Page "+(pageNumber+1)+" of " +totalNumberOfPages+"</p>";
 	
 	$('#bc-video-search-playlist').removeClass('disable');
 	$('#playlist-preview').remove();
@@ -262,7 +263,7 @@ displayPlaylists = function (pResponse) {
 	if (pageNumber+1 < totalNumberOfPages ){
 		nextButton = "<button class='next-page button' data-nextPage='"+(pageNumber+1)+"'> Next Page </button>";	
 	}
-	innerHTML = "<div id='playlist-page-"+pageNumber+"' class='"+pageClass+"'>"+innerHTML+"<div class='button-bar'>"+prevButton+nextButton+"</div></div>";
+	innerHTML = "<div id='playlist-page-"+pageNumber+"' class='"+pageClass+"'>"+innerHTML+pagesHTML+"<div class='button-bar'>"+prevButton+nextButton+"</div></div>";
 
 	//Add table to window
 	if (pageNumber == 0) {
@@ -273,7 +274,7 @@ displayPlaylists = function (pResponse) {
 	
 	//Add Playlists button
 	//Button is intitally disabled until at least one playlist is checked
-	$('#bc-video-search-playlist').before("<button class='button' disabled='disabled' id='playlist-preview'>Add Playlists</button>");
+	$('#bc-video-search-playlist').before("<button class='button' disabled='disabled' id='playlist-preview'>Assign Playlist(s) to Player</button>");
 
 	//Binds the preview playlists function to the Add Playlists button
 	$('#playlist-preview').bind('click', function () {
@@ -426,7 +427,8 @@ displayPagedVideoSearchResults = function (pResponse, allOrSearch) {
 	totalNumberOfPages = Math.ceil(totalCount/pResponse.page_size), 
 	prevButton ='', 
 	nextButton = '',
-	pageClass='';
+	pageClass='',
+	pagesHTML = "<p class='pageOfPage'>Page "+(pageNumber+1)+" of " +totalNumberOfPages+"</p>";
 
 	if (pageNumber > 0) {
 		pageClass='hidden';
@@ -435,7 +437,7 @@ displayPagedVideoSearchResults = function (pResponse, allOrSearch) {
 	if (pageNumber+1 < totalNumberOfPages ){
 		nextButton = "<button class='next-page button' data-nextPage='"+(pageNumber+1)+"'> Next Page </button>";	
 	}
-	html = "<div id='video-page-"+pageNumber+"' class='"+pageClass+"'>"+html+"<div class='button-bar'>"+prevButton+nextButton+"</div></div>";
+	html = "<div id='video-page-"+pageNumber+"' class='"+pageClass+"'>"+html+pagesHTML+"<div class='clearfix button-bar'>"+prevButton+nextButton+"</div></div>";
 	if (pageNumber == 0) {
 		$('#bc-video-search-video').html(html).removeClass('disable');
 	} else {

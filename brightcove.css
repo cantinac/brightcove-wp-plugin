@@ -74,11 +74,15 @@ body#media-upload ul#sidemenu{ font-weight:normal; margin:0 5px; left:0; bottom:
 .block { display:block; }
 
 .disable {opacity:.5;}
-
+.pageOfPage {text-align:center; margin-bottom:0px;}
+.button-bar{ margin-top:0px;}
 .no-error{ visibility:hidden; }
 
 .placeholder { color: #666; }
 .placeholderFocus { color: #000; }
+
+
+
 
 
 
