@@ -892,8 +892,31 @@ $(function () {
 	
 	$('.loading-img').remove();
 	$('.no-error').css('visibility','visible');
+	
+	//Makes placeholder attribute work in IE and opera
+	$.support.placeholder = false;
+	test = document.createElement('input');
+	if('placeholder' in test) $.support.placeholder = true;
 
-	$('#content')
+	if(!$.support.placeholder) { 
+		var active = document.activeElement;
+		$(':text').focus(function () {
+			if ($(this).attr('placeholder') != '' && $(this).val() == $(this).attr('placeholder')) {
+				$(this).val('').removeClass('hasPlaceholder');
+			}
+		}).blur(function () {
+			if ($(this).attr('placeholder') != '' && ($(this).val() == '' || $(this).val() == $(this).attr('placeholder'))) {
+				$(this).val($(this).attr('placeholder')).addClass('hasPlaceholder');
+			}
+		});
+		$(':text').blur();
+		$(active).focus();
+		$('form').submit(function () {
+			$(this).find('.hasPlaceholder').each(function() { $(this).val(''); });
+		});
+	}
+
+
 });
 
 })(jQuery);
