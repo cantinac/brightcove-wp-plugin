@@ -895,7 +895,7 @@ $(function () {
 	$('.loading-img').remove();
 	$('.no-error').css('visibility','visible');
 	
-
+	//Fix for IE for placeholder
     $(":input[placeholder]").placeholder();
 
 

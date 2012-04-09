@@ -19,6 +19,7 @@ jQuery(document).ready(function() {
 			jQuery('.required-settings tr:nth-child(1)').addClass('not-filled');
 		}
 	}
-
+	//Fix for IE for placeholder
+  	jQuery(":input[placeholder]").placeholder();
 	jQuery('#brightcove_menu').validate();
 });

@@ -11,7 +11,7 @@ function brightcove_settings_notice() {
     if (current_user_can('administrator')) {
       echo "<div class='error'><p>You have not entered your settings for the Brightcove Plugin. Please set them up at <a href='admin.php?page=brightcove_menu'>Brightcove Settings</a></p></div>";
     } else {
-      echo "<div class='error'><p>  You have not set up your defaults for this plugin. Please contact your site administrator to set these defaults.</p></div>";
+      echo "<div class='error'><p>  You have not set up your defaults for the Brightcove plugin. Please contact your site administrator to set these defaults.</p></div>";
     } 
     
   }
@@ -36,6 +36,10 @@ add_menu_page(__('Brightcove Settings'), __('Brightcove'), 'edit_themes', 'brigh
   wp_deregister_script('jQueryValidateAddional');
   wp_register_script( 'jQueryValidateAddional', '/wp-content/plugins/brightcove/jQueryValidation/additional-methods.min.js');
   wp_enqueue_script( 'jQueryValidateAddional');
+
+    wp_deregister_script('jqueryPlaceholder');
+  wp_register_script( 'jqueryPlaceholder', '/wp-content/plugins/brightcove/jQueryPlaceholder/jQueryPlaceholder.js');
+  wp_enqueue_script( 'jqueryPlaceholder');
 }
 
 function brightcove_menu_render() {

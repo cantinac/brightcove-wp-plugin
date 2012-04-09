@@ -75,13 +75,14 @@ function add_jquery_scripts() {
   wp_register_style('jqueryStyle', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css');
   wp_enqueue_style( 'jqueryStyle');
 
-  wp_deregister_script('jqueryPlaceholder');
-  wp_register_script( 'jqueryPlaceholder', '/wp-content/plugins/brightcove/jQueryPlaceholder.js');
-  wp_enqueue_script( 'jqueryPlaceholder' );
 }
 
 function add_validation_scripts()
 {
+  wp_deregister_script('jqueryPlaceholder');
+  wp_register_script( 'jqueryPlaceholder', '/wp-content/plugins/brightcove/jQueryPlaceholder/jQueryPlaceholder.js');
+  wp_enqueue_script( 'jqueryPlaceholder');
+
   wp_deregister_script('jquery-validate');
   wp_register_script( 'jquery-validate', '/wp-content/plugins/brightcove/jQueryValidation/jquery.validate.min.js');
   wp_enqueue_script( 'jquery-validate' );
@@ -153,7 +154,7 @@ if ( current_user_can('administrator') ) {
   </div>";
 } else  {
 	 $bcGlobalVariables['defaultSetErrorMessage'] = "<div class='hidden error' id='defaults-not-set' data-defaultsSet='".$bcGlobalVariables['defaultSet']."'>
-     You have not set up your defaults for this plugin. Please contact your site administrator to set these defaults.
+    You have not set up your defaults for the Brightcove plugin. Please contact your site administrator to set these defaults.
   </div>";	
 }
 
