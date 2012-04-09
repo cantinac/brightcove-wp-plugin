@@ -234,7 +234,7 @@ seeAllPlaylists = function(pageNumber) {
     var url= [
       "http://api.brightcove.com/services/library&command=find_all_playlists",
       "&token=", encodeURIComponent(token),
-      '&page_size=25',
+      '&page_size=5',
       '&page_number=',encodeURIComponent(pageNumber),
       '&get_item_count=true',
       "&callback=",encodeURIComponent("displayPlaylists")
@@ -893,28 +893,10 @@ $(function () {
 	$('.loading-img').remove();
 	$('.no-error').css('visibility','visible');
 	
-	//Makes placeholder attribute work in IE and opera
-	$.support.placeholder = false;
-	test = document.createElement('input');
-	if('placeholder' in test) $.support.placeholder = true;
 
-	if(!$.support.placeholder) { 
-		var active = document.activeElement;
-		$(':text').focus(function () {
-			if ($(this).attr('placeholder') != '' && $(this).val() == $(this).attr('placeholder')) {
-				$(this).val('').removeClass('hasPlaceholder');
-			}
-		}).blur(function () {
-			if ($(this).attr('placeholder') != '' && ($(this).val() == '' || $(this).val() == $(this).attr('placeholder'))) {
-				$(this).val($(this).attr('placeholder')).addClass('hasPlaceholder');
-			}
-		});
-		$(':text').blur();
-		$(active).focus();
-		$('form').submit(function () {
-			$(this).find('.hasPlaceholder').each(function() { $(this).val(''); });
-		});
-	}
+    $(":input[placeholder]").placeholder();
+
+
 
 
 });

@@ -74,6 +74,10 @@ function add_jquery_scripts() {
 
   wp_register_style('jqueryStyle', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css');
   wp_enqueue_style( 'jqueryStyle');
+
+  wp_deregister_script('jqueryPlaceholder');
+  wp_register_script( 'jqueryPlaceholder', '/wp-content/plugins/brightcove/jQueryPlaceholder.js');
+  wp_enqueue_script( 'jqueryPlaceholder' );
 }
 
 function add_validation_scripts()

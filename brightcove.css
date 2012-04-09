@@ -77,5 +77,8 @@ body#media-upload ul#sidemenu{ font-weight:normal; margin:0 5px; left:0; bottom:
 
 .no-error{ visibility:hidden; }
 
+.placeholder { color: #666; }
+.placeholderFocus { color: #000; }
+
 
 
