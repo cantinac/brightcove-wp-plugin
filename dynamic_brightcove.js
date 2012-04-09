@@ -159,21 +159,11 @@ insertShortcode = function(typeOfPlayer) {
       shortcode = '[brightcove videoID='+playerDataPlayer.videoID+' playerID='+playerDataPlayer.playerID+' height='+playerDataPlayer.height+' width='+playerDataPlayer.width+']';
     } else if (typeOfPlayer == 'playlist') {
       shortcode = '[brightcove playlistID='+playerDataPlaylist.playlistID+' playerID='+playerDataPlaylist.playerID+' height='+playerDataPlaylist.height+' width='+playerDataPlaylist.width+']';
+    }	
+    	var win = window.dialogArguments || opener || parent || top;
+    	win.send_to_editor(shortcode);
     }
-       
-    var win = window.dialogArguments || opener || parent || top;
-    var isVisual = (typeof win.tinyMCE != "undefined") && win.tinyMCE.activeEditor && !win.tinyMCE.activeEditor.isHidden();    
-    if (isVisual) {
-        win.tinyMCE.activeEditor.execCommand('mceInsertContent', false, shortcode);
-    } else {
-        var currentContent = $('#content', window.parent.document).val();
-        if ( typeof currentContent == 'undefined' )
-             currentContent = '';        
-        $( '#content', window.parent.document ).val( currentContent + shortcode );
-    }
-    self.parent.tb_remove();
-  }
-
+    
 hideSettings = function (typeOfPlayer) {
 	if (typeOfPlayer == 'playlist') {
 		$('#playlist-settings').addClass('hidden');
@@ -902,6 +892,8 @@ $(function () {
 	
 	$('.loading-img').remove();
 	$('.no-error').css('visibility','visible');
+
+	$('#content')
 });
 
 })(jQuery);

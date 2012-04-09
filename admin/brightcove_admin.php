@@ -106,7 +106,7 @@ if (isset($_GET['settings-updated'])) {
               <label for="bc_default_width">Default Player Width</label>
             </th>
             <td>
-              <input value = '<? echo get_option('bc_default_width'); ?>' name="bc_default_width" type="text" id="bc_default_width" class="number regular-text" placeholder='Default player width'>
+              <input value = '<? echo get_option('bc_default_width'); ?>' name="bc_default_width" type="text" id="bc_default_width" class="digits regular-text" placeholder='Default player width'>
               <span class='description'>Default width for video players</span>
             </td>
           </tr>
@@ -115,7 +115,7 @@ if (isset($_GET['settings-updated'])) {
               <label for="bc_default_height">Default Player Height </label>
             </th>
             <td>
-              <input value = '<? echo get_option('bc_default_height'); ?>' name="bc_default_height" type="text" id="bc_default_height" class="number regular-text" placeholder='Default player height'>
+              <input value = '<? echo get_option('bc_default_height'); ?>' name="bc_default_height" type="text" id="bc_default_height" class="digits regular-text" placeholder='Default player height'>
               <span class='description'>Default height for video players</span>
             </td>
           </tr>
@@ -124,7 +124,7 @@ if (isset($_GET['settings-updated'])) {
               <label for="bc_default_width_playlist">Default Playlist Player Width </label>
             </th>
             <td>
-              <input value = '<? echo get_option('bc_default_width_playlist'); ?>' name="bc_default_width_playlist" type="text" id="bc_default_width_playlist" class="number regular-text" placeholder='Default playlist player width'>
+              <input value = '<? echo get_option('bc_default_width_playlist'); ?>' name="bc_default_width_playlist" type="text" id="bc_default_width_playlist" class="digits regular-text" placeholder='Default playlist player width'>
               <span class='description'>Default width for playlist players</span>
             </td>
           </tr>
@@ -133,7 +133,7 @@ if (isset($_GET['settings-updated'])) {
               <label for="bc_default_height">Default Playlist Player Height </label>
             </th>
             <td>
-              <input value = '<? echo get_option('bc_default_height_playlist'); ?>' name="bc_default_height_playlist" type="text" id="bc_default_height_playlist" class="number regular-text" placeholder='Default playlist player height'>
+              <input value = '<? echo get_option('bc_default_height_playlist'); ?>' name="bc_default_height_playlist" type="text" id="bc_default_height_playlist" class="digits regular-text" placeholder='Default playlist player height'>
               <span class='description'>Default height for playlist players</span>
             </td>
           </tr>

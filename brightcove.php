@@ -26,7 +26,7 @@ function brightcove_media_menu($tabs) {
   }
   return $tabs;
 }
-
+wp_enqueue_script('media-upload');
 add_filter('media_upload_tabs', 'brightcove_media_menu');
 add_action('media_upload_brightcove', 'brightcove_menu_handle');
 add_action('media_upload_brightcove_api', 'brightcove_api_menu_handle');
