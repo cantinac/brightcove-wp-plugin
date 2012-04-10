@@ -1,208 +1,87 @@
-.bc-video-search
-{
-	margin-top:1em;
-}
-
-.media-item img, .media-item .filename
-{
-	float:left;
-}
-
-.media-item span.title
-{
-	float:left;
-	margin-left:1em;
-	margin-right:1em;
-}
-
-.bc-check span
-{
-	margin-left:1em;
-}
-
-#bc-error{
-	line-height:3em;
-	height:3em;
-	padding-left:10px;
-	padding-right:10px;
-	width:603px !important;
-}
-
-.media-item, #tabs
-{
- 	width:623px;
- 	margin-left:auto;
- 	margin-right:auto;
- 	margin-top:1em;
-}
-
-#tabs .media-item, #tabs .media-item table, .media-item table, .media-item table td input
-{
-	width:100%;
-}
-#bc-video-ref, #bc-playlist-ref
-{
-width:auto;
-}
-.hidden
-{
-	display:none;
-}
-
-.bc_video_thumb
-{
-	width:180px;
-	margin-top:10px;
-	margin-left:10px;
-	height:150px;
-	border-style:solid;
-	border-width:1px;
-	border-color:#DFDFDF;
-	float:left;
-	position:relative;
-	-moz-box-shadow:    3px 3px 2px 1px #ccc;
- 	-webkit-box-shadow: 3px 3px 2px 1px #ccc;
-  	box-shadow:         3px 3px 2px 1px #ccc;
-}
-
-.bc_video_thumb:hover
-{
-	-moz-box-shadow:    0px 0px 2px 1px #F7F7F7;
- 	-webkit-box-shadow: 0px 0px 2px 1px #F7F7F7;
-  	box-shadow:         0px 0px 2px 1px #F7F7F7;		
-}
+.bc-video-search { margin-top: 1em; }
 
 
+/*Styling on tabs*/
+.bc-container { margin: 10px 28px; }
+.bc-container .ui-widget-header { background: transparent; border-top: 0; border-right: 0; border-left: 0; }
+.bc-container .ui-tabs .tab { padding: 1em .5em; }
+.bc-container .ui-tabs th.label label { font-size: 12px; font-weight: bold; }
+.bc-container .ui-tabs th.label { padding-left: 0; }
 
-.bc_video_thumb img
-{
-	margin-left:27.5px;
-	margin-right:27.5px;
-	width:150px;
-	max-height:50%;
-	position:relative;
-}
+.bc-container .field-row label { font-weight: bold; float: left; display: block; width: 100px; }
+.bc-container .field-row { clear: both; }
 
-.bc_video_thumb h3
-{
-	text-align:center;
-	margin-left:1em;
-	margin-right:1em;
-	word-wrap:break-word;
-	line-height:1.5em;
-	height:1.5em;
+/*Styling on items in media api tables */
+.media-item img, .media-item .filename { float:left; }
+.media-item th.label { width: 60px; padding-left: 8px; }
+.media-item span.title { float:left; margin-left:1em; margin-right:1em; }
 
-}
-.bc_api_header
-{
-	height:50px;
-}
-#media-items .media-item.no-border, #bc-form .describe
-{
-	border-style:none;
-}
-.bc-player-row
-{
-	margin-top:2em;
-}
-#bc-form, .outer_container
-{
-	margin:1em;
-}
+.insert-button-container { margin-top: 10px; }
 
+.bc-check input { margin-top: .5em; }
+.bc-check span { margin-left: .5em; }
+
+#bc-error, .bc-error { line-height:3em; padding: 0 10px; margin: 10px; }
+
+#tabs .media-item, #tabs .media-item table, .media-item table, .media-item table td input{ width:100%; }
+
+#bc-video-ref, #bc-playlist-ref { width:auto; }
+
+#media-items .media-item.no-border{ border-style:none; }
+
+div#media-upload-header{ margin:0; padding:5px 5px 0; font-weight:bold; position:relative; border-bottom-width:1px; border-bottom-style:solid; }
+
+#sidemenu li 
+{ display:inline; line-height:200%; list-style:none; text-align:center; white-space:nowrap; margin:0; padding:0; }
+
+body#media-upload ul#sidemenu{ font-weight:normal; margin:0 5px; left:0; bottom:-1px; float:none; overflow:hidden; }
+
+.player-preview { line-height:1em; }
+.preview-header {margin-bottom:0em;}
+
+.id-field { width:100%; }
+
+#bc-video-search-video tr:hover td { background-color: #e6e6e6; }
+
+/*Styling the tables for brightcove API */
+#bc-video-search-video .widefat tr td:nth-child(3),#bc-video-search-video .widefat tr th:nth-child(3), #bc-video-search-playlist .widefat tr td:nth-child(4),#bc-video-search-playlist .widefat tr th:nth-child(4) { text-align:center; }
+
+#bc-video-search-video .widefat tr td:nth-child(4), #bc-video-search-video .widefat tr th:nth-child(4), #bc-video-search-playlist .widefat tr td:nth-child(5), #bc-video-search-playlist .widefat tr th:nth-child(5) { text-align:right; }
+
+/*Styling for search bar on media api video tab*/
+#tabs-api #tabs-1 #search-form div:first-child {width:85%;}
+#tabs-api #tabs-1 #search-form div:first-child input {width:100%; margin-bottom:1em;}
+#tabs-api #tabs-1 #search-form div:nth-child(2) button {float:right;}
+
+/*CSS for loading gifs*/
+.loading-img {display:block; margin-left:auto; margin-right:auto;}
+.loading-img-api { z-index:999; position:absolute; top:150px; opacity:1; left:50%; margin-left:-16px;}
+
+/* CSS for page format of videos */
+.button-bar { margin-top:1em; }
+.prev-page: { float:left; }
+.next-page { float:right; }
+
+/********************* Helper CSS *********************/
+
+/*Clearfix*/
 .clearfix:before, .clearfix:after { content: ""; display: table; }
 .clearfix:after { clear: both; }
 .clearfix { *zoom: 1; }
 
+.hidden { display:none; }
 
+.block { display:block; }
 
+.disable {opacity:.5;}
+.pageOfPage {text-align:center; margin-bottom:0px;}
+.button-bar{ margin-top:0px;}
+.no-error{ visibility:hidden; }
 
+.placeholder { color: #666; }
+.placeholderFocus { color: #000; }
 
-#bc-form .describe, #bc-form .button, 
-{
-	margin-top:1em;
-}
-
-#bc-form .media-item
-{
-	margin-top:.5em;
-	margin-bottom:.5em;
-}
-	#bc-form .media-item.or-row
-	{
-		margin-top:-.5em;
-		margin-bottom:-.5em;
-		min-height:0px;
-	}
-	#bc-form .media-item.or-row td
-	{
-		width:100%;
-		text-align:center;
-	}
-
-	#bc-form .describe 
-	{
-		margin-top:.5em;
-	}
-div#media-upload-header
-{
-	margin:0;
-	padding:5px 5px 0;
-	font-weight:bold;
-	position:relative;
-	border-bottom-width:1px;
-	border-bottom-style:solid;
-}
-
-#sidemenu li 
-{
-	display:inline;
-	line-height:200%;
-	list-style:none;
-	text-align:center;
-	white-space:nowrap;
-	margin:0;
-	padding:0;
-}
-
-body#media-upload ul#sidemenu
-{
-	font-weight:normal;
-	margin:0 5px;
-	left:0;
-	bottom:-1px;
-	float:none;
-	overflow:hidden;
-}
-
-.block
-{
-	display:block;
-}
-
-.player-preview
-{
-	line-height:1em;
-}
-
-.id-field
-{
-	width:100%;
-}
-
-.widefat tr td:nth-child(3), .widefat tr th:nth-child(3)
-{
-	text-align:center;
-}
-
-.widefat tr td:nth-child(4), .widefat tr th:nth-child(4)
-{
-	text-align:right;
-}
-
-
-
-
+.see-all-videos, .see-all-playlists {margin-top:-45px; float:right;}
 
 
 

@@ -1,34 +1,47 @@
 <?php
 /**
  * @package Brightcove
- * @version 0.1
+ * @version 1.0
  */
 /*
 Plugin Name: Brightcove
-Plugin URI: 
-Description: Brightcove plugin
-Author: Nancy Decker
-Version: 0.1
+Plugin URL: 
+Description: An easy to use plugin that inserts Brightcove Video into your Wordpress site. 
+Author: Brightcove
+Version: 1.0
 Author URI: 
 */
 
-
 require dirname( __FILE__ ) . '/admin/brightcove_admin.php';
+require dirname( __FILE__ ) . '/brightcove_shortcode.php';
 
+//Nessesary to fix wordpress bug where wp_get_current_user is undefined
+require_once(ABSPATH."wp-includes/pluggable.php");
 
 /************************Upload Media Tab ***************************/
 
 function brightcove_media_menu($tabs) {
+	//TODO Check for isset or empty instead
+  if (get_option('bc_api_key') != NULL or get_option('bc_api_key') != '') {
+    $tabs['brightcove_api']='Brightcove'; 
+  } else {
+    $tabs['brightcove']='Brightcove';
+  }
+  return $tabs;
+}
+wp_enqueue_script('media-upload');
+add_filter('media_upload_tabs', 'brightcove_media_menu');
+add_action('media_upload_brightcove', 'brightcove_menu_handle');
+add_action('media_upload_brightcove_api', 'brightcove_api_menu_handle');
 
-if (get_option('bc_api_key') != NULL or get_option('bc_api_key') != '') {
- $tabs['brightcove_api']='Brightcove Media API'; 
-} else {
-  $tabs['brightcove']='Brightcove';
-}
-return $tabs;
-}
+$myStyleUrl = plugins_url('brightcove.css', __FILE__);
+wp_register_style('myStyleSheets', $myStyleUrl);
+wp_enqueue_style( 'myStyleSheets');
 
 function brightcove_menu_handle() {
+	//TODO check to see what $errors is being used for
+	//TODO check to see if parameters can be passed in here
+	//if not then have bc_media_upload_form call function
 	return wp_iframe('bc_media_upload_form',$errors);
 }
 
@@ -36,229 +49,13 @@ function brightcove_api_menu_handle() {
   return wp_iframe('bc_media_api_upload_form',$errors);
 }
 
-function bc_media_api_upload_form() {
-media_upload_header();
-add_brightcove_script();
-add_jquery_scripts();
-add_validation_scripts();
-add_dynamic_brightcove_api_script();
-$playerID=get_option('bc_player_id');
-$playerID_playlist=get_option('bc_player_id_playlist');
-$publisherID=get_option('bc_pub_id');
-$apiKey=get_option('bc_api_key');
-
-if ($playerID == '' || $playerID_playlist == '' || $publisherID  == '') {
-  $defaultSet='false';
-} else  {
-  $defaultSet='true';
+//Adds all the scripts nessesary for plugin to work
+function add_all_scripts() {
+	add_brightcove_script();
+	add_jquery_scripts();
+	add_validation_scripts();
+	add_dynamic_brightcove_api_script();
 }
-?>
-<script src="/wp-content/plugins/brightcove/bc-mapi.js" type="text/javascript"></script>
-<div class='hidden error' id='defaults_not_set' data-defaultsSet='<?php echo $defaultSet; ?>'>
-  You have not set up your defaults for this plugin. Please click on the link to set your defaults.
-  <a target="_top" href="admin.php?page=brightcove_menu">Brightcove Settings</a>
-</div>
-<div id='bc-error' class='hidden error'></div>
-  <div class='no-error'>
-    <div class='outer_container' >
-      <input type='hidden' id='bc_api_key' name='bc_api_key' value='<?php echo $apiKey; ?>' >
-       <input type='hidden' id='bc_default_height' name='bc_default_height' value='<?php echo $defaultHeight; ?>' >
-        <input type='hidden' id='bc_default_width' name='bc_default_width' value='<?php echo $defaultWidth; ?>' >
-          <input type='hidden' id='bc_default_thumbnail' value='<?php echo dirname( __FILE__ ).'/admin/brightcove.png';?>' >
-
-      <div id='tabs-api'>
-        <ul>
-          <li ><a class='video-tab-api' href="#tabs-1">Videos</a></li>
-          <li><a class='playlist-tab-api' href="#tabs-2">Playlists</a></li>
-        </ul>
-        <div id='tabs-1'>
-          <button class='button' id='bc_search'>Search</button>
-          <div class='alignright'>
-            <input id='bc-search-field' type='text'>
-            <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
-          </div>
-          <div class='bc-video-search clearfix' id='bc-video-search-video'></div>
-
-        </div>
-        <div id='tabs-2'>
-          <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
-          <div class='bc-video-search clearfix' id='bc-video-search-playlist'></div>
-        </div>
-      </div>
-    </div>
-  </div>
-<?php
-}
-
-/*Controls the tab of the media upload form*/
-function bc_media_upload_form() { 
-media_upload_header();
-add_brightcove_script();
-add_jquery_scripts();
-add_validation_scripts();
-add_dynamic_brightcove_api_script();
-
-/*Gets the default player set in the admin settings*/
-$playerID=get_option('bc_player_id');
-$defaultHeight=get_option('bc_default_height');
-$defaultWidth=get_option('bc_default_width');
-$playerID_playlist=get_option('bc_player_id_playlist');
-
-if ($playerID == '' || $playerID_playlist == '') {
-  $defaultSet='false';
-} else  {
-  $defaultSet='true';
-}
-?>
-<div class='hidden error' id='defaults_not_set' data-defaultsSet='<?php echo $defaultSet; ?>'>
-  You have not set up your defaults for this plugin. Please go to the brightcove menu on the side panel of the admin screen.
-</div>
-<div class='no-error'>
-  <div id='tabs'>
-    <ul>
-      <li ><a class='video-tab' href="#tabs-1">Videos</a></li>
-      <li><a class='playlist-tab' href="#tabs-2">Playlists</a></li>
-    </ul>
-
-    <div class='tab video-tab' id='tabs-1'>
-      <div class='media-item no-border'>
-        <form id='validate_video'>
-          <table>
-            <tbody>
-              <tr>
-                <th valign='top' scope='row' class='label'>
-                  <span class="alignleft"><label for="bc-video">Video:</label></span>
-                  <span class="alignright"></span>
-                </th>
-                <td>
-                  <input class='id-field' placeholder='Video ID' aria-required="true" type='text' name='bcVideo' id='bc-video' placeholder='Video ID or URL' onblur="BCL.setPlayerData()">
-                </td>
-              </tr>
-              <tr>
-                <th valign='top' scope='row' class='label'>
-                </th>
-                <td class='bc-check'>
-                   <input class='alignleft' type='checkbox' name='bc-video-ref' id='bc-video-ref' onblur="BCL.setPlayerData()"/>
-                   <span class="alignleft"><label for='bc-video-ref'>This is a reference ID, not a video ID </label></span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </form>
-      </div>
-    </div>
-    <div class='tab playlist-tab' id='tabs-2'>
-     <div class='media-item no-border'>
-        <form id='validate_playlist'>
-          <table> 
-            <tbody>
-              <tr>
-                <th valign='top' scope='row' class='label' >
-                  <span class="alignleft"><label for="bcPlaylist">Playlist:</label></span>
-                  <span class="alignright"></span>
-                </th>
-                <td>
-                 <input class='id-field' type='text' name='bcPlaylist' id='bc-playlist' placeholder='Playlist ID(s) seperated by commas' onblur="BCL.setPlayerData()"/>
-                </td>
-              </tr>
-              <tr>
-                <th valign='top' scope='row' class='label'>
-                </th>
-                <td class='bc-check'>
-                 <input class='alignleft' type='checkbox' name='bc-playlist-ref' id='bc-playlist-ref' onblur="BCL.setPlayerData()"/>
-                 <span class="alignleft"><label for='bc-playlist-ref'>These are reference IDs, not playlist IDs </label></span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </form>
-      </div>
-    </div>
-  </div>
-
-      <div class='media-item'>
-        <input type='hidden' id='bc_default_player' name='bc_default_player' value='<?php echo $playerID; ?>' >
-        <input type='hidden' id='bc_default_player_playlist' name='bc_default_player_playlist' value='<?php echo $playerID_playlist; ?>' >
-        <input type='hidden' id='bc_default_height' name='bc_default_height' value='<?php echo $defaultHeight; ?>' >
-        <input type='hidden' id='bc_default_width' name='bc_default_width' value='<?php echo $defaultWidth; ?>' >
-        <form id='validate_settings'>
-          <table>
-            <tbody>
-              <tr class='bc-player-row'>
-              <th valign='top' scope='row' class='label'>
-                <span class="alignleft"><label for="bcPlayer">Player:</label></span>
-                <span class="alignright"></span>
-              </th>
-              <td>
-               <input class='digits' type='text' name='bcPlayer' id='bc-player' placeholder='Player ID (optional)' onblur="BCL.setPlayerData()" />
-              </td>
-            </tr>
-            <tr class='bc-height-row'>
-              <th valign='top' scope='row' class='label'>
-                <span class="alignleft"><label for="bcHeight">Height:</label></span>
-                <span class="alignright"></span>
-              </th>
-              <td>
-               <input class='digits'  type='text' name='bcHeight' id='bc-height' placeholder='Height (optional)' onblur="BCL.setPlayerData()" />
-              </td>
-            </tr>
-            <tr class='bc-width-row'>
-              <th valign='top' scope='row' class='label'>
-                <span class="alignleft"><label for="bcWidth">Width:</label></span>
-                <span class="alignright"></span>
-              </th>
-              <td>
-               <input class='digits' type='text' name='bcWidth' id='bc-width' placeholder='Width (optional)' onblur="BCL.setPlayerData()" />
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </form>
-      </div>
-
-    
-
-      <div class='media-item no-border'>
-        <button class='aligncenter button' onclick="BCL.insertShortcode()" />Insert Shortcode</button>
-      </div>
-
-      <div class='media-item no-border'>
-        <div id='bc-error' class='hidden error'></div>
-      </div>
-
-      <div class='media-item no-border player-preview'>
-       <table>
-         <tbody>
-          <tr>
-            <td>
-              <div class='alignleft'>
-                  <h3 id='bc_title'></h3>
-                  <p id='bc_description'></p>
-                  <p> Video Preview: </p>
-                  <div id="dynamic-bc-placeholder"> </div>
-              </div>
-              <div class='alignleft'>
-              </div>
-            </td>
-          </tr>
-          <tbody>
-        </table>
-      </div>
-</div>
-
-	<?php
-}
-
-add_filter('media_upload_tabs', 'brightcove_media_menu');
-add_action('media_upload_brightcove', 'brightcove_menu_handle');
-add_action('media_upload_brightcove_api', 'brightcove_api_menu_handle');
-
-
- $myStyleUrl = plugins_url('brightcove.css', __FILE__);
- wp_register_style('myStyleSheets', $myStyleUrl);
- wp_enqueue_style( 'myStyleSheets');
-
-add_shortcode('brightcove','add_brightcove');
 
 function add_brightcove_script() {	
 wp_deregister_script( 'brightcove_script' );
@@ -266,36 +63,35 @@ wp_register_script( 'brightcove_script', 'http://admin.brightcove.com/js/Brightc
 wp_enqueue_script( 'brightcove_script' );
 }
 
+function add_jquery_scripts() {
+  wp_deregister_script('jquery');
+  wp_register_script( 'jquery', 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js');
+  wp_enqueue_script( 'jquery' );
+
+  wp_deregister_script('jquery-ui-core');
+  wp_register_script( 'jquery-ui-core', 'https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js');
+  wp_enqueue_script( 'jquery-ui-core' );
+
+  wp_register_style('jqueryStyle', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/smoothness/jquery-ui.css');
+  wp_enqueue_style( 'jqueryStyle');
+
+}
+
 function add_validation_scripts()
 {
-  wp_deregister_script('jQueryValidate');
-  wp_register_script( 'jQueryValidate', '/wp-content/plugins/brightcove/jQueryValidation/jquery.validate.min.js');
-  wp_enqueue_script( 'jQueryValidate' );
+  wp_deregister_script('jqueryPlaceholder');
+  wp_register_script( 'jqueryPlaceholder', '/wp-content/plugins/brightcove/jQueryPlaceholder/jQueryPlaceholder.js');
+  wp_enqueue_script( 'jqueryPlaceholder');
 
-  wp_deregister_script('jQueryValidateAddional');
-  wp_register_script( 'jQueryValidateAddional', '/wp-content/plugins/brightcove/jQueryValidation/additional-methods.min.js');
-  wp_enqueue_script( 'jQueryValidateAddional' );
+  wp_deregister_script('jquery-validate');
+  wp_register_script( 'jquery-validate', '/wp-content/plugins/brightcove/jQueryValidation/jquery.validate.min.js');
+  wp_enqueue_script( 'jquery-validate' );
+
+  wp_deregister_script('jquery-validat-addional');
+  wp_register_script( 'jquery-validate-addional', '/wp-content/plugins/brightcove/jQueryValidation/additional-methods.min.js');
+  wp_enqueue_script( 'jquery-validate-addional' );
 }
 
-function add_jquery_scripts()
-{/*
-  wp_deregister_script('jQuery');
-  wp_register_script( 'jQuery', '/wp-content/plugins/brightcove/jQueryUI/js/jquery-1.7.1.min.js');
-  wp_enqueue_script( 'jQuery' );*/
-
-  wp_deregister_script('jQueryUI');
-  wp_register_script( 'jQueryUI', '/wp-content/plugins/brightcove/jQueryUI/js/jquery-ui-1.8.18.custom.min.js');
-  wp_enqueue_script( 'jQueryUI' );
-
-  wp_register_style('jQueryStyle', '/wp-content/plugins/brightcove/jQueryUI/css/smoothness/jquery-ui-1.8.18.custom.css');
-  wp_enqueue_style( 'jQueryStyle');
-}
-/*
-function add_api_brightcove_script() {	
-wp_deregister_script( 'api_brightcove_script' );
-wp_register_script( 'api_brightcove_script', 'http://admin.brightcove.com/js/APIModules_all.js');
-wp_enqueue_script( 'api_brightcove_script' );
-}*/
 
 function add_dynamic_brightcove_api_script() {	
 wp_deregister_script( 'dynamic_brightcove_script' );
@@ -303,84 +99,331 @@ wp_register_script( 'dynamic_brightcove_script', '/wp-content/plugins/brightcove
 wp_enqueue_script( 'dynamic_brightcove_script' );
 }
 
-function add_brightcove($atts) {
-add_brightcove_script();
-isset($atts['playerid']) ? $playerId=($atts['playerid']): $playerId=get_option('bc_player_id');
-?>
-<!-- Start of Brightcove Player -->
+//global variables 
 
-<div style="display:none">
-</div>
+GLOBAL $bcGlobalVariables;
 
-<object id="myExperience" class="BrightcoveExperience">
-  <param name="bgcolor" value="#FFFFFF" />
-  <param name="width" value="<?php echo $atts['width']; ?>" />
-  <param name="height" value="<?php echo $atts['height']; ?>" />
-  <param name="playerID" value="<?php echo $playerId; ?>" />
-  <!--<param name="playerKey" value="AQ~~,AAAAipOT-Hk~,_eG7BsSTB2xUL0C9k36uPnnnkgJfJRPS" />-->
-  <param name="isVid" value="true" />
-  <param name="isUI" value="true" />
-  <param name="dynamicStreaming" value="true" />
-  
-   <?php  
-   if ($atts['videoid'] != NULL && $atts['isref'] == NULL)
-   { ?>
-    <param name="@videoPlayer" value="<?php echo $atts['videoid']; ?>" />
-   <?php } 
-   if ($atts['videoid'] != NULL && $atts['isref'] != NULL)
-   { ?>
-    <param name="@videoPlayer" value="ref:<?php echo $atts['videoid']; ?>" />
-   <?php }
-   if ($atts['playlistid'] != NULL && $atts['isref'] == NULL)
-   { ?>
-    <param name="@playlistTabs" value="<?php echo $atts['playlistid']; ?>" />
-    <param name="@videoList" value="<?php echo $atts['playlistid']; ?>" />
-    <param name="@playlistCombo" value="<?php echo $atts['playlistid']; ?>" />
-   <?php } 
-   if ($atts['playlistid'] != NULL && $atts['isref'] != NULL)
-   { ?>
-    <param name="@playlistTabs" value="ref:<?php echo $atts['playlistid']; ?>" />
-    <param name="@videoList" value="ref:<?php echo $atts['playlistid']; ?>" />
-    <param name="@playlistCombo" value="ref:<?php echo $atts['playlistid']; ?>" />
-   <?php }
-  ?>
+$bcGlobalVariables = Array('playerID'=>null, 
+'defaultHeight' => null, 
+'defaultWidth' => null, 
+'defaultIDPlaylist' => null, 
+'defaultHeightPlaylist' => null, 
+'defaultWidthPlaylist' => null,
+'defaultSet' => null, 
+'defaultSetErrorMessage' => null, 
+'defaultsSection' => null, 
+'loadingImg' => null, 
+'publisherID' => null);
 
+//Publisher ID 
+$bcGlobalVariables['publisherID']=get_option('bc_pub_id');
 
-</object>
+//Player ID for single videos
+$bcGlobalVariables['playerID']=get_option('bc_player_id');
+//Default height & width for single video players
+$bcGlobalVariables['defaultHeight']=get_option('bc_default_height');
+if ($bcGlobalVariables['defaultHeight'] == '') {
+  $bcGlobalVariables['defaultHeight']='270';
+}
+$bcGlobalVariables['defaultWidth']=get_option('bc_default_width');
+if ($bcGlobalVariables['defaultWidth'] == '') {
+  $bcGlobalVariables['defaultWidth']='480';
+}
+//Player ID for playlists
+$bcGlobalVariables['playerIDPlaylist']=get_option('bc_player_id_playlist');
+//Default height & width for playlist players
+$bcGlobalVariables['defaultHeightPlaylist']=get_option('bc_default_height_playlist');
+if ($bcGlobalVariables['defaultHeightPlaylist'] == '') {
+  $bcGlobalVariables['defaultHeightPlaylist']='400';
+}
+$bcGlobalVariables['defaultWidthPlaylist']=get_option('bc_default_width_playlist');
+if ($bcGlobalVariables['defaultWidthPlaylist'] == '') {
+  $bcGlobalVariables['defaultWidthPlaylist']='940';
+}
+//Checks to see if both those variables are set
+if ($bcGlobalVariables['playerID'] == '' || $bcGlobalVariables['playerIDPlaylist'] == '' || $bcGlobalVariables['publisherID'] == '') {
+  $bcGlobalVariables['defaultSet']=false;
+} else  {
+  $bcGlobalVariables['defaultSet']=true;
+}
 
-<!-- 
-This script tag will cause the Brightcove Players defined above it to be created as soon
-as the line is read by the browser. If you wish to have the player instantiated only after
-the rest of the HTML is processed and the page load is complete, remove the line.
--->
-<!--<script type="text/javascript">brightcove.createExperiences();</script>-->
-
-<!-- End of Brightcove Player -->	
-
-
-
-<?php
-
+if ( current_user_can('administrator') ) {
+    $bcGlobalVariables['defaultSetErrorMessage'] = "<div class='hidden error' id='defaults-not-set' data-defaultsSet='".$bcGlobalVariables['defaultSet']."'>
+     You have not set up your defaults for this plugin. Please click on the link to set your defaults.
+  <a target='_top' href='admin.php?page=brightcove_menu'>Brightcove Settings</a>
+  </div>";
+} else  {
+	 $bcGlobalVariables['defaultSetErrorMessage'] = "<div class='hidden error' id='defaults-not-set' data-defaultsSet='".$bcGlobalVariables['defaultSet']."'>
+    You have not set up your defaults for the Brightcove plugin. Please contact your site administrator to set these defaults.
+  </div>";	
 }
 
 
 
+$bcGlobalVariables['defaultsSection'] = 
+	"<div class='defaults'>
+	<input type='hidden' id='bc-default-player' name='bc-default-player' value='".$bcGlobalVariables['playerID']."' >
+	<input type='hidden' id='bc-default-width' name='bc-default-width' value='".$bcGlobalVariables['defaultWidth']."' >
+	<input type='hidden' id='bc-default-height' name='bc-default-height' value='".$bcGlobalVariables['defaultHeight']."' >
+	<input type='hidden' id='bc-default-player-playlist' name='bc-default-player-playlist' value='".$bcGlobalVariables['playerIDPlaylist']."' >
+	<input type='hidden' id='bc-default-width-playlist' name='bc-default-width-playlist' value='".$bcGlobalVariables['defaultWidthPlaylist']."' >
+	<input type='hidden' id='bc-default-height-playlist' name='bc-default-height-playlist' value='".$bcGlobalVariables['defaultHeightPlaylist']."' >
+	</div>";
+
+$bcGlobalVariables['loadingImg'] = "<img class='loading-img' src='/wp-includes/js/thickbox/loadingAnimation.gif' />";
+
+
+
+
+function set_shortcode_button ($playlistOrVideo, $buttonText) {
+
+if ($playlistOrVideo == 'playlist') {
+	$id='playlist-shortcode-button';
+} else {
+	$id='video-shortcode-button';
+}
+
+?>
+	<div class='media-item no-border insert-button-container'>
+      <button disabled='disabled' id='<?php echo $id; ?>' class='aligncenter button'/><?php echo $buttonText; ?></button>
+    </div> <?php
+	
+} 
+
+//TODO Pass in as map
+function add_player_settings($playlistOrVideo, $buttonText) { 
+	GLOBAL $bcGlobalVariables;
+	if ($playlistOrVideo == 'playlist') {
+		$setting = '-playlist';
+		$height = $bcGlobalVariables['defaultHeightPlaylist'];
+		$width = $bcGlobalVariables['defaultWidthPlaylist'];
+		$player = $bcGlobalVariables['playerIDPlaylist'];
+		$id='playlist-settings';
+		$class='playlist-hide';
+	} else {
+		$setting = '';
+		$height = $bcGlobalVariables['defaultHeight'];
+		$width = $bcGlobalVariables['defaultWidth'];
+		$player = $bcGlobalVariables['playerID'];
+		$id='video-settings';
+		$class='video-hide';
+	}
+
+	?>
+	<form class='<?php echo $class;?>' id='<?php echo $id; ?>'>
+        <table>
+          <tbody>
+            <tr class='bc-player-row'>
+            <th valign='top' scope='row' class='label'>
+              <span class="alignleft"><label for="bcPlayer">Player:</label></span>
+              <span class="alignright"></span>
+            </th>
+            <td>
+             <input class='digits player-data' type='text' name='bcPlayer' id='bc-player<? echo $setting; ?>' placeholder='Default ID is <?php echo $player; ?>'/>
+            </td>
+          </tr>
+          <tr class='bc-width-row'>
+            <th valign='top' scope='row' class='label'>
+              <span class="alignleft"><label for="bcWidth">Width:</label></span>
+              <span class="alignright"></span>
+            </th>
+            <td>
+             <input class='digits player-data' type='text' name='bcWidth' id='bc-width<?echo $setting; ?>' placeholder='Default is <?php echo $width; ?> px' />
+            </td>
+          </tr>
+          <tr class='bc-height-row'>
+            <th valign='top' scope='row' class='label'>
+              <span class="alignleft"><label for="bcHeight">Height:</label></span>
+              <span class="alignright"></span>
+            </th>
+            <td>
+             <input class='digits player-data'  type='text' name='bcHeight' id='bc-height<?echo $setting; ?>' placeholder='Default is <?php echo $height; ?> px' />
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <?php set_shortcode_button($playlistOrVideo, $buttonText); ?>
+      </form> 
+      <?php
+}
+
+function add_preview_area ($playlistOrVideo) {
+
+	if ($playlistOrVideo == 'playlist') {
+		$id='dynamic-bc-placeholder-playlist';
+		$class='playlist-hide';
+		$otherClass='playlist';
+	} else {
+		$id='dynamic-bc-placeholder-video';
+		$class='video-hide';
+		$otherClass='video';
+	}
+
+?>
+	<div class='<?php echo $class; ?> media-item no-border player-preview preview-container hidden'>
+      <h3 class='preview-header'>Video Preview</h3>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+				<div class='alignleft'>
+					<h4 id='bc-title-<?php echo $otherClass; ?>' class='bc-title'></h4>
+					<p id='bc-description-<?php echo $otherClass; ?>' class='bc-description'></p>
+					<div id="<?php echo $id; ?>"></div>
+				</div>
+				<div class='alignleft'>
+				</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <?php
+}
+
+function bc_media_upload_form () {
+	media_upload_header();
+	add_all_scripts();
+?>
+<div class="bc-container">
+	<?php
+	GLOBAL $bcGlobalVariables;
+		echo $bcGlobalVariables['defaultSetErrorMessage']; 
+		echo $bcGlobalVariables['defaultsSection'];
+		echo $bcGlobalVariables['loadingImg'];
+	?>
+
+	<div class='no-error'>
+	    <div id='tabs'>
+	      <ul>
+	        <li ><a class='video-tab' href="#tabs-1">Videos</a></li>
+	        <li><a class='playlist-tab' href="#tabs-2">Playlists</a></li>
+	      </ul>
+	    <div class='tab clearfix video-tab' id='tabs-1'>
+	        <div class='media-item no-border'>
+	          <form id='validate-video'>
+	            <table>
+	              <tbody>
+	                <tr>
+	                  <th valign='top' scope='row' class='label'>
+	                    <span class="alignleft"><label for="bc-video">Video:</label></span>
+	                    <span class="alignright"></span>
+	                  </th>
+	                  <td>
+	                    <input class='id-field player-data' placeholder='Video ID' aria-required="true" type='text' name='bcVideo' id='bc-video' placeholder='Video ID or URL'>
+	                  </td>
+	                </tr>
+	                <tr>
+	                  <th valign='top' scope='row' class='label'>
+	                  </th>
+	                  <td class='bc-check'>
+	                     <input class='player-data alignleft' type='checkbox' name='bc-video-ref' id='bc-video-ref' />
+	                     <span class="alignleft"><label for='bc-video-ref'>This is a reference ID, not a video ID </label></span>
+	                  </td>
+	                </tr>
+	              </tbody>
+	            </table>
+	          </form>
+	        </div>
+	      </div>
+	      <div class='tab clearfix playlist-tab' id='tabs-2'>
+		       <div class='media-item no-border'>
+		          <form id='validate-playlist'>
+		            <table> 
+		              <tbody>
+		                <tr>
+		                  <th valign='top' scope='row' class='label' >
+		                    <span class="alignleft"><label for="bcPlaylist">Playlist:</label></span>
+		                    <span class="alignright"></span>
+		                  </th>
+		                  <td>
+		                   <input class='id-field player-data' type='text' name='bcPlaylist' id='bc-playlist' placeholder='Playlist ID(s) separated by commas or spaces' />
+		                  </td>
+		                </tr>
+		                <tr>
+		                  <th valign='top' scope='row' class='label'>
+		                  </th>
+		                  <td class='bc-check'>
+		                   <input class='alignleft player-data' type='checkbox' name='bc-playlist-ref' id='bc-playlist-ref'/>
+		                   <span class="alignleft"><label for='bc-playlist-ref'>These are reference IDs, not playlist IDs </label></span>
+		                  </td>
+		                </tr>
+		              </tbody>
+		            </table>
+		          </form>
+		        </div>
+		      </div>
+		    </div><!-- End of tabs --> 
+		    <div id='bc-error' class='hidden error'>An error has occured, please check to make sure that you have a valid video or playlist ID</div>
+
+<?php
+	//TODO pass in map of defaults
+	add_player_settings('video', 'Insert Shortcode');?> 
+	
+<?php
+	add_preview_area('video');
+	add_player_settings('playlist', 'Insert Shortcode');
+	add_preview_area('playlist');
+
+?>
+</div> <?php	
+}
+
+function add_mapi_script() {
+	wp_deregister_script( 'mapi_script' );
+	wp_register_script( 'mapi_script', '/wp-content/plugins/brightcove/bc-mapi.js');
+	wp_enqueue_script( 'mapi_script' );
+}
+
+function bc_media_api_upload_form () {
+	GLOBAL $bcGlobalVariables;
+	media_upload_header();
+	add_all_scripts();
+	add_mapi_script();
+	$apiKey = get_option('bc_api_key');
+?>
+	<div class="bc-container">
+	<?php
+		echo $bcGlobalVariables['defaultSetErrorMessage']; 
+		echo $bcGlobalVariables['defaultsSection'];
+		echo $bcGlobalVariables['loadingImg'];
+
+	?>
+<input type='hidden' id='bc-api-key' name='bc-api-key' value='<?php echo $apiKey; ?>'>
+<div class='no-error'>
+	<div id='tabs-api'>
+		<ul>
+			<li ><a class='video-tab-api' href="#tabs-1">Videos</a></li>
+			<li><a class='playlist-tab-api' href="#tabs-2">Playlists</a></li>
+		</ul>
+		<div id='tabs-1' class='tabs clearfix video-tabs'>
+			<form class='clearfix' id='search-form'>
+				<div class='alignleft'>
+				  <input placeholder=' Search by name, description, tag or custom field' id='bc-search-field' type='text'>
+				</div>
+				<div class='alignright'>
+				  <button class='button' type='submit' id='bc-search'>Search</button>
+				</div>
+			</form>
+			<div class='bc-video-search clearfix' id='bc-video-search-video'></div>
+			<?php add_player_settings('video', 'Insert Video'); ?>
+		</div>
+		<div id='tabs-2' class='tabs clearfix playlist-tab'>
+			<div class='bc-video-search clearfix' id='bc-video-search-playlist'></div>
+			<?php add_player_settings('playlist', 'Insert Playlists');?>
+		</div>
+	</div>
+</div>
+	<?php
+	
+	
 
 
 
 
 
+}
 
-
-
-
-
-
-
-
-
-
-    
 
 
 
